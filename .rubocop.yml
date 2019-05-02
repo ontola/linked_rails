@@ -1,0 +1,45 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - !ruby/regexp /(vendor|bundle|bin|db|tmp)\/.*/
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  UseCache: true
+  CacheRootDirectory: tmp
+
+Rails:
+  Enabled: true
+
+Bundler/DuplicatedGem:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Metrics/AbcSize:
+  Exclude:
+    - test/**/*.rb
+
+Metrics/ClassLength:
+  Exclude:
+    - test/**/*.rb
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Exclude:
+    - test/**/*.rb
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*.rb
+
+Style/Documentation:
+  Enabled: false

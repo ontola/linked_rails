@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+require_relative 'enhancements/route_concerns'
+
+require_relative 'enhancements/actionable/model'
+require_relative 'enhancements/actionable/routing'
+require_relative 'enhancements/actionable/serializer'
+require_relative 'enhancements/createable/action'
+require_relative 'enhancements/createable/controller'
+require_relative 'enhancements/destroyable/action'
+require_relative 'enhancements/destroyable/controller'
+require_relative 'enhancements/destroyable/routing'
+require_relative 'enhancements/menuable/model'
+require_relative 'enhancements/menuable/routing'
+require_relative 'enhancements/menuable/serializer'
+require_relative 'enhancements/tableable/model'
+require_relative 'enhancements/updateable/action'
+require_relative 'enhancements/updateable/controller'
+require_relative 'enhancements/updateable/routing'
+require_relative 'enhancements/updateable/serializer'
