@@ -1,8 +1,8 @@
 # LinkedRails
-LinkedRails aims to make creating a basic Linked Data application a matter of seconds.
+LinkedRails is a gem for Ruby on Rails that helps you create a Linked Data application a matter of seconds.
 
 It includes among other things:
-* Linked data serialization using [rdf-serializers](https://github.com/ontola/rdf-serializers)
+* Linked data serialization to Turtle, JSON-LD, N-Triples and more using [rdf-serializers](https://github.com/ontola/rdf-serializers)
 * Controller abstraction using [active_response](https://github.com/ontola/active_response)
 * Serialization of forms using the [SHACL spec](http://www.w3.org/ns/shacl)
 * Serialization of collections using the [Activity Streams spec](https://www.w3.org/ns/activitystreams)
@@ -65,6 +65,3 @@ Add the following line to your policies
 ```
 LinkedRails::Policy
 ```
-
-## License
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
