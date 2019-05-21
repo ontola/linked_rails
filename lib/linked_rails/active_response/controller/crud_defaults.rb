@@ -11,7 +11,7 @@ module LinkedRails
         end
 
         def create_meta
-          []
+          invalidate_parent_collections
         end
 
         def default_form_options(action)
@@ -31,7 +31,7 @@ module LinkedRails
         end
 
         def destroy_meta
-          []
+          invalidate_parent_collections
         end
 
         def index_success_options_rdf
@@ -43,6 +43,14 @@ module LinkedRails
             locals: index_locals,
             meta: request.head? ? [] : index_meta
           }
+        end
+
+        def invalidate_parent_collections
+          data = []
+          current_resource.parent_collections.each do |collection|
+            data.push [NS::SP[:Variable], NS::ONTOLA[:baseCollection], collection.iri, NS::ONTOLA[:invalidate]]
+          end
+          data
         end
 
         def permit_params

@@ -11,5 +11,6 @@ module LinkedRails
     ONTOLA = ::RDF::Vocabulary.new('https://ns.ontola.io/')
     SCHEMA = RDF::Vocabulary.new('http://schema.org/')
     SH = RDF::Vocabulary.new('http://www.w3.org/ns/shacl#')
+    SP = RDF::Vocabulary.new('http://spinrdf.org/sp#')
   end
 end
