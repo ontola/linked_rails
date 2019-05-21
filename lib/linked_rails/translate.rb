@@ -34,6 +34,14 @@ module LinkedRails
     )
   end
 
+  Translate.translations_for(:action, :submit) do |object|
+    key = object.resource.is_a?(Collection) ? object.resource.association : object.resource&.class&.name&.tableize
+    I18n.t(
+      "actions.#{key}.#{object.tag}.submit",
+      default: [:"actions.default.#{object.tag}.submit", object.tag.to_s.humanize]
+    )
+  end
+
   Translate.translations_for(:action, :description) do |object|
     I18n.t(
       "actions.#{object.resource&.class&.name&.tableize}.#{object.tag}.description",

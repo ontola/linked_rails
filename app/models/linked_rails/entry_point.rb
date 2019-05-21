@@ -44,11 +44,7 @@ module LinkedRails
     end
 
     def label_fallback
-      key = resource.is_a?(Collection) ? resource.association : resource&.class&.name&.tableize
-      I18n.t(
-        "actions.#{key}.#{tag}.submit",
-        default: [:"actions.default.#{tag}.submit", :'actions.default.submit', 'save']
-      )
+      LinkedRails.translate(:action, :submit, self)
     end
 
     def route_fragment
