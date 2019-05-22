@@ -4,6 +4,8 @@ module LinkedRails
   class NotFoundController < ApplicationController
     def show
       handle_error(ActionController::RoutingError.new('Route not found'))
+    rescue ActionController::UnknownFormat
+      head 404
     end
   end
 end
