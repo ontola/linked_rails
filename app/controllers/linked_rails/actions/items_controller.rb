@@ -5,6 +5,8 @@ module LinkedRails
     class ItemsController < LinkedRails.controller_parent_class
       active_response :show, :index
 
+      skip_before_action :authorize_action
+
       private
 
       def action_list

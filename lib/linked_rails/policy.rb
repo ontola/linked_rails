@@ -11,9 +11,44 @@ module LinkedRails
       extend Enhanceable
 
       enhanceable :policy_class, :Policy
+
+      attr_reader :user_context, :record
+
+      def initialize(user_context, record)
+        @user_context = user_context
+        @record = record
+      end
+    end
+
+    def create_child?(klass)
+      child_policy(klass).create?
+    end
+
+    def index_children?(klass)
+      child_policy(klass).show?
+    end
+
+    def show?
+      false
+    end
+
+    def update?
+      false
+    end
+
+    def create?
+      false
+    end
+
+    def destroy?
+      false
     end
 
     private
+
+    def child_policy(klass)
+      Pundit.policy(context, record.build_child(klass))
+    end
 
     def policy_class
       self.class.policy_class

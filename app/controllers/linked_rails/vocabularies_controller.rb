@@ -4,6 +4,8 @@ module LinkedRails
   class VocabulariesController < ApplicationController
     active_response :show
 
+    skip_before_action :authorize_action
+
     private
 
     def add_class_data(graph, klass, iri) # rubocop:disable Metrics/AbcSize
