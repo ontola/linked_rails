@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'active_response/controller'
+require_relative 'controller/authorization'
 require_relative 'controller/error_handling'
 
 module LinkedRails
@@ -13,6 +14,7 @@ module LinkedRails
       enhanceable :controller_class, :Controller
 
       include LinkedRails::ActiveResponse::Controller
+      include LinkedRails::Controller::Authorization
       include LinkedRails::Controller::ErrorHandling
       include LinkedRails::Helpers::OntolaActionsHelper
     end
