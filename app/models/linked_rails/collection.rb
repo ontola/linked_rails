@@ -112,7 +112,7 @@ module LinkedRails
         filter: filter
       }
       opts[:page] = 1 if type == :paginated
-      opts[:before] = Time.current.utc.to_s(:db) if type == :infinite
+      opts[:before] = default_before_value if type == :infinite
       opts
     end
 

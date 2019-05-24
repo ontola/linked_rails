@@ -13,7 +13,7 @@ module LinkedRails
       end
 
       def first
-        iri(iri_opts.merge(before: Time.current.utc.to_s(:db)))
+        iri(iri_opts.merge(before: default_before_value))
       end
 
       def last; end
@@ -55,10 +55,6 @@ module LinkedRails
 
       def sort_column
         @sort_column ||= collection.sortings.last.sort_value.keys.first
-      end
-
-      def sort_direction
-        @sort_direction ||= collection.sortings.last.sort_value.values.first == :desc ? :lt : :gt
       end
     end
   end

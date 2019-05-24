@@ -6,12 +6,20 @@ module LinkedRails
       attr_accessor :sort
       attr_writer :default_sortings
 
+      def default_before_value
+        (sort_direction == :lt ? Time.current.utc : Date.new(1970, 1, 1)).to_s(:db)
+      end
+
       def default_sortings
         opts =
           @default_sortings ||
           association_class.try(:default_sortings) ||
           [{key: NS::SCHEMA[:dateCreated], direction: :desc}]
         opts.respond_to?(:call) ? opts.call(parent) : opts
+      end
+
+      def sort_direction
+        @sort_direction ||= sortings.last.sort_value.values.first == :desc ? :lt : :gt
       end
 
       def sorted?

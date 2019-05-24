@@ -14,7 +14,7 @@ module LinkedRails
       attr_accessor :collection, :filter, :include_map
       attr_writer :page_size
       delegate :association_base, :association_class, :default_page_size, :parent, :policy, :user_context, :apply_scope,
-               :display, :unfiltered_collection, to: :collection
+               :display, :unfiltered_collection, :sort_direction, :default_before_value, to: :collection
       delegate :count, to: :members
 
       def iri_path(opts = {})
