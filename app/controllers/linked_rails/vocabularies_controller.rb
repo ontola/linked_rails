@@ -4,8 +4,6 @@ module LinkedRails
   class VocabulariesController < ApplicationController
     active_response :show
 
-    skip_before_action :authorize_action
-
     private
 
     def add_class_data(graph, klass, iri) # rubocop:disable Metrics/AbcSize
@@ -69,6 +67,8 @@ module LinkedRails
         end
       graph << RDF::Statement.new(iri, RDF::RDFS[:subClassOf], parent.is_a?(Array) ? parent.first : parent)
     end
+
+    def authorize_action; end
 
     def show_success
       respond_with_resource(resource: vocab_graph)

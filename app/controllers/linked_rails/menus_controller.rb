@@ -4,8 +4,6 @@ module LinkedRails
   class MenusController < LinkedRails.controller_parent_class
     active_response :show, :index
 
-    skip_before_action :authorize_action
-
     private
 
     def app_menu_list
@@ -15,6 +13,8 @@ module LinkedRails
     def app_menu?
       request.path.start_with?('/apex/')
     end
+
+    def authorize_action; end
 
     def index_association
       menu_list.menus
