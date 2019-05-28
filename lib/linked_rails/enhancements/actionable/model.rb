@@ -31,7 +31,9 @@ module LinkedRails
 
         module ClassMethods
           def action_list
-            @action_list ||= defined_action_list || define_action_list
+            return @action_list if @action_list.try(:actionable_class) == self
+
+            @action_list = defined_action_list || define_action_list
           end
 
           def preview_includes
@@ -45,11 +47,11 @@ module LinkedRails
           end
 
           def defined_action_list
-            "#{name}ActionList".safe_constantize || "#{name}::ActionList".safe_constantize
+            "#{name}ActionList".safe_constantize
           end
 
           def define_action_list
-            list = const_set('ActionList', Class.new(action_superclass))
+            list = const_set("#{name}ActionList", Class.new(action_superclass))
             list.include_enhancements(:actionable_class, :Action)
             list
           end
