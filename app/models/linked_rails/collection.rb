@@ -33,8 +33,8 @@ module LinkedRails
       super
     end
 
-    def apply_scope(association)
-      policy_scope = policy && policy::Scope || Pundit::PolicyFinder.new(association).scope
+    def apply_scope(association, scope: nil)
+      policy_scope = scope || Pundit::PolicyFinder.new(association).scope
       policy_scope ? policy_scope.new(user_context, association).resolve : association
     end
 
@@ -44,7 +44,7 @@ module LinkedRails
     end
 
     def association_base
-      @association_base ||= apply_scope(filtered_association)
+      @association_base ||= apply_scope(filtered_association, scope: policy && policy::Scope)
     end
 
     def default_page_size
