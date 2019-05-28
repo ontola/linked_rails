@@ -13,20 +13,22 @@ module LinkedRails
         end
       end
 
-      def previous_changes_by_predicate # rubocop:disable Metrics/AbcSize
-        return {} unless respond_to?(:previous_changes) && self.class.respond_to?(:serializer_class)
+      def previous_changes_by_predicate
+        serializer_class = ActiveModel::Serializer.serializer_for(self)
+        return {} unless respond_to?(:previous_changes) && serializer_class
 
         Hash[
           previous_changes
-            .map { |k, v| [self.class.serializer_class._attributes_data[k.to_sym]&.options.try(:[], :predicate), v] }
+            .map { |k, v| [serializer_class._attributes_data[k.to_sym]&.options.try(:[], :predicate), v] }
             .select { |k, _v| k.present? }
         ]
       end
 
       def previously_changed_relations
-        return {} unless self.class.respond_to?(:serializer_class)
+        serializer_class = ActiveModel::Serializer.serializer_for(self)
+        return {} unless serializer_class
 
-        self.class.serializer_class._reflections.select do |key, _value|
+        serializer_class._reflections.select do |key, _value|
           association_changed?(key.to_s.ends_with?('_collection') ? send(key).association : key)
         end
       end

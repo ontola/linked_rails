@@ -4,6 +4,26 @@ module LinkedRails
   module ActiveResponse
     module Controller
       module CrudDefaults
+        def changed_relations_triples # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+          current_resource.previously_changed_relations.flat_map do |key, value|
+            relation_iri = current_resource.send(key).iri
+            if key.to_s.ends_with?('_collection')
+              [[NS::SP[:Variable], NS::ONTOLA[:baseCollection], relation_iri, NS::ONTOLA[:invalidate]]]
+            else
+              [
+                [current_resource.iri, value.options[:predicate], relation_iri],
+                [relation_iri, NS::SP[:Variable], NS::SP[:Variable], NS::ONTOLA[:invalidate]]
+              ]
+            end
+          end
+        end
+
+        def changes_triples
+          current_resource.previous_changes_by_predicate.map do |predicate, (_old_value, new_value)|
+            [current_resource.iri, predicate, new_value, NS::ONTOLA[:replace]]
+          end
+        end
+
         def create_success_options_rdf
           opts = create_success_options
           opts[:meta] = create_meta
@@ -77,7 +97,7 @@ module LinkedRails
         end
 
         def update_meta
-          []
+          changes_triples + changed_relations_triples
         end
 
         def user_context
