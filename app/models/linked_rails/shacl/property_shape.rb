@@ -42,7 +42,7 @@ module LinkedRails
                   [:sh_in, ActiveModel::Validations::InclusionValidator, :in]
 
       def default_value
-        @default_value || form&.target&.send(model_attribute) if model_attribute
+        @default_value ||= default_value_from_target
       end
 
       # The placeholder of the property.
@@ -63,6 +63,13 @@ module LinkedRails
       end
 
       private
+
+      def default_value_from_target # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+        return if model_attribute.blank? || form&.target&.blank? || sh_class.present?
+
+        value = form.target.send(model_attribute)
+        value if value.is_a?(String) || value.is_a?(RDF::URI) || RDF::Literal.new(value).class < RDF::Literal
+      end
 
       def description_from_attribute
         return if @description.blank?
