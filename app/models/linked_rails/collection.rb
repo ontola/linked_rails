@@ -27,6 +27,10 @@ module LinkedRails
                   :parent, :part_of, :user_context, :page_size, :policy
     attr_writer :association_base, :default_type, :title, :type, :views
 
+    def action_list(user_context)
+      association_class.try(:action_list)&.new(resource: self, user_context: user_context)
+    end
+
     def actions(user_context = nil)
       return [] if action_list(user_context).nil?
 
@@ -95,10 +99,6 @@ module LinkedRails
     end
 
     private
-
-    def action_list(user_context)
-      association_class.try(:action_list)&.new(resource: self, user_context: user_context)
-    end
 
     def default_type
       @default_type || :paginated
