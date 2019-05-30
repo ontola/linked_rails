@@ -57,7 +57,9 @@ module LinkedRails
 
       class << self
         def actionable_class
-          @actionable_class ||= name.demodulize.gsub('ActionList', '').safe_constantize
+          @actionable_class ||=
+            name.gsub('ActionList', '').safe_constantize ||
+            name.demodulize.gsub('ActionList', '').safe_constantize
         end
 
         def defined_actions
