@@ -16,7 +16,7 @@ module LinkedRails
             http_method: :post,
             image: -> { create_image },
             label: -> { create_label },
-            path: :new,
+            iri_path: -> { create_iri_path },
             policy: -> { create_policy },
             submit_label: -> { create_submit_label },
             result: -> { result_class },
@@ -37,6 +37,12 @@ module LinkedRails
 
         def create_image
           'fa-plus'
+        end
+
+        def create_iri_path
+          uri = URI(resource.iri_path)
+          uri.path += '/new'
+          uri.to_s
         end
 
         def create_label
