@@ -53,7 +53,7 @@ module LinkedRails
       @form_steps ||=
         _fields
           .values
-          .select { |attr| attr[:type] == :resource && instance_exec(&attr[:if]) }
+          .select { |attr| attr[:type] == :resource && (attr[:if].blank? || instance_exec(&attr[:if])) }
           .map { |attrs| LinkedRails::Form::Step.new(attrs.except(:if, :type).merge(form: self)) }
     end
 
