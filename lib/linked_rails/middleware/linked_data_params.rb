@@ -15,6 +15,15 @@ module LinkedRails
 
       private
 
+      def add_param(hash, key, value)
+        if hash[key].is_a?(Hash)
+          hash[key] = hash[key].merge(value)
+        else
+          hash[key] = value
+        end
+        hash
+      end
+
       def blob_attribute(base_params, value)
         base_params["<#{value}>"] if value.starts_with?(NS::LL['blobs/'])
       end
@@ -42,13 +51,16 @@ module LinkedRails
         Rails.logger
       end
 
-      def nested_attributes(graph, subject, klass, association, base_params)
+      def nested_attributes(graph, subject, klass, association, base_params, collection)
         nested_resources =
           if graph.query([subject, RDF::RDFV[:first], nil]).present?
-            RDF::List.new(subject: subject, graph: graph)
-              .map { |nested| parse_nested_resource(graph, nested, klass, base_params) }
+            Hash[
+              RDF::List.new(subject: subject, graph: graph)
+                .map { |nested| [rand(1_000_000_000).to_s, parse_nested_resource(graph, nested, klass, base_params)] }
+            ]
           else
-            parse_nested_resource(graph, subject, klass, base_params)
+            parsed = parse_nested_resource(graph, subject, klass, base_params)
+            collection ? {rand(1_000_000_000).to_s => parsed} : parsed
           end
         ["#{association}_attributes", nested_resources]
       end
@@ -92,12 +104,11 @@ module LinkedRails
 
       # Recursively parses a resource from graph
       def parse_resource(graph, subject, klass, base_params)
-        HashWithIndifferentAccess[
-          graph
-            .query([subject])
-            .map { |statement| parse_statement(graph, statement, klass, base_params) }
-            .compact
-        ]
+        graph
+          .query([subject])
+          .map { |statement| parse_statement(graph, statement, klass, base_params) }
+          .compact
+          .reduce({}) { |h, (k, v)| add_param(h, k, v) }
       end
 
       def parse_statement(graph, statement, klass, base_params)
@@ -110,9 +121,10 @@ module LinkedRails
       end
 
       def parsed_association(graph, object, klass, association, base_params)
-        association_klass = klass.reflect_on_association(association).klass
+        reflection = klass.reflect_on_association(association)
+        association_klass = reflection.klass
         if graph.has_subject?(object)
-          nested_attributes(graph, object, association_klass, association, base_params)
+          nested_attributes(graph, object, association_klass, association, base_params, reflection.collection?)
         elsif object.iri?
           ["#{association}_id", opts_from_route(object.to_s, klass: association_klass)[:id]]
         end
