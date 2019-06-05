@@ -74,7 +74,7 @@ module LinkedRails
       def description_from_attribute
         return if @description.blank?
 
-        @description.respond_to?(:call) ? @description.call(form.target) : @description
+        @description.respond_to?(:call) ? form.instance_exec(&@description) : @description
       end
 
       def validator_by_class(klass)

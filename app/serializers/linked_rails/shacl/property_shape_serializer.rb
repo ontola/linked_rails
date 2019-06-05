@@ -25,7 +25,11 @@ module LinkedRails
       has_many :sh_in_options
 
       def default_value
-        object.default_value.respond_to?(:call) ? object.default_value.call(object) : object.default_value
+        if object.default_value.respond_to?(:call)
+          object.form.instance_exec(&object.default_value)
+        else
+          object.default_value
+        end
       end
 
       def pattern
@@ -43,7 +47,7 @@ module LinkedRails
         options = object.sh_in
         return if options.blank?
 
-        options.respond_to?(:call) ? options.call(object) : options
+        options.respond_to?(:call) ? object.form.instance_exec(&options) : options
       end
     end
   end

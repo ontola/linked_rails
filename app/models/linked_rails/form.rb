@@ -53,13 +53,13 @@ module LinkedRails
       @form_steps ||=
         _fields
           .values
-          .select { |attr| attr[:type] == :resource && attr[:if].call(target) }
+          .select { |attr| attr[:type] == :resource && instance_exec(&attr[:if]) }
           .map { |attrs| LinkedRails::Form::Step.new(attrs.except(:if, :type).merge(form: self)) }
     end
 
     def include_attribute?(attr)
       return true if _property_groups[attr[:model_attribute]] || attr[:model_attribute] == :type
-      return false if attr[:if] && !attr[:if].call(target)
+      return false if attr[:if] && !instance_exec(&attr[:if])
 
       attribute_permitted?(attr)
     end
