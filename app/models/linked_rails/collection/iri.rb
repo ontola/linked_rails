@@ -9,7 +9,7 @@ module LinkedRails
         opts = {}
         iri_opts_add(opts, :display, display)
         iri_opts_add(opts, :type, type) if type&.to_sym != default_type
-        iri_opts_add(opts, :page_size, page_size)
+        iri_opts_add(opts, :page_size, page_size) if page_size.to_i != default_page_size
         iri_opts_add(opts, :'filter%5B%5D', filter_iri_opts)
         iri_opts_add(opts, :'sort%5B%5D', sort_iri_opts)
         opts
