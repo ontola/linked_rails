@@ -84,6 +84,12 @@ module LinkedRails
         target._referred_resources = []
       end
 
+      def form_options(attr, opts)
+        opts[:options].map do |key, values|
+          LinkedRails::Form::Option.new({key: key, attr: attr, klass: model_class, type: opts[:type]}.merge(values))
+        end
+      end
+
       def model_class
         @model_class ||=
           name.sub(/Form$/, '').safe_constantize ||
@@ -170,12 +176,6 @@ module LinkedRails
         opts[:order] = _fields.keys.length
         opts[:type] ||= :property
         _fields[key.try(:to_sym)] = opts
-      end
-
-      def form_options(attr, opts)
-        opts[:options].map do |key, values|
-          LinkedRails::Form::Option.new({key: key, attr: attr, klass: model_class, type: opts[:type]}.merge(values))
-        end
       end
 
       def literal_or_node_property_attrs(serializer_attr, attrs)
