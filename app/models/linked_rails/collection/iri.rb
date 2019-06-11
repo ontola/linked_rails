@@ -5,7 +5,7 @@ module LinkedRails
     module Iri
       COLLECTION_PARAMS = %w[display filter%5B%5D* page page_size type before sort%5B%5D*].freeze
 
-      def iri_opts
+      def iri_opts # rubocop:disable Metrics/AbcSize
         opts = {}
         iri_opts_add(opts, :display, display)
         iri_opts_add(opts, :type, type) if type&.to_sym != default_type

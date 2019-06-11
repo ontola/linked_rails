@@ -38,6 +38,8 @@ module LinkedRails
       end
 
       def available?
+        return false unless action_status == NS::SCHEMA[:PotentialActionStatus]
+
         @condition.nil? || condition
       end
 

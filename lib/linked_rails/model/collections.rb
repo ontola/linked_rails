@@ -11,14 +11,12 @@ module LinkedRails
         self.inc_nested_collection = [
           default_view: {member_sequence: :members},
           filters: [],
-          sortings: [],
-          operation: LinkedRails::Enhancements::Actionable::FORM_INCLUDES
+          sortings: []
         ].freeze
         class_attribute :inc_shallow_collection
         self.inc_shallow_collection = [
           filters: [],
-          sortings: [],
-          operation: LinkedRails::Enhancements::Actionable::FORM_INCLUDES
+          sortings: []
         ].freeze
       end
 

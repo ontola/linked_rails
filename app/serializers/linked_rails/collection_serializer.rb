@@ -16,21 +16,10 @@ module LinkedRails
     has_one :default_view, predicate: NS::AS[:pages]
     has_many :default_filtered_collections, predicate: LinkedRails::NS::ONTOLA[:filteredCollections]
 
-    has_many :actions, key: :operation, predicate: NS::SCHEMA[:potentialAction]
     has_many :filters, predicate: LinkedRails::NS::ONTOLA[:collectionFilter]
     has_many :sortings, predicate: LinkedRails::NS::ONTOLA[:collectionSorting]
 
-    triples :action_methods
-
-    def actions
-      object.actions(scope).select(&:available?)
-    end
-
-    def action_methods
-      triples = []
-      actions&.each { |action| triples.concat(action_triples(action)) }
-      triples
-    end
+    delegate :filtered?, to: :object
 
     def columns
       case object.display
@@ -55,31 +44,5 @@ module LinkedRails
 
       LinkedRails::NS::ONTOLA[:FilteredCollection]
     end
-
-    private
-
-    def action_for_parent(action)
-      action_triple(object.parent, NS::SCHEMA[:potentialAction], action.iri, NS::LL[:add]) if object.parent
-    end
-
-    def action_triples(action)
-      [
-        action_triple(
-          object,
-          LinkedRails::NS::ONTOLA["#{action.tag}_action".camelize(:lower)],
-          action.iri,
-          NS::LL[:add]
-        ),
-        action_for_parent(action)
-      ].compact
-    end
-
-    def action_triple(subject, predicate, iri, graph = nil)
-      subject_iri = subject.iri
-      subject_iri = RDF::URI(subject_iri.to_s.sub('/lr/', '/od/')) if subject.class.to_s == 'LinkedRecord'
-      [subject_iri, predicate, iri, graph]
-    end
-
-    delegate :filtered?, to: :object
   end
 end

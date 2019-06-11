@@ -55,7 +55,7 @@ module LinkedRails
         end
 
         def index_success_options_rdf
-          return index_success_options if index_collection_or_view.nil?
+          return index_success_options.merge(meta: request.head? ? [] : index_meta) if index_collection_or_view.nil?
 
           {
             collection: index_collection_or_view,

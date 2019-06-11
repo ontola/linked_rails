@@ -6,8 +6,8 @@ module LinkedRails
       module Collections
         private
 
-        def action_form_includes(action = nil)
-          LinkedRails::Enhancements::Actionable::FORM_INCLUDES + [resource: form_resource_includes(action)]
+        def action_form_includes(_action = nil)
+          LinkedRails::Enhancements::Actionable::FORM_INCLUDES
         end
 
         def collection_from_parent
@@ -30,8 +30,7 @@ module LinkedRails
           {
             default_view: collection_view_includes(member_includes),
             filters: [],
-            sortings: [],
-            operation: action_form_includes
+            sortings: []
           }
         end
 
@@ -45,21 +44,26 @@ module LinkedRails
           {member_sequence: {members: member_includes}}
         end
 
-        def collection_view_params
-          params.permit(:before, :page)
+        def collection_view_params(opts = params)
+          method = opts.is_a?(Hash) ? :slice : :permit
+          opts.send(method, :before, :page)
         end
 
         def collection_options
           {
-            display: params[:display],
-            filter: parse_filter(params[:filter], controller_class.try(:filter_options)),
             include_map: collection_include_map,
             user_context: user_context
-          }.merge(collection_type_params)
+          }.merge(collection_params)
         end
 
-        def collection_type_params
-          params.permit(:page_size, :type)
+        def collection_params(opts = params, klass = controller_class)
+          method = opts.is_a?(Hash) ? :slice : :permit
+          params = opts.send(method, :display, :page_size, :type).to_h
+          params[:filter] = parse_filter(
+            opts.is_a?(Hash) ? opts[:filter] : opts.permit(filter: [])[:filter],
+            klass.try(:filter_options)
+          )
+          params
         end
 
         def form_resource_includes(action)
@@ -89,7 +93,9 @@ module LinkedRails
         end
 
         def index_meta
-          if index_collection.is_a?(LinkedRails.collection_class) || index_collection.is_a?(LinkedRails::Sequence)
+          if index_collection.is_a?(LinkedRails.collection_class) ||
+              index_collection.is_a?(LinkedRails::Sequence) ||
+              index_collection.nil?
             return []
           end
 

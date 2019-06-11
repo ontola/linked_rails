@@ -13,16 +13,44 @@ module LinkedRails
 
       def authorize_action; end
 
+      def collection_actions
+        return [] if parent_resource.try(:collections).blank?
+
+        parent_resource.collections.map do |opts|
+          parent_resource.collection_for(opts[:name], user_context: user_context).actions(user_context)
+        end.flatten
+      end
+
       def index_association
-        action_list.actions
+        action_list.actions + collection_actions
       end
 
       def index_includes
-        [:target, actions: [target: {action_body: :referred_shapes}]]
+        action_form_includes
+      end
+
+      def index_meta
+        parent_triples + removed_triples
+      end
+
+      def parent_triples
+        index_association.map(&method(:triples_for_action)).flatten(1)
+      end
+
+      def triples_for_action(action)
+        [
+          parent_resource.action_predicate(action),
+          action.available? ? NS::SCHEMA[:potentialAction] : nil,
+          action.available? && action.favorite ? NS::ONTOLA[:favoriteAction] : nil
+        ].compact.map { |predicate| [parent_resource.iri, predicate, action.iri] }
+      end
+
+      def removed_triples
+        parent_resource.action_triples(delta_iri(:remove))
       end
 
       def show_includes
-        [:object].concat(action_form_includes)
+        action_form_includes
       end
 
       def requested_resource

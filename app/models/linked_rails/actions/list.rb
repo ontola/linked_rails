@@ -13,34 +13,23 @@ module LinkedRails
       class_attribute :_defined_actions, instance_reader: false, instance_writer: false
 
       def actions
-        @actions ||= available_actions.map { |tag, opts| action_item(tag, opts.dup) }
+        @actions ||= defined_actions.map { |tag, opts| action_item(tag, opts.dup) }
       end
 
       def action(tag)
         actions.find { |a| a.tag == tag }
       end
 
-      def available_actions
-        return {} if defined_actions.blank?
-
-        @available_actions ||= defined_actions.select(&method(:action_available?)).compact
-      end
-
       def defined_actions
-        self.class.defined_actions
+        self.class.defined_actions.select(&method(:collection_filter))
       end
 
       private
 
-      def action_available?(_tag, options)
-        call_option(options[:collection], resource) == resource.is_a?(LinkedRails.collection_class) &&
-          (options[:condition].nil? || call_option(options[:condition], resource))
-      end
-
       def action_item(tag, options)
         options[:tag] ||= options[:action_tag] || tag
         options[:list] ||= self
-        LinkedRails.actions_item_class.new(options.except(:condition, :action_tag))
+        LinkedRails.actions_item_class.new(options.except(:action_tag))
       end
 
       def association
@@ -51,8 +40,12 @@ module LinkedRails
         option.respond_to?(:call) ? instance_exec(&option) : option
       end
 
+      def collection_filter(_tag, options)
+        call_option(options[:collection], resource) == resource.is_a?(LinkedRails.collection_class)
+      end
+
       def result_class
-        @result_class ||= create_on_collection? ? resource.association_class : self.class.actionable_class
+        @result_class ||= self.class.actionable_class
       end
 
       class << self
