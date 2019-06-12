@@ -13,7 +13,7 @@ module LinkedRails
       end
 
       def first
-        iri(iri_opts.merge(before: default_before_value))
+        iri_from_path(iri_path(before: default_before_value))
       end
 
       def last; end
@@ -23,7 +23,7 @@ module LinkedRails
 
         next_before = members.last.send(sort_column)
         next_before = next_before.utc.to_s(:db) if next_before.is_a?(Time)
-        iri(iri_opts.merge(before: next_before))
+        iri_from_path(iri_path(before: next_before))
       end
 
       def prev; end

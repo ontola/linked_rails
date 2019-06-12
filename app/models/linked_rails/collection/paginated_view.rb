@@ -6,23 +6,23 @@ module LinkedRails
       attr_accessor :page
 
       def first
-        iri(iri_opts.merge(page: 1))
+        iri_from_path(iri_path(page: 1))
       end
 
       def last
-        iri(iri_opts.merge(page: [total_page_count, 1].max)) if total_page_count
+        iri_from_path(iri_path(page: [total_page_count, 1].max)) if total_page_count
       end
 
       def next
         return if page.nil? || page.to_i >= (total_page_count || 0)
 
-        iri(iri_opts.merge(page: page.to_i + 1))
+        iri_from_path(iri_path(page: page.to_i + 1))
       end
 
       def prev
         return if page.nil? || page.to_i <= 1
 
-        iri(iri_opts.merge(page: page.to_i - 1))
+        iri_from_path(iri_path(page: page.to_i - 1))
       end
 
       private
