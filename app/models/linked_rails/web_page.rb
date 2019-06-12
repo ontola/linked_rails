@@ -7,6 +7,7 @@ module LinkedRails
     include LinkedRails::Model
 
     attr_writer :iri, :widgets
+    attr_accessor :description, :name
 
     def widget_sequence
       @widget_sequence ||= LinkedRails::Sequence.new(@widgets)
