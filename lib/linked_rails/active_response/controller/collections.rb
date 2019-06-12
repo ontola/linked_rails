@@ -13,14 +13,13 @@ module LinkedRails
         def collection_from_parent
           return if collection_from_parent_name.blank?
 
-          parent_resource.send(
+          parent_resource!.send(
             collection_from_parent_name,
             collection_options
           )
         end
 
         def collection_from_parent_name
-          return unless respond_to?(:parent_resource, true)
           return unless parent_resource.respond_to?("#{controller_name.singularize}_collection", true)
 
           "#{controller_name.singularize}_collection"

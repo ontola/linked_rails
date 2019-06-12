@@ -8,15 +8,15 @@ module LinkedRails
       private
 
       def action_list
-        parent_resource.action_list(user_context)
+        parent_resource!.action_list(user_context)
       end
 
       def authorize_action; end
 
       def collection_actions
-        return [] if parent_resource.try(:collections).blank?
+        return [] if parent_resource!.try(:collections).blank?
 
-        parent_resource.collections.map do |opts|
+        parent_resource!.collections.map do |opts|
           parent_resource.collection_for(opts[:name], user_context: user_context).actions(user_context)
         end.flatten
       end
@@ -39,14 +39,14 @@ module LinkedRails
 
       def triples_for_action(action)
         [
-          parent_resource.action_predicate(action),
+          parent_resource!.action_predicate(action),
           action.available? ? NS::SCHEMA[:potentialAction] : nil,
           action.available? && action.favorite ? NS::ONTOLA[:favoriteAction] : nil
-        ].compact.map { |predicate| [parent_resource.iri, predicate, action.iri] }
+        ].compact.map { |predicate| [parent_resource!.iri, predicate, action.iri] }
       end
 
       def removed_triples
-        parent_resource.action_triples(delta_iri(:remove))
+        parent_resource!.action_triples(NS::ONTOLA[:remove])
       end
 
       def show_includes

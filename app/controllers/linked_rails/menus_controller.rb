@@ -40,7 +40,7 @@ module LinkedRails
     end
 
     def menu_list
-      app_menu? ? app_menu_list : parent_resource.menu_list(user_context)
+      app_menu? ? app_menu_list : parent_resource!.menu_list(user_context)
     end
 
     def requested_resource
