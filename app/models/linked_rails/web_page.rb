@@ -10,7 +10,7 @@ module LinkedRails
     attr_accessor :description, :name
 
     def widget_sequence
-      @widget_sequence ||= LinkedRails::Sequence.new(@widgets)
+      @widget_sequence ||= LinkedRails::Sequence.new(@widgets) if @widgets
     end
 
     class << self
@@ -19,7 +19,7 @@ module LinkedRails
       end
 
       def show_includes
-        super + [widget_sequence: {members: Widget.show_includes}]
+        super + [widget_sequence: {members: LinkedRails::Widget.show_includes}]
       end
     end
   end
