@@ -30,7 +30,13 @@ module LinkedRails
       end
 
       def index_meta
-        parent_triples + removed_triples
+        parent_triples + removed_triples + index_type_triple
+      end
+
+      def index_type_triple
+        [
+          [parent_resource!.actions_iri, RDF[:type], NS::LL[:LoadingResource]]
+        ]
       end
 
       def parent_triples

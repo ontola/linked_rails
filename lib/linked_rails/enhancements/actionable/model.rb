@@ -34,13 +34,24 @@ module LinkedRails
         end
 
         def action_triples(graph = nil) # rubocop:disable Metrics/AbcSize
-          action_iri = iri.dup
-          action_iri.path += '/actions'
-
           predicates = actions&.map(&method(:action_predicate)) || []
           predicates += [NS::SCHEMA[:potentialAction], LinkedRails::NS::ONTOLA[:favoriteAction]]
           predicates << LinkedRails::NS::ONTOLA[:createAction] if try(:collections).present?
-          predicates.map { |predicate| [iri, predicate, action_iri, graph].compact }
+          predicates.map { |predicate| [iri, predicate, actions_iri, graph].compact } + invalidate_actions_iri_triple
+        end
+
+        def actions_iri
+          return @actions_iri if @actions_iri
+
+          @actions_iri = iri.dup
+          @actions_iri.path += '/actions'
+          @actions_iri
+        end
+
+        private
+
+        def invalidate_actions_iri_triple
+          [[actions_iri, NS::SP[:Variable], NS::SP[:Variable], NS::ONTOLA[:invalidate]]]
         end
 
         module ClassMethods
