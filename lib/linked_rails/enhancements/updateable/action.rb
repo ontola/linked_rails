@@ -14,6 +14,7 @@ module LinkedRails
             policy: :update?,
             label: -> { update_label },
             image: 'fa-pencil-square-o',
+            include_resource: -> { update_include_resource? },
             url: -> { update_url },
             http_method: :put,
             form: -> { "#{resource.class}Form".safe_constantize },
@@ -22,6 +23,10 @@ module LinkedRails
         end
 
         def update_description; end
+
+        def update_include_resource?
+          false
+        end
 
         def update_iri_path
           uri = URI(resource.iri_path)

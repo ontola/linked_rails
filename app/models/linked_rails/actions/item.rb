@@ -13,7 +13,7 @@ module LinkedRails
       attr_writer :target, :iri_path
       delegate :resource, :user_context, to: :list, allow_nil: true
 
-      %i[description result type policy label image url collection condition form completed
+      %i[description result type policy label image url include_resource collection condition form completed
          tag http_method favorite path policy_resource].each do |method|
         attr_writer method
         define_method method do
@@ -41,6 +41,10 @@ module LinkedRails
         return false unless action_status == NS::SCHEMA[:PotentialActionStatus]
 
         @condition.nil? || condition
+      end
+
+      def included_resource
+        resource if include_resource
       end
 
       def iri_path(_opts = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

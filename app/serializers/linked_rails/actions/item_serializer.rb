@@ -14,6 +14,7 @@ module LinkedRails
       has_one :parent, predicate: NS::SCHEMA[:isPartOf]
       has_one :resource, predicate: NS::SCHEMA[:object]
       has_one :target, predicate: NS::SCHEMA[:target]
+      has_one :included_resource
 
       delegate :type, to: :object
 

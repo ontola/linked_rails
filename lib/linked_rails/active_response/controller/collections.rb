@@ -6,8 +6,8 @@ module LinkedRails
       module Collections
         private
 
-        def action_form_includes(_action = nil)
-          LinkedRails::Enhancements::Actionable::FORM_INCLUDES
+        def action_form_includes(action = nil)
+          LinkedRails::Enhancements::Actionable::FORM_INCLUDES + [included_resource: form_resource_includes(action)]
         end
 
         def collection_from_parent

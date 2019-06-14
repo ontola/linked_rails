@@ -15,6 +15,7 @@ module LinkedRails
             form: -> { "#{result_class}Form".safe_constantize },
             http_method: :post,
             image: -> { create_image },
+            include_resource: -> { create_include_resource? },
             label: -> { create_label },
             iri_path: -> { create_iri_path },
             policy: -> { create_policy },
@@ -37,6 +38,10 @@ module LinkedRails
 
         def create_image
           'fa-plus'
+        end
+
+        def create_include_resource?
+          false
         end
 
         def create_iri_path

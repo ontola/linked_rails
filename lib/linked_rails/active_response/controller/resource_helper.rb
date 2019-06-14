@@ -69,10 +69,14 @@ module LinkedRails
           ApplicationRecord.descendants.detect { |m| m.to_s == parent_resource_type(opts)&.classify }
         end
 
-        def parent_resource_or_collection(opts) # rubocop:disable Metrics/AbcSize
+        def parent_resource_or_collection(opts)
           resource = resource_from_opts(opts.merge(type: controller_name))
           return resource if opts[:collection].blank?
 
+          parent_collection(resource, opts)
+        end
+
+        def parent_collection(resource, opts)
           collection_class = opts[:collection].classify.constantize
           collection_opts = collection_params(opts, collection_class)
 
