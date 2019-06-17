@@ -17,7 +17,7 @@ module LinkedRails
       def iri_from_path(path, opts = {})
         uri_opts = {scheme: LinkedRails.scheme, host: LinkedRails.host, path: path}
         uri_opts[:fragment] = opts[:fragment] if opts[:fragment].present?
-        uri_opts[:query] = opts.except(:fragment).to_param if opts.except(:fragment).present?
+        uri_opts[:query] = opts.except(:fragment).compact.to_param if opts.except(:fragment).present?
         RDF::URI(uri_opts)
       end
 
