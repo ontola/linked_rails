@@ -22,7 +22,7 @@ module LinkedRails
       end
 
       def member_sequence
-        @member_sequence ||= LinkedRails::Sequence.new(members)
+        @member_sequence ||= LinkedRails::Sequence.new(members, id: members_iri)
       end
 
       def members
@@ -50,6 +50,12 @@ module LinkedRails
 
       def base_count
         collection.total_count
+      end
+
+      def members_iri
+        uri = iri.dup
+        uri.fragment = :members
+        uri
       end
 
       def parsed_sort_values
