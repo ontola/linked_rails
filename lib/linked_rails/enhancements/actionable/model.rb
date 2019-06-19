@@ -44,6 +44,7 @@ module LinkedRails
           return @actions_iri if @actions_iri
 
           @actions_iri = iri.dup
+          @actions_iri.path ||= ''
           @actions_iri.path += '/actions'
           @actions_iri
         end
