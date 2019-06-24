@@ -34,7 +34,10 @@ module LinkedRails
         private
 
         def attribute_mapping
-          ActiveModel::Serializer.serializer_for(self)
+          serializer = ActiveModel::Serializer.serializer_for(self)
+          return [] if serializer.blank?
+
+          serializer
             ._attributes_data
             .values
             .select { |value| value.options[:predicate].present? }
@@ -42,7 +45,10 @@ module LinkedRails
         end
 
         def reflection_mapping
-          ActiveModel::Serializer.serializer_for(self)
+          serializer = ActiveModel::Serializer.serializer_for(self)
+          return [] if serializer.blank?
+
+          serializer
             ._reflections
             .values
             .select { |value| value.options[:predicate].present? }
