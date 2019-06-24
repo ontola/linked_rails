@@ -101,7 +101,7 @@ module LinkedRails
     private
 
     def default_type
-      @default_type || :paginated
+      @default_type || association_class.try(:default_collection_type) || :paginated
     end
 
     def default_view_opts
