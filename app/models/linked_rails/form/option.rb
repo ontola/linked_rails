@@ -10,13 +10,6 @@ module LinkedRails
       attr_accessor :attr, :iri, :key, :klass, :type
       attr_writer :label
 
-      def iri_path(_opts = {})
-        path = URI(iri)
-        path.host = nil
-        path.scheme = nil
-        path.to_s
-      end
-
       def label
         label_from_variable ||
           I18n.t(

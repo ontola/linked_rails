@@ -9,25 +9,26 @@ module LinkedRails
       include LinkedRails::CallableVariable
 
       attr_accessor :parent, :tag, :item_type, :type, :resource
-      attr_writer :action, :href, :image, :iri_base, :iri_tag, :label, :menus
+      attr_writer :action, :href, :image, :iri_base, :label, :menus
+      delegate :iri_opts, to: :parent
 
-      %i[action href image iri_tag label menus].each do |method|
+      %i[action href image label menus iri_base].each do |method|
         callable_variable(method, instance: :parent)
       end
-      callable_variable(:iri_base, instance: :parent, default: -> { parent.iri_path })
 
-      def iri_path(fragment: nil) # rubocop:disable Metrics/MethodLength
-        fragment = "##{fragment}" if fragment
-        seperator =
-          if parent.is_a?(LinkedRails::Menus::List)
-            '/'
-          elsif parent.iri.to_s.include?('#')
-            '.'
-          else
-            fragment = nil
-            '#'
-          end
-        "#{iri_base}#{seperator}#{tag}#{fragment}"
+      def iri_opts
+        parent.iri_opts.merge(
+          tag: route_tag,
+          fragment: route_fragment
+        )
+      end
+
+      def iri_template
+        return parent.send(:iri_template) unless parent.is_a?(LinkedRails::Menus::List)
+
+        return URITemplate.new("#{iri_base}{/tag}{#fragment}") if iri_base
+
+        iri_template_expand_path(parent.send(:iri_template), '{/tag}')
       end
 
       def menu_sequence
@@ -41,13 +42,22 @@ module LinkedRails
       end
 
       def menu_sequence_iri
-        iri_from_path("#{iri_path}/menus")
+        return @menu_sequence_iri if @menu_sequence_iri
+
+        sequence_iri = iri.dup
+        sequence_iri.path ||= ''
+        sequence_iri.path += '/menus'
+        sequence_iri
       end
 
-      private
+      def route_fragment
+        return if parent.is_a?(LinkedRails::Menus::List)
 
-      def iri_tag
-        @iri_tag || tag
+        [parent.route_fragment, tag].compact.join('.')
+      end
+
+      def route_tag
+        parent.is_a?(LinkedRails::Menus::List) ? tag : parent.route_tag
       end
 
       class << self

@@ -8,7 +8,7 @@ module LinkedRails
       attribute :count, predicate: NS::AS[:totalItems]
       attribute :display, predicate: LinkedRails::NS::ONTOLA[:collectionDisplay]
 
-      %i[first prev next last].each do |attr|
+      %i[next prev].each do |attr|
         attribute attr, predicate: NS::AS[attr]
       end
 

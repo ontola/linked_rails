@@ -7,7 +7,7 @@ module LinkedRails
     include LinkedRails::Model
 
     attr_accessor :parent
-    delegate :form, :description, :url, :http_method, :image, :user_context, :resource, :tag, to: :parent
+    delegate :form, :description, :iri_opts, :url, :http_method, :image, :user_context, :resource, :tag, to: :parent
 
     def action_body
       @action_body ||= form&.new(target, user_context)&.shape
@@ -17,10 +17,8 @@ module LinkedRails
       {}
     end
 
-    def iri_path
-      iri = URI(parent.iri_path)
-      iri.fragment = 'EntryPoint'
-      iri.to_s
+    def iri_template
+      @iri_template ||= iri_template_with_fragment(parent.send(:iri_template), :EntryPoint)
     end
 
     def label

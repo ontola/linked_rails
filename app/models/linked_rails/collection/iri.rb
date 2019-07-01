@@ -5,7 +5,15 @@ module LinkedRails
     module Iri
       COLLECTION_PARAMS = %w[display filter%5B%5D* page page_size type before sort%5B%5D*].freeze
 
-      def iri_opts # rubocop:disable Metrics/AbcSize
+      def canonical_iri_template
+        @canonical_iri_template ||=
+          URITemplate.new(
+            "#{[parent&.root_relative_canonical_iri, association_class.route_key].join('/')}"\
+            "{?#{COLLECTION_PARAMS.join(',')}}"
+          )
+      end
+
+      def iri_opts
         opts = {}
         iri_opts_add(opts, :display, display)
         iri_opts_add(opts, :type, type) if type&.to_sym != default_type
@@ -15,14 +23,10 @@ module LinkedRails
         opts
       end
 
-      def iri_path
-        iri_template.expand(iri_opts)
-      end
-
       def iri_template
         @iri_template ||=
           URITemplate.new(
-            "#{[parent&.iri_path, association_class.route_key].compact.join('/')}{?#{COLLECTION_PARAMS.join(',')}}"
+            "#{[parent&.root_relative_iri, association_class.route_key].join('/')}{?#{COLLECTION_PARAMS.join(',')}}"
           )
       end
 

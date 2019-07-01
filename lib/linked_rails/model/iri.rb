@@ -6,24 +6,29 @@ module LinkedRails
       extend ActiveSupport::Concern
 
       # @return [RDF::URI].
+      def canonical_iri(opts = {})
+        return iri_with_root(root_relative_canonical_iri(opts)) if opts.present?
+
+        @canonical_iri ||= iri_with_root(root_relative_canonical_iri(opts))
+      end
+
+      def canonical_iri_opts
+        iri_opts
+      end
+
+      # @return [RDF::URI].
       def iri(opts = {})
-        if opts.blank?
-          @iri ||= iri_from_path(iri_path)
-        else
-          iri_from_path(URI(iri_path).path, opts)
-        end
+        return iri_with_root(root_relative_iri(opts)) if opts.present?
+
+        @iri ||= iri_with_root(root_relative_iri)
       end
 
-      def iri_from_path(path, opts = {})
-        uri_opts = {scheme: LinkedRails.scheme, host: LinkedRails.host, path: path}
-        uri_opts[:fragment] = opts[:fragment] if opts[:fragment].present?
-        uri_opts[:query] = opts.except(:fragment).compact.to_param if opts.except(:fragment).present?
-        RDF::URI(uri_opts)
-      end
-
-      # @return [String]
-      def iri_path(_opts = nil)
-        ["/#{[route_key, to_param].compact.join('/')}", route_fragment].compact.join('#')
+      # @return [Hash]
+      def iri_opts
+        @iri_opts ||= {
+          fragment: route_fragment,
+          id: to_param
+        }
       end
 
       def reload(_opts = {})
@@ -31,10 +36,63 @@ module LinkedRails
         super
       end
 
+      # @return [RDF::URI]
+      def root_relative_canonical_iri(opts = {})
+        RDF::URI(expand_canonical_iri_template(canonical_iri_opts.merge(opts)))
+      end
+
+      # @return [RDF::URI]
+      def root_relative_iri(opts = {})
+        RDF::URI(expand_iri_template(iri_opts.merge(opts)))
+      end
+
+      # @return [String, Symbol]
       def route_fragment; end
 
-      def route_key
-        self.class.route_key
+      private
+
+      # @return [String]
+      def expand_canonical_iri_template(args = {})
+        canonical_iri_template.expand(args)
+      end
+
+      # @return [String]
+      def expand_iri_template(args = {})
+        iri_template.expand(args)
+      end
+
+      # @return [RDF::URI]
+      def iri_with_root(root_relative_iri)
+        iri = root_relative_iri.dup
+        iri.scheme = LinkedRails.scheme
+        iri.host = LinkedRails.host
+        iri
+      end
+
+      # @return [URITemplate]
+      def iri_template
+        self.class.iri_template
+      end
+
+      # @return [URITemplate]
+      def canonical_iri_template
+        self.class.canonical_iri_template || iri_template
+      end
+
+      # @return [URITemplate]
+      def iri_template_expand_path(template_base, path)
+        tokens = template_base.tokens
+
+        ind = tokens.find_index do |t|
+          t.is_a?(URITemplate::RFC6570::Expression::FormQuery) || t.is_a?(URITemplate::RFC6570::Expression::Fragment)
+        end
+
+        URITemplate.new([tokens[0...ind], path, tokens[ind..-1]].flatten.join)
+      end
+
+      # @return [URITemplate]
+      def iri_template_with_fragment(template_base, fragment)
+        URITemplate.new("#{template_base.to_s.sub(/{#[\w]+}/, '').split('#').first}##{fragment}")
       end
 
       module ClassMethods
@@ -46,6 +104,12 @@ module LinkedRails
           superclass.try(:iri_namespace) ||
             (parents.include?(LinkedRails) ? LinkedRails::NS::ONTOLA : LinkedRails.app_ns)
         end
+
+        def iri_template
+          @iri_template ||= URITemplate.new("/#{route_key}{/id}{#fragment}")
+        end
+
+        def canonical_iri_template; end
 
         delegate :route_key, to: :model_name
       end

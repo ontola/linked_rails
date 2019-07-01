@@ -17,7 +17,7 @@ module LinkedRails
             image: -> { create_image },
             include_resource: -> { create_include_resource? },
             label: -> { create_label },
-            iri_path: -> { create_iri_path },
+            root_relative_iri: -> { create_iri_path },
             policy: -> { create_policy },
             submit_label: -> { create_submit_label },
             result: -> { result_class },
@@ -45,7 +45,8 @@ module LinkedRails
         end
 
         def create_iri_path
-          uri = URI(resource.iri_path)
+          uri = resource.root_relative_iri.dup
+          uri.path ||= ''
           uri.path += '/new'
           uri.to_s
         end

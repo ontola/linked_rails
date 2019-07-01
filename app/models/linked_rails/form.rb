@@ -8,16 +8,15 @@ module LinkedRails
 
     class_attribute :_fields, :_property_groups, :_referred_resources
     attr_accessor :user_context, :target
+    delegate :iri_opts, to: :target
 
     def initialize(target, user_context)
       @target = target
       @user_context = user_context
     end
 
-    def iri_path
-      iri = URI(target.iri_path)
-      iri.fragment = self.class.name
-      iri.to_s
+    def iri_template
+      @iri_template ||= iri_template_with_fragment(target.send(:iri_template), self.class.name)
     end
 
     def shape # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

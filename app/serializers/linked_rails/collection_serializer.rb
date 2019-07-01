@@ -4,12 +4,14 @@ module LinkedRails
   class CollectionSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
 
+    attribute :base_url, predicate: LinkedRails::NS::SCHEMA[:url]
     attribute :title, predicate: NS::AS[:name]
     attribute :total_count, predicate: NS::AS[:totalItems]
     attribute :iri_template, predicate: LinkedRails::NS::ONTOLA[:iriTemplate]
     attribute :default_type, predicate: LinkedRails::NS::ONTOLA[:defaultType]
     attribute :display, predicate: LinkedRails::NS::ONTOLA[:collectionDisplay]
     attribute :columns, predicate: LinkedRails::NS::ONTOLA[:columns]
+    attribute :collection_type, predicate: LinkedRails::NS::ONTOLA[:collectionType]
 
     has_one :unfiltered_collection, predicate: LinkedRails::NS::ONTOLA[:baseCollection]
     has_one :part_of, predicate: NS::SCHEMA[:isPartOf]
@@ -20,6 +22,18 @@ module LinkedRails
     has_many :sortings, predicate: LinkedRails::NS::ONTOLA[:collectionSorting]
 
     delegate :filtered?, to: :object
+
+    %i[first last].each do |attr|
+      attribute attr, predicate: NS::AS[attr]
+    end
+
+    def base_url
+      object.iri(display: nil, page_size: nil)
+    end
+
+    def collection_type
+      NS::ONTOLA["collectionType/#{object.type || :paginated}"]
+    end
 
     def columns
       case object.display

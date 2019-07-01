@@ -16,13 +16,13 @@ module LinkedRails
       def next
         return if page.nil? || page.to_i >= (total_page_count || 0)
 
-        iri_from_path(iri_path(page: page.to_i + 1))
+        iri_with_root(root_relative_iri(page: page.to_i + 1))
       end
 
       def prev
         return if page.nil? || page.to_i <= 1
 
-        iri_from_path(iri_path(page: page.to_i - 1))
+        iri_with_root(root_relative_iri(page: page.to_i - 1))
       end
 
       private

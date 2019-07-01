@@ -17,8 +17,12 @@ module LinkedRails
                :display, :unfiltered_collection, :sort_direction, :default_before_value, to: :collection
       delegate :count, to: :members
 
-      def iri_path(opts = {})
-        collection.unfiltered.iri_template.expand(iri_opts.merge(opts))
+      def root_relative_canonical_iri(opts = {})
+        collection.unfiltered.root_relative_canonical_iri(iri_opts.merge(opts))
+      end
+
+      def root_relative_iri(opts = {})
+        collection.unfiltered.root_relative_iri(iri_opts.merge(opts))
       end
 
       def member_sequence

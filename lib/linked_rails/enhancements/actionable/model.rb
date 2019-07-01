@@ -41,12 +41,7 @@ module LinkedRails
         end
 
         def actions_iri
-          return @actions_iri if @actions_iri
-
-          @actions_iri = iri.dup
-          @actions_iri.path ||= ''
-          @actions_iri.path += '/actions'
-          @actions_iri
+          @actions_iri ||= iri_with_root(RDF::URI(iri_template_expand_path(iri_template, '/actions').expand(iri_opts)))
         end
 
         private

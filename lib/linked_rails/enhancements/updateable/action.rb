@@ -18,7 +18,7 @@ module LinkedRails
             url: -> { update_url },
             http_method: :put,
             form: -> { "#{resource.class}Form".safe_constantize },
-            iri_path: -> { update_iri_path }
+            root_relative_iri: -> { update_iri_path }
           )
         end
 
@@ -29,7 +29,8 @@ module LinkedRails
         end
 
         def update_iri_path
-          uri = URI(resource.iri_path)
+          uri = resource.root_relative_iri.dup
+          uri.path ||= ''
           uri.path += '/edit'
           uri.to_s
         end

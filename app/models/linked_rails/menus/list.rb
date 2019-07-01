@@ -8,6 +8,7 @@ module LinkedRails
 
       attr_accessor :resource, :user_context
       class_attribute :_defined_menus, instance_reader: false, instance_writer: false
+      delegate :iri_opts, to: :resource
 
       def available_menus
         return [] if defined_menus.blank?
@@ -53,8 +54,8 @@ module LinkedRails
         @resource_policy[policy_resource.identifier] ||= Pundit.policy(user_context, policy_resource)
       end
 
-      def route_key
-        [resource.iri_path[1..-1].presence, :menus].compact.join('/')
+      def iri_template
+        @iri_template ||= iri_template_expand_path(resource.send(:iri_template), '/menus')
       end
 
       class << self

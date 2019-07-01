@@ -14,7 +14,7 @@ module LinkedRails
             image: 'fa-close',
             url: -> { resource.iri(destroy: true) },
             http_method: :delete,
-            iri_path: -> { destroy_iri_path },
+            root_relative_iri: -> { destroy_iri_path },
             favorite: -> { destroy_action_favorite }
           )
         end
@@ -26,7 +26,8 @@ module LinkedRails
         end
 
         def destroy_iri_path
-          uri = URI(resource.iri_path)
+          uri = resource.root_relative_iri.dup
+          uri.path ||= ''
           uri.path += '/delete'
           uri.to_s
         end

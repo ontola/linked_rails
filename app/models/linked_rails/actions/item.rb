@@ -10,8 +10,9 @@ module LinkedRails
       include LinkedRails::Model
 
       attr_accessor :list, :policy_arguments, :user_context, :submit_label
-      attr_writer :target, :iri_path
+      attr_writer :target, :root_relative_iri
       delegate :resource, :user_context, to: :list, allow_nil: true
+      delegate :iri_opts, to: :resource, allow_nil: true
 
       %i[description result type policy label image url include_resource collection condition form completed
          tag http_method favorite path policy_resource].each do |method|
@@ -47,21 +48,18 @@ module LinkedRails
         resource if include_resource
       end
 
-      def iri_path(_opts = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        value = @iri_path.respond_to?(:call) ? list.instance_exec(&@iri_path) : @iri_path
-        return @iri_path = value if value
+      def root_relative_iri(_opts = {})
+        value = @root_relative_iri.respond_to?(:call) ? list.instance_exec(&@root_relative_iri) : @root_relative_iri
+        value = RDF::URI(value) unless value.blank? || value.is_a?(RDF::URI)
+        return @root_relative_iri = value if value
 
-        base = URI(resource.iri_path)
-        if path.blank?
-          base.path += "/actions/#{tag}"
-        elsif list.is_a?(LinkedRails::Actions::List)
-          base.path += "/#{path}"
-        elsif base.fragment
-          base.fragment = "#{base.fragment}.#{path}"
-        else
-          base.fragment = path.to_s
-        end
-        @iri_path = base.to_s
+        super
+      end
+
+      def iri_template
+        path_suffix = path.blank? ? "/actions/#{tag}" : "/#{path}"
+
+        @iri_template ||= iri_template_expand_path(resource.send(:iri_template), path_suffix)
       end
 
       def target
