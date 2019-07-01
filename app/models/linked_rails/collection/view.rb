@@ -12,9 +12,8 @@ module LinkedRails
       include LinkedRails::Collection::Preloading
 
       attr_accessor :collection, :filter, :include_map
-      attr_writer :page_size
       delegate :association_base, :association_class, :default_page_size, :parent, :policy, :user_context, :apply_scope,
-               :display, :unfiltered_collection, :sort_direction, :default_before_value, to: :collection
+               :display, :unfiltered_collection, :sort_direction, :total_page_count, to: :collection
       delegate :count, to: :members
 
       def root_relative_canonical_iri(opts = {})
@@ -35,7 +34,7 @@ module LinkedRails
       end
 
       def page_size
-        @page_size&.to_i || default_page_size
+        collection.page_size&.to_i || default_page_size
       end
 
       def title
@@ -52,10 +51,6 @@ module LinkedRails
         @arel_table ||= association_class.arel_table
       end
 
-      def base_count
-        collection.total_count
-      end
-
       def members_iri
         uri = iri.dup
         uri.fragment = :members
@@ -70,10 +65,6 @@ module LinkedRails
         scope = scope.preload(association_class.includes_for_serializer) if scope.respond_to?(:preload)
         scope = scope.reorder(parsed_sort_values) if scope.respond_to?(:reorder)
         scope
-      end
-
-      def total_page_count
-        (base_count / page_size.to_f).ceil if base_count
       end
 
       class << self

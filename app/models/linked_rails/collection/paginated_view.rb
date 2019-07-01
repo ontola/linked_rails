@@ -5,14 +5,6 @@ module LinkedRails
     class PaginatedView < LinkedRails.collection_view_class
       attr_accessor :page
 
-      def first
-        iri_from_path(iri_path(page: 1))
-      end
-
-      def last
-        iri_from_path(iri_path(page: [total_page_count, 1].max)) if total_page_count
-      end
-
       def next
         return if page.nil? || page.to_i >= (total_page_count || 0)
 
@@ -29,8 +21,7 @@ module LinkedRails
 
       def iri_opts
         {
-          page: page,
-          page_size: page_size
+          page: page
         }.merge(collection.iri_opts)
       end
 

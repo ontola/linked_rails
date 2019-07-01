@@ -12,18 +12,12 @@ module LinkedRails
         super
       end
 
-      def first
-        iri_from_path(iri_path(before: default_before_value))
-      end
-
-      def last; end
-
-      def next
+      def next # rubocop:disable Metrics/AbcSize
         return if before.nil? || members.blank?
 
         next_before = members.last.send(sort_column)
         next_before = next_before.utc.to_s(:db) if next_before.is_a?(Time)
-        iri_from_path(iri_path(before: next_before))
+        iri_with_root(root_relative_iri(before: next_before)) if association_base.where(before_query(next_before)).any?
       end
 
       def prev; end
@@ -34,14 +28,13 @@ module LinkedRails
 
       private
 
-      def before_query
-        arel_table[sort_column].send(sort_direction, before)
+      def before_query(time = before)
+        arel_table[sort_column].send(sort_direction, time)
       end
 
       def iri_opts
         {
-          before: before,
-          page_size: page_size
+          before: before
         }.merge(collection.iri_opts)
       end
 

@@ -59,8 +59,21 @@ module LinkedRails
       @default_view ||= view_with_opts(default_view_opts)
     end
 
+    def first
+      case type
+      when :paginated
+        iri_with_root(root_relative_iri(page: 1))
+      when :infinite
+        iri_with_root(root_relative_iri(before: default_before_value))
+      end
+    end
+
     def inspect
       "#<#{association_class}Collection iri:#{iri}>"
+    end
+
+    def last
+      iri_with_root(root_relative_iri(page: [total_page_count, 1].max)) if type == :paginated && total_page_count
     end
 
     def new_child(options)
@@ -86,6 +99,10 @@ module LinkedRails
       @total_count ||= association_base.try(:total_count) || association_base.count
     end
 
+    def total_page_count
+      (total_count / (page_size || default_page_size).to_f).ceil if total_count
+    end
+
     def type
       @type&.to_sym || default_type
     end
@@ -95,7 +112,7 @@ module LinkedRails
     end
 
     def view_with_opts(opts)
-      LinkedRails.collection_view_class.new({collection: self, type: type, page_size: page_size}.merge(opts))
+      LinkedRails.collection_view_class.new({collection: self, type: type}.merge(opts))
     end
 
     private
@@ -108,7 +125,6 @@ module LinkedRails
       opts = {
         include_map: (include_map || {}),
         type: type,
-        page_size: page_size || default_page_size,
         filter: filter
       }
       opts[:page] = 1 if type == :paginated
