@@ -25,6 +25,12 @@ module LinkedRails
         }.merge(collection.iri_opts)
       end
 
+      def prepare_members(scope)
+        return super unless scope.is_a?(Array)
+
+        Kaminari.paginate_array(super)
+      end
+
       def raw_members
         @raw_members ||=
           prepare_members(association_base)
