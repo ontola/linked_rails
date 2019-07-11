@@ -52,7 +52,7 @@ module LinkedRails
     end
 
     def default_page_size
-      association_class.try(:default_per_page)
+      association_class.try(:default_per_page) || 20
     end
 
     def default_view
