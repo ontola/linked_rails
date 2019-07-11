@@ -7,29 +7,28 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          has_action(
-            :destroy,
-            type: [NS::SCHEMA[:Action], NS::ONTOLA[:DestroyAction]],
-            policy: :destroy?,
-            image: 'fa-close',
-            url: -> { resource.iri(destroy: true) },
-            http_method: :delete,
-            root_relative_iri: -> { destroy_iri_path },
-            favorite: -> { destroy_action_favorite }
-          )
+          has_action(:destroy, destroy_options)
         end
 
-        private
+        module ClassMethods
+          private
 
-        def destroy_action_favorite
-          false
-        end
-
-        def destroy_iri_path
-          uri = resource.root_relative_iri.dup
-          uri.path ||= ''
-          uri.path += '/delete'
-          uri.to_s
+          def destroy_options # rubocop:disable Metrics/MethodLength
+            {
+              type: [NS::SCHEMA[:Action], NS::ONTOLA[:DestroyAction]],
+              policy: :destroy?,
+              image: 'fa-close',
+              url: -> { resource.iri(destroy: true) },
+              http_method: :delete,
+              root_relative_iri: lambda {
+                uri = resource.root_relative_iri.dup
+                uri.path ||= ''
+                uri.path += '/delete'
+                uri.to_s
+              },
+              favorite: false
+            }
+          end
         end
       end
     end

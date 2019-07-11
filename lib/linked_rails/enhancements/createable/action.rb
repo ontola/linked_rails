@@ -7,66 +7,35 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          has_action(
-            :create,
-            collection: -> { create_on_collection? },
-            description: -> { create_description },
-            favorite: -> { create_action_favorite },
-            form: -> { "#{result_class}Form".safe_constantize },
-            http_method: :post,
-            image: -> { create_image },
-            include_resource: -> { create_include_resource? },
-            label: -> { create_label },
-            root_relative_iri: -> { create_iri_path },
-            policy: -> { create_policy },
-            submit_label: -> { create_submit_label },
-            result: -> { result_class },
-            type: lambda {
-              [LinkedRails::NS::ONTOLA["Create::#{result_class}"], LinkedRails::NS::SCHEMA[:CreateAction]]
-            },
-            url: -> { create_url }
-          )
+          has_action(:create, create_options)
         end
 
-        private
+        module ClassMethods
+          private
 
-        def create_action_favorite
-          false
-        end
-
-        def create_description; end
-
-        def create_image
-          'fa-plus'
-        end
-
-        def create_include_resource?
-          false
-        end
-
-        def create_iri_path
-          uri = resource.root_relative_iri.dup
-          uri.path ||= ''
-          uri.path += '/new'
-          uri.to_s
-        end
-
-        def create_label
-          I18n.t("#{association}.type_new", default: "New #{result_class.name.humanize}")
-        end
-
-        def create_on_collection?
-          true
-        end
-
-        def create_policy
-          :create_child?
-        end
-
-        def create_submit_label; end
-
-        def create_url
-          resource.iri
+          def create_options # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+            {
+              collection: true,
+              favorite: false,
+              form: -> { "#{result_class}Form".safe_constantize },
+              http_method: :post,
+              image: 'fa-plus',
+              include_resource: false,
+              label: -> { I18n.t("#{association}.type_new", default: "New #{result_class.name.humanize}") },
+              root_relative_iri: lambda {
+                uri = resource.root_relative_iri.dup
+                uri.path ||= ''
+                uri.path += '/new'
+                uri.to_s
+              },
+              policy: :create_child?,
+              result: -> { result_class },
+              type: lambda {
+                [LinkedRails::NS::ONTOLA["Create::#{result_class}"], LinkedRails::NS::SCHEMA[:CreateAction]]
+              },
+              url: -> { resource.iri }
+            }
+          end
         end
       end
     end
