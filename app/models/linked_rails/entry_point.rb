@@ -7,7 +7,8 @@ module LinkedRails
     include LinkedRails::Model
 
     attr_accessor :parent
-    delegate :form, :description, :iri_opts, :url, :http_method, :image, :user_context, :resource, :tag, to: :parent
+    delegate :form, :description, :iri_opts, :url, :http_method, :image, :user_context,
+             :resource, :tag, :translation_key, to: :parent
 
     def action_body
       @action_body ||= form&.new(target, user_context)&.shape

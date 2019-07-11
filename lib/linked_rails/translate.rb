@@ -29,22 +29,21 @@ module LinkedRails
 
   Translate.translations_for(:action, :label) do |object|
     I18n.t(
-      "actions.#{object.resource&.class&.name&.tableize}.#{object.tag}.label",
+      "actions.#{object.translation_key}.#{object.tag}.label",
       default: [:"actions.default.#{object.tag}.label", object.tag.to_s.humanize]
     )
   end
 
   Translate.translations_for(:action, :submit) do |object|
-    key = object.resource.is_a?(Collection) ? object.resource.association : object.resource&.class&.name&.tableize
     I18n.t(
-      "actions.#{key}.#{object.tag}.submit",
+      "actions.#{object.translation_key}.#{object.tag}.submit",
       default: [:"actions.default.#{object.tag}.submit", object.tag.to_s.humanize]
     )
   end
 
   Translate.translations_for(:action, :description) do |object|
     I18n.t(
-      "actions.#{object.resource&.class&.name&.tableize}.#{object.tag}.description",
+      "actions.#{object.translation_key}.#{object.tag}.description",
       default: [:"actions.default.#{object.tag}.description", '']
     )
   end

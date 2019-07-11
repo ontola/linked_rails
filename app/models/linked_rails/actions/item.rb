@@ -66,6 +66,10 @@ module LinkedRails
         @target ||= LinkedRails.entry_point_class.new(parent: self)
       end
 
+      def translation_key
+        @translation_key ||= (resource.is_a?(Collection) ? resource.association_class : resource&.class)&.name&.tableize
+      end
+
       private
 
       def description_fallback
