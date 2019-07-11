@@ -3,7 +3,7 @@
 module LinkedRails
   module ActiveResponse
     module Controller
-      module Collections
+      module Collections # rubocop:disable Metrics/ModuleLength
         private
 
         def action_form_includes(action = nil)
@@ -55,6 +55,10 @@ module LinkedRails
           }.merge(collection_params)
         end
 
+        def collection_or_view(collection)
+          collection_view_params.present? ? collection&.view_with_opts(collection_view_params) : collection
+        end
+
         def collection_params(opts = params, klass = controller_class)
           method = opts.is_a?(Hash) ? :slice : :permit
           params = opts.send(method, :display, :page_size, :type).to_h
@@ -80,7 +84,7 @@ module LinkedRails
         end
 
         def index_collection_or_view
-          collection_view_params.present? ? index_collection&.view_with_opts(collection_view_params) : index_collection
+          collection_or_view(index_collection)
         end
 
         def index_includes_collection
