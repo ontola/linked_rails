@@ -4,8 +4,12 @@ module LinkedRails
   module ActiveResponse
     module Controller
       module ResourceHelper
+        def params_for_parent
+          params.dup
+        end
+
         def parent_resource
-          @parent_resource ||= parent_from_params(params)
+          @parent_resource ||= parent_from_params(params_for_parent)
         end
 
         def parent_resource!
@@ -25,8 +29,7 @@ module LinkedRails
         # Finds the parent resource based on the URL's :foo_id param
         # @param opts [Hash, nil] The parameters, {ActionController::StrongParameters#params} is used when not given.
         # @return [ApplicationRecord, nil] The parent resource corresponding to the params if found
-        def parent_from_params(opts = params)
-          opts = opts.dup
+        def parent_from_params(opts = params_for_parent)
           opts[:class] = parent_resource_class(opts)
           opts[:id] = opts.delete(parent_resource_param(opts))
           parent_resource_or_collection(opts)

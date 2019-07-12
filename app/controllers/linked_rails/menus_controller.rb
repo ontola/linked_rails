@@ -2,17 +2,11 @@
 
 module LinkedRails
   class MenusController < LinkedRails.controller_parent_class
+    include MenuHelpers
+
     active_response :show, :index
 
     private
-
-    def app_menu_list
-      @app_menu_list ||= AppMenuList.new(resource: current_user, user_context: user_context)
-    end
-
-    def app_menu?
-      request.path.start_with?('/apex/')
-    end
 
     def authorize_action; end
 
@@ -24,23 +18,8 @@ module LinkedRails
       [menu_sequence: [members: [menu_sequence: :members]]]
     end
 
-    def show_includes # rubocop:disable Metrics/MethodLength
-      [
-        menu_sequence: [
-          members: LinkedRails.menus_item_class.preview_includes + [
-            menu_sequence: [
-              members: [
-                LinkedRails.menus_item_class.preview_includes,
-                menu_sequence: [members: LinkedRails.menus_item_class.preview_includes]
-              ]
-            ]
-          ]
-        ]
-      ]
-    end
-
-    def menu_list
-      app_menu? ? app_menu_list : parent_resource!.menu_list(user_context)
+    def show_includes
+      [menu_sequence: menu_includes]
     end
 
     def requested_resource

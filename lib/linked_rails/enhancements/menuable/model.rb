@@ -23,6 +23,10 @@ module LinkedRails
           def menu_class
             @menu_class ||= "#{name}MenuList".safe_constantize || "#{superclass.name}MenuList".safe_constantize
           end
+
+          def preview_includes
+            super + menu_class.defined_menus.keys.map { |tag| "#{tag}_menu" }
+          end
         end
       end
     end
