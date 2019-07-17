@@ -65,7 +65,7 @@ module LinkedRails
       private
 
       def default_value_from_target # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-        return if model_attribute.blank? || form&.target&.blank? || sh_class.present?
+        return if model_attribute.blank? || !form&.target&.respond_to?(model_attribute) || sh_class.present?
 
         value = form.target.send(model_attribute)
         value if value.is_a?(String) || value.is_a?(RDF::URI) || RDF::Literal.new(value).class < RDF::Literal
