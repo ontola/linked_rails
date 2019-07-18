@@ -87,7 +87,9 @@ module LinkedRails
           t.is_a?(URITemplate::RFC6570::Expression::FormQuery) || t.is_a?(URITemplate::RFC6570::Expression::Fragment)
         end
 
-        URITemplate.new([tokens[0...ind], path, tokens[ind..-1]].flatten.join)
+        prefix = ind ? tokens[0...ind] : tokens
+        suffix = ind ? tokens[ind..-1] : []
+        URITemplate.new([prefix, path, suffix].flatten.join)
       end
 
       # @return [URITemplate]
