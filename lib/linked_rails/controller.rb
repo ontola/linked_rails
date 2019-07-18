@@ -18,6 +18,7 @@ module LinkedRails
       include LinkedRails::Controller::Authorization
       include LinkedRails::Controller::ErrorHandling
       include LinkedRails::Helpers::OntolaActionsHelper
+      include LinkedRails::Helpers::ResourceHelper
     end
 
     private
