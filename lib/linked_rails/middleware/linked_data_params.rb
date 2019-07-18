@@ -17,8 +17,17 @@ module LinkedRails
 
       private
 
-      def add_param(hash, key, value)
-        hash[key] = hash[key].is_a?(Hash) ? hash[key].merge(value) : value
+      def add_param(hash, key, value) # rubocop:disable Metrics/MethodLength
+        case hash[key]
+        when nil
+          hash[key] = value
+        when Hash
+          hash[key].merge!(value)
+        when Array
+          hash[key].append(value)
+        else
+          hash[key] = [hash[key], value]
+        end
         hash
       end
 
