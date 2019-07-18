@@ -25,6 +25,8 @@ module LinkedRails
           end
 
           def preview_includes
+            return super if menu_class.blank?
+
             super + menu_class.defined_menus.keys.map { |tag| "#{tag}_menu" }
           end
         end
