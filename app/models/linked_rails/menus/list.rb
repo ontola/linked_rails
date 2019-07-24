@@ -51,7 +51,7 @@ module LinkedRails
         raise 'policy_resource is missing' if policy_resource.blank?
 
         @resource_policy ||= {}
-        @resource_policy[policy_resource.identifier] ||= Pundit.policy(user_context, policy_resource)
+        @resource_policy[policy_resource] ||= Pundit.policy(user_context, policy_resource)
       end
 
       def iri_template
