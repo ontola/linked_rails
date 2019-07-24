@@ -11,7 +11,7 @@ module LinkedRails
              :resource, :tag, :translation_key, to: :parent
 
     def action_body
-      @action_body ||= form&.new(target, user_context)&.shape
+      @action_body ||= form&.new(target, iri_template, user_context)&.shape
     end
 
     def as_json(_opts = {})

@@ -21,7 +21,7 @@ module LinkedRails
       def referred_shapes
         object.referred_shapes&.map do |shape|
           if shape.is_a?(Class) && shape < LinkedRails::Form
-            shape.new(object.form.target.build_child(shape.model_class), scope).shape
+            shape.new(object.form.target.build_child(shape.model_class), object.form.iri_template, scope).shape
           else
             shape
           end

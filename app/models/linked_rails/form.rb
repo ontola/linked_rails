@@ -7,16 +7,16 @@ module LinkedRails
     include LinkedRails::Model
 
     class_attribute :_fields, :_property_groups, :_referred_resources
-    attr_accessor :user_context, :target
-    delegate :iri_opts, to: :target
+    attr_accessor :iri_template_base, :user_context, :target
 
-    def initialize(target, user_context)
+    def initialize(target, iri_template_base, user_context)
       @target = target
+      @iri_template_base = iri_template_base
       @user_context = user_context
     end
 
     def iri_template
-      @iri_template ||= iri_template_with_fragment(target.send(:iri_template), self.class.name)
+      @iri_template ||= iri_template_with_fragment(iri_template_base, self.class.name)
     end
 
     def shape # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
