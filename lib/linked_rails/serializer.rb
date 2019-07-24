@@ -35,6 +35,21 @@ module LinkedRails
       object.class.iri
     end
 
+    private
+
+    def serialize_image(obj)
+      if obj.is_a?(String) || obj.is_a?(Symbol)
+        {
+          id: RDF::URI(obj.to_s.gsub(/^fa-/, 'http://fontawesome.io/icon/')),
+          type: NS::ONTOLA[:FontAwesomeIcon]
+        }
+      elsif obj.is_a?(RDF::URI)
+        {id: obj}
+      else
+        obj.presence
+      end
+    end
+
     module ClassMethods
       def enum(key, opts = nil)
         self._enums ||= {}

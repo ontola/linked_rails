@@ -26,6 +26,10 @@ module LinkedRails
         end
       end
 
+      def image
+        serialize_image(object.image)
+      end
+
       def menus_present?
         object.menu_sequence.present?
       end
