@@ -33,7 +33,7 @@ module LinkedRails
           LinkedRails::NS::ONTOLA["#{action.tag}_action".camelize(:lower)]
         end
 
-        def action_triples(graph = nil) # rubocop:disable Metrics/AbcSize
+        def action_triples(graph = NS::ONTOLA[:replace]) # rubocop:disable Metrics/AbcSize
           predicates = actions&.map(&method(:action_predicate)) || []
           predicates += [NS::SCHEMA[:potentialAction], LinkedRails::NS::ONTOLA[:favoriteAction]]
           predicates << LinkedRails::NS::ONTOLA[:createAction] if try(:collections).present?

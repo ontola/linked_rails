@@ -48,7 +48,7 @@ module LinkedRails
           parent_resource!.action_predicate(action),
           action.available? ? NS::SCHEMA[:potentialAction] : nil,
           action.available? && action.favorite ? NS::ONTOLA[:favoriteAction] : nil
-        ].compact.map { |predicate| [parent_resource!.iri, predicate, action.iri] }
+        ].compact.map { |predicate| [parent_resource!.iri, predicate, action.iri, NS::ONTOLA[:replace]] }
       end
 
       def removed_triples
