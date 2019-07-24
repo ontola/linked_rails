@@ -35,10 +35,7 @@ module LinkedRails
         def invalid_resource(**opts)
           message = error_message(opts[:resource])
           response_headers(opts.merge(notice: message))
-          controller.render(
-            format => error_graph(StandardError.new(message), 422),
-            status: :unprocessable_entity
-          )
+          controller.head :unprocessable_entity
         end
 
         def new_resource(**opts)
@@ -77,12 +74,6 @@ module LinkedRails
         end
 
         private
-
-        def error_graph(error, status)
-          LinkedRails.rdf_error_class
-            .new(status, controller.request.original_url, error)
-            .graph
-        end
 
         def error_message(resource)
           errors = resource.is_a?(ActiveModel::Errors) ? resource : resource.errors
