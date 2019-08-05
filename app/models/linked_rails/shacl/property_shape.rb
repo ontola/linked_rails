@@ -51,7 +51,7 @@ module LinkedRails
       end
 
       def min_count
-        @min_count || validator_by_class(ActiveRecord::Validations::PresenceValidator).present? ? 1 : nil
+        @min_count || (validator_by_class(ActiveRecord::Validations::PresenceValidator).present? ? 1 : nil)
       end
 
       def model_name
