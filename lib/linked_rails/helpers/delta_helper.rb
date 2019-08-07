@@ -10,7 +10,7 @@ module LinkedRails
             [[NS::SP[:Variable], NS::ONTOLA[:baseCollection], relation_iri, NS::ONTOLA[:invalidate]]]
           else
             [
-              [current_resource.iri, value.options[:predicate], relation_iri],
+              [current_resource.iri, value.options[:predicate], relation_iri, NS::ONTOLA[:replace]],
               [relation_iri, NS::SP[:Variable], NS::SP[:Variable], NS::ONTOLA[:invalidate]]
             ]
           end
