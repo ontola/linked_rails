@@ -9,8 +9,8 @@ module LinkedRails
       include ActiveModel::Serialization
       include LinkedRails::Model
 
-      attr_accessor :list, :policy_arguments, :user_context, :submit_label
-      attr_writer :target, :root_relative_iri
+      attr_accessor :list, :policy_arguments, :submit_label
+      attr_writer :target, :root_relative_iri, :user_context
       delegate :resource, :user_context, to: :list, allow_nil: true
       delegate :iri_opts, to: :resource, allow_nil: true
 
@@ -68,6 +68,10 @@ module LinkedRails
 
       def translation_key
         @translation_key ||= (resource.is_a?(Collection) ? resource.association_class : resource&.class)&.name&.tableize
+      end
+
+      def user_context
+        @user_context || list.user_context
       end
 
       private
