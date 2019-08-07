@@ -47,7 +47,7 @@ module LinkedRails
     private
 
     def child_policy(klass)
-      Pundit.policy(context, record.build_child(klass.constantize))
+      Pundit.policy(user_context, record.build_child(klass.constantize))
     end
 
     def policy_class
