@@ -12,7 +12,10 @@ module LinkedRails
     end
 
     def sequence
-      object&.members&.map&.with_index { |item, index| [rdf_subject, RDF["_#{index}"], item_iri(item), NS::LL[:supplant]] } || []
+      object
+        &.members
+        &.map
+        &.with_index { |item, index| [rdf_subject, RDF["_#{index}"], item_iri(item), NS::LL[:supplant]] } || []
     end
 
     def rdf_subject
