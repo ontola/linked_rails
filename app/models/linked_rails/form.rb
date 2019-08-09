@@ -131,6 +131,8 @@ module LinkedRails
           RDF::XSD[:integer]
         when :datetime
           RDF::XSD[:dateTime]
+        when :date
+          RDF::XSD[:date]
         when :boolean
           RDF::XSD[:boolean]
         when :decimal
