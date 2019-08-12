@@ -51,7 +51,7 @@ module LinkedRails
         if self.class.reflect_on_association(association).collection?
           send(association).any? { |a| a.previous_changes.present? }
         else
-          send(association)&.previous_changes&.present?
+          previous_changes.include?("#{association}_id") || send(association)&.previous_changes&.present?
         end
       end
 
