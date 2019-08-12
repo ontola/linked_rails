@@ -6,9 +6,7 @@ module LinkedRails
       attr_accessor :before
 
       def initialize(attrs = {})
-        # rubocop:disable Rails/TimeZone
-        attrs[:before] = Time.parse(attrs[:before]).to_s(:db) if attrs[:before]
-        # rubocop:enable Rails/TimeZone
+        attrs[:before] = Time.parse(attrs[:before]).iso8601(6) if attrs[:before]
         super
       end
 
@@ -16,7 +14,7 @@ module LinkedRails
         return if before.nil? || members.blank?
 
         next_before = members.last.send(sort_column)
-        next_before = next_before.utc.to_s(:db) if next_before.is_a?(Time)
+        next_before = next_before.utc.iso8601(6) if next_before.is_a?(Time)
         iri_with_root(root_relative_iri(before: next_before)) if association_base.where(before_query(next_before)).any?
       end
 

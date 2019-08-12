@@ -25,7 +25,7 @@ describe LinkedRails::Collection::View do
   let(:infinite_collection_view) do
     collection.view_with_opts(before: before_time)
   end
-  let(:before_time) { Time.current.utc.to_s(:db) }
+  let(:before_time) { Time.current.utc.iso8601(6) }
   let(:encoded_before_time) { ERB::Util.url_encode(before_time) }
   let(:type) { nil }
 

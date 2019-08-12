@@ -7,7 +7,7 @@ module LinkedRails
       attr_writer :default_sortings
 
       def default_before_value
-        (sort_direction == :lt ? Time.current.utc : Date.new(1970, 1, 1)).to_s(:db)
+        (sort_direction == :lt ? Time.current.utc : Time.new(1970, 1, 1).utc).iso8601(6)
       end
 
       def default_sortings
