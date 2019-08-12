@@ -15,7 +15,7 @@ module LinkedRails
       delegate :iri_opts, to: :resource, allow_nil: true
 
       %i[description result type policy label image url include_resource collection condition form completed
-         tag http_method favorite path policy_resource].each do |method|
+         tag http_method favorite path policy_resource predicate].each do |method|
         attr_writer method
         define_method method do
           var = instance_variable_get(:"@#{method}")
@@ -97,6 +97,10 @@ module LinkedRails
         return true if policy.blank?
 
         @policy_valid ||= resource_policy.send(policy, *policy_arguments)
+      end
+
+      def predicate_fallback
+        LinkedRails::NS::ONTOLA["#{tag}_action".camelize(:lower)]
       end
 
       def resource_policy

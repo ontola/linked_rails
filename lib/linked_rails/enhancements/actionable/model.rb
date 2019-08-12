@@ -29,12 +29,8 @@ module LinkedRails
           @action_list[user_context] ||= self.class.action_list.new(resource: self, user_context: user_context)
         end
 
-        def action_predicate(action)
-          LinkedRails::NS::ONTOLA["#{action.tag}_action".camelize(:lower)]
-        end
-
-        def action_triples(graph = NS::ONTOLA[:replace]) # rubocop:disable Metrics/AbcSize
-          predicates = actions&.map(&method(:action_predicate)) || []
+        def action_triples(graph = NS::ONTOLA[:replace])
+          predicates = actions&.map(&:predicate) || []
           predicates += [NS::SCHEMA[:potentialAction], LinkedRails::NS::ONTOLA[:favoriteAction]]
           predicates << LinkedRails::NS::ONTOLA[:createAction] if try(:collections).present?
           predicates.map { |predicate| [iri, predicate, actions_iri, graph].compact } + invalidate_actions_iri_triple
