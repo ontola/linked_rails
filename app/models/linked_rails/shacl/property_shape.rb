@@ -64,17 +64,26 @@ module LinkedRails
 
       private
 
-      def default_value_from_target # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+      def default_value_from_sh_in(value)
+        sh_in.detect { |v| v.is_a?(LinkedRails::Form::Option) && v.key == value.to_sym }&.iri || value
+      end
+
+      def default_value_from_target
         return if model_attribute.blank? || !form&.target&.respond_to?(model_attribute) || sh_class.present?
 
-        value = form.target.send(model_attribute)
-        value if value.is_a?(String) || value.is_a?(RDF::URI) || RDF::Literal.new(value).class < RDF::Literal
+        sanitized_default_value(form.target.send(model_attribute))
       end
 
       def description_from_attribute
         return if @description.blank?
 
         @description.respond_to?(:call) ? form.instance_exec(&@description) : @description
+      end
+
+      def sanitized_default_value(value)
+        return default_value_from_sh_in(value) if value.is_a?(String) && sh_in.is_a?(Array)
+
+        value if value.is_a?(String) || value.is_a?(RDF::URI) || RDF::Literal.new(value).class < RDF::Literal
       end
 
       def validator_by_class(klass)
