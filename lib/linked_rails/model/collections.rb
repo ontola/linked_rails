@@ -41,13 +41,13 @@ module LinkedRails
           )
       end
 
-      def parent_collections
+      def parent_collections(user_context)
         return [] if try(:parent).blank?
 
         parent
           .collections
           .select { |collection| is_a?(collection[:options][:association_class]) }
-          .map { |collection| parent.collection_for(collection[:name]) }
+          .map { |collection| parent.collection_for(collection[:name], user_context: user_context) }
       end
 
       private
