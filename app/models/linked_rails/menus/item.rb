@@ -32,7 +32,7 @@ module LinkedRails
       end
 
       def menu_sequence
-        return if menus.blank?
+        return if menus.nil?
 
         @menu_sequence ||=
           LinkedRails::Sequence.new(
