@@ -83,7 +83,7 @@ module LinkedRails
       def opts_from_route(route, method = 'GET', klass: nil)
         opts = Rails.application.routes.recognize_path(route, method: method)
         route_klass = opts[:controller]&.classify&.safe_constantize
-        return {} unless klass.nil? || route_klass.present? && klass <= route_klass
+        return {} unless klass.nil? || route_klass.present? && klass <=> route_klass
 
         opts
       rescue ActionController::RoutingError
