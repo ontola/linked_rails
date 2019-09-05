@@ -5,6 +5,10 @@ module LinkedRails
     class Step < LinkedRails::SHACL::PropertyShape
       attr_accessor :url
 
+      def label
+        @label.respond_to?(:call) ? form.instance_exec(&@label) : @label
+      end
+
       class << self
         def iri
           NS::ONTOLA[:FormStep]
