@@ -225,7 +225,8 @@ module LinkedRails
         group = LinkedRails::SHACL::PropertyGroup.new(
           description: opts[:description],
           label: opts[:label],
-          iri: opts[:iri]
+          iri: opts[:iri],
+          order: _fields[name][:order]
         )
         _fields[name][:is_group] = true
         _property_groups[name] = group
