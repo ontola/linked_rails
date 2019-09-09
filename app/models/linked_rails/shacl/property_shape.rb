@@ -65,7 +65,7 @@ module LinkedRails
       private
 
       def default_value_from_sh_in(value)
-        sh_in.detect { |v| v.is_a?(LinkedRails::Form::Option) && v.key == value.to_sym }&.iri || value
+        sh_in.detect { |v| v.is_a?(LinkedRails::Form::Option) && v.key == value.to_sym }&.iri
       end
 
       def default_value_from_target
