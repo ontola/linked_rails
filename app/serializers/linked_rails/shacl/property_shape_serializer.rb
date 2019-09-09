@@ -44,10 +44,7 @@ module LinkedRails
       end
 
       def sh_in_options
-        options = object.sh_in
-        return if options.blank?
-
-        options.respond_to?(:call) ? object.form.instance_exec(&options) : options
+        object.sh_in
       end
     end
   end

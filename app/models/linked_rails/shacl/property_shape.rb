@@ -62,6 +62,11 @@ module LinkedRails
         LinkedRails.translate(:property, :label, self)
       end
 
+      def sh_in
+        @sh_in = form.instance_exec(&@sh_in) if @sh_in.respond_to?(:call)
+        @sh_in
+      end
+
       private
 
       def default_value_from_sh_in(value)
