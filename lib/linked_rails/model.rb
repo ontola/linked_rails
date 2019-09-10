@@ -22,5 +22,11 @@ module LinkedRails
     def build_child(klass)
       klass.new
     end
+
+    module ClassMethods
+      def form_class
+        @form_class ||= "#{name}Form".safe_constantize
+      end
+    end
   end
 end

@@ -17,7 +17,7 @@ module LinkedRails
             {
               collection: true,
               favorite: false,
-              form: -> { "#{result_class}Form".safe_constantize },
+              form: -> { result_class.try(:form_class) },
               http_method: :post,
               image: 'fa-plus',
               include_resource: false,
