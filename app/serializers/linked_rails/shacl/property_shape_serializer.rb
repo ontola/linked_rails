@@ -22,8 +22,6 @@ module LinkedRails
       attribute :sh_in, predicate: NS::SH[:in]
       attribute :path, predicate: NS::SH[:path]
 
-      has_many :sh_in_options
-
       def default_value
         if object.default_value.respond_to?(:call)
           object.form.instance_exec(&object.default_value)
@@ -37,14 +35,10 @@ module LinkedRails
       end
 
       def sh_in
-        options = sh_in_options
+        options = object.sh_in
         return options unless [Array, ActiveRecord::Relation].any? { |klass| options.is_a?(klass) }
 
         RDF::List[*options.map { |option| option.try(:iri) || option }]
-      end
-
-      def sh_in_options
-        object.sh_in
       end
     end
   end

@@ -69,7 +69,7 @@ module LinkedRails
         return if enum_opts.blank?
 
         {
-          type: NS::SCHEMA[:Thing],
+          type: NS::ONTOLA[:FormOption],
           options: Hash[
             enum_opts&.map { |k, _v| [k.to_sym, {iri: LinkedRails::NS::ONTOLA["form_option/#{key}/#{k}"]}] }
           ]

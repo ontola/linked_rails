@@ -7,8 +7,8 @@ module LinkedRails
         target: {
           action_body: [
             :form_steps,
-            referred_shapes: [:form_steps, property: :sh_in_options],
-            property: [:sh_in_options, referred_shapes: [:form_steps, property: :sh_in_options]].freeze
+            referred_shapes: %i[form_steps property],
+            property: [referred_shapes: %i[form_steps property]].freeze
           ].freeze
         }.freeze
       ].freeze

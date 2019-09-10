@@ -6,18 +6,14 @@ module LinkedRails
 
     private
 
-    def add_class_data(klass, iri) # rubocop:disable Metrics/AbcSize
+    def add_class_data(klass, iri)
       @graph << RDF::Statement.new(iri, RDF[:type], RDF::RDFS[:Class])
       add_subclasses(iri, klass)
       add_input_select_property(iri, klass)
       add_class_label(iri, klass)
       add_class_description(iri, klass)
-
-      klass.predicate_mapping.each do |property_iri, value|
-        @graph << RDF::Statement.new(property_iri, RDF[:type], RDF[:Property])
-        add_property_label(property_iri, klass, value.name)
-        add_property_icon(property_iri, value.options[:image])
-      end
+      add_sh_in_options(klass)
+      add_property_data(klass)
     end
 
     def add_class_description(iri, klass)
@@ -47,6 +43,14 @@ module LinkedRails
       @graph << RDF::Statement.new(property_iri, NS::SCHEMA[:image], RDF::URI("http://fontawesome.io/icon/#{icon}"))
     end
 
+    def add_property_data(klass)
+      klass.predicate_mapping.each do |property_iri, value|
+        @graph << RDF::Statement.new(property_iri, RDF[:type], RDF[:Property])
+        add_property_label(property_iri, klass, value.name)
+        add_property_icon(property_iri, value.options[:image])
+      end
+    end
+
     def add_property_label(property_iri, klass, name)
       I18n.available_locales.each do |locale|
         label = I18n.with_locale(locale) do
@@ -57,6 +61,16 @@ module LinkedRails
 
         @graph << RDF::Statement.new(property_iri, RDF::RDFS[:label], RDF::Literal.new(label, language: locale))
       end
+    end
+
+    def add_sh_in_options(klass)
+      return unless klass.try(:form_class)
+
+      klass
+        .form_class
+        .property_shapes_attrs
+        .select { |opts| opts[:sh_in].is_a?(Array) }
+        .each { |opts| opts[:sh_in].each(&method(:dump_sh_in)) }
     end
 
     def add_subclasses(iri, klass)
@@ -70,6 +84,14 @@ module LinkedRails
     end
 
     def authorize_action; end
+
+    def dump_sh_in(option)
+      ActiveModelSerializers::SerializableResource
+        .new(option, adapter: :rdf, scope: user_context)
+        .adapter
+        .triples
+        .each { |t| @graph << t }
+    end
 
     def show_success
       respond_with_resource(resource: vocab_graph)
