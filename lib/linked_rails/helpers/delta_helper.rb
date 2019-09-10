@@ -17,10 +17,15 @@ module LinkedRails
         end
       end
 
-      def changes_triples
-        current_resource.previous_changes_by_predicate.map do |predicate, (_old_value, new_value)|
-          [current_resource.iri, predicate, new_value, NS::ONTOLA[:replace]]
-        end
+      def changes_triples # rubocop:disable Metrics/AbcSize
+        serializer = ActiveModelSerializers::SerializableResource.new(current_resource, {}).serializer_instance
+        current_resource.previous_changes_by_predicate.map do |predicate, (_old_value, _new_value)|
+          attr_name = current_resource.class.predicate_mapping[predicate].name
+          serialized_value = serializer.read_attribute_for_serialization(attr_name)
+          (serialized_value.is_a?(Array) ? serialized_value : [serialized_value]).map do |value|
+            RDF::Statement.new(current_resource.iri, predicate, value, graph_name: NS::ONTOLA[:replace])
+          end
+        end.flatten
       end
 
       def delta_iri(delta)
