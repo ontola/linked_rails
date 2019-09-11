@@ -174,7 +174,7 @@ module LinkedRails
         end
         raise "Field '#{key}' defined twice" if _fields[key].present?
 
-        opts[:order] = _fields.keys.length
+        opts[:order] ||= _fields.keys.length
         opts[:type] ||= :property
         _fields[key.try(:to_sym)] = opts
       end
@@ -226,7 +226,7 @@ module LinkedRails
           description: opts[:description],
           label: opts[:label],
           iri: opts[:iri],
-          order: _fields[name][:order]
+          order: opts[:order] || _fields[name][:order]
         )
         _fields[name][:is_group] = true
         _property_groups[name] = group
