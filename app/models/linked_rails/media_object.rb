@@ -2,10 +2,10 @@
 
 module LinkedRails
   class MediaObject < Resource
-    attr_accessor :content_type, :description, :filename, :uploaded_at
+    attr_accessor :content_type, :description, :filename, :position_y, :uploaded_at
     attr_writer :type
 
-    %i[content_url embed_url thumbnail_url url].each do |attr|
+    %i[content_url embed_url thumbnail_url url cover_url].each do |attr|
       attr_reader attr
 
       define_method "#{attr}=" do |value|

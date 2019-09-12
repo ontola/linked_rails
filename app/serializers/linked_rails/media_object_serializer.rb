@@ -11,6 +11,8 @@ module LinkedRails
     attribute :thumbnail_url, predicate: NS::SCHEMA[:thumbnail]
     attribute :uploaded_at, predicate: NS::SCHEMA[:uploadDate]
     attribute :url, predicate: NS::SCHEMA[:url]
+    attribute :cover_url, predicate: NS::ONTOLA[:imgUrl1500x2000]
+    attribute :position_y, predicate: NS::ONTOLA[:imagePositionY]
 
     def type
       case object.type&.to_sym

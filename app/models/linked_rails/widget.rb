@@ -35,7 +35,7 @@ module LinkedRails
       @property_shapes ||= {}
       @property_shapes[[iri, predicate]] ||=
         LinkedRails::PropertyQuery.new(
-          target_node: RDF::URI(iri),
+          target_node: iri.is_a?(RDF::Resource) ? iri : RDF::URI(iri),
           path: RDF::URI(predicate)
         )
     end

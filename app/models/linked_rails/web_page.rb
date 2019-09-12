@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  class WebPage
-    include ActiveModel::Model
-    include ActiveModel::Serialization
-    include LinkedRails::Model
-
-    attr_writer :iri, :widgets
-    attr_accessor :description, :name
+  class WebPage < CreativeWork
+    attr_writer :widgets
+    attr_accessor :cover_photo, :includes
 
     def widget_sequence
       @widget_sequence ||= LinkedRails::Sequence.new(@widgets) if @widgets
@@ -19,7 +15,7 @@ module LinkedRails
       end
 
       def show_includes
-        super + [widget_sequence: {members: LinkedRails::Widget.show_includes}]
+        super + [:includes, widget_sequence: {members: LinkedRails::Widget.show_includes}]
       end
     end
   end
