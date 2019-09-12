@@ -10,6 +10,7 @@ module LinkedRails
       attribute :result, predicate: NS::SCHEMA[:result]
       attribute :action_status, predicate: NS::SCHEMA[:actionStatus]
       attribute :favorite, predicate: LinkedRails::NS::ONTOLA[:favoriteAction]
+      attribute :url, predicate: NS::SCHEMA[:url]
 
       has_one :parent, predicate: NS::SCHEMA[:isPartOf]
       has_one :resource, predicate: NS::SCHEMA[:object]
@@ -20,6 +21,10 @@ module LinkedRails
 
       def result
         object.result&.iri
+      end
+
+      def url
+        object.target[:id] if object.target.is_a?(Hash)
       end
 
       def parent
