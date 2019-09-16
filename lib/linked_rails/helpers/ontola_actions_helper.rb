@@ -12,8 +12,8 @@ module LinkedRails
         NS::ONTOLA["actions/copyToClipboard?#{{value: value}.to_param}"]
       end
 
-      def ontola_dialog_action(resource)
-        NS::ONTOLA["actions/dialog/alert?#{{resource: resource}.to_param}"]
+      def ontola_dialog_action(resource, opener: nil)
+        NS::ONTOLA["actions/dialog/alert?#{{resource: resource, opener: opener}.compact.to_param}"]
       end
 
       def ontola_redirect_action(location, reload: nil)
