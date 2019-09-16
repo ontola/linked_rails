@@ -12,7 +12,6 @@ module LinkedRails
       add_input_select_property(iri, klass)
       add_class_label(iri, klass)
       add_class_description(iri, klass)
-      add_sh_in_options(klass)
       add_property_data(klass)
     end
 
@@ -63,11 +62,8 @@ module LinkedRails
       end
     end
 
-    def add_sh_in_options(klass)
-      return unless klass.try(:form_class)
-
-      klass
-        .form_class
+    def add_sh_in_options(form)
+      form
         .property_shapes_attrs
         .select { |opts| opts[:sh_in].is_a?(Array) }
         .each { |opts| opts[:sh_in].each(&method(:dump_sh_in)) }
@@ -102,6 +98,9 @@ module LinkedRails
       ApplicationRecord.descendants.each do |klass|
         iri = klass.iri.is_a?(Array) ? klass.iri.first : klass.iri
         add_class_data(klass, iri)
+      end
+      LinkedRails::Form.descendants.each do |form|
+        add_sh_in_options(form)
       end
       @graph
     end
