@@ -50,11 +50,13 @@ module LinkedRails
       end
     end
 
-    def add_property_label(property_iri, klass, name)
+    def add_property_label(property_iri, klass, name) # rubocop:disable Metrics/AbcSize
       I18n.available_locales.each do |locale|
         label = I18n.with_locale(locale) do
-          I18n.t("#{klass.name.tableize}.properties.#{name}.label", default: nil) ||
-            LinkedRails::SHACL::PropertyShape.new(model_name: klass.model_name, model_attribute: name).name
+          I18n.t(
+            "properties.#{name}.label",
+            default: I18n.t("#{klass.name.tableize}.properties.#{name}.label", default: nil)
+          ) || LinkedRails::SHACL::PropertyShape.new(model_name: klass.model_name, model_attribute: name).name
         end
         next if label.blank?
 
