@@ -9,6 +9,7 @@ module LinkedRails
       attribute :default_value, predicate: NS::SH[:defaultValue]
       attribute :description, predicate: NS::SH[:description]
       attribute :group, predicate: NS::SH[:group]
+      attribute :input_field, predicate: NS::ONTOLA[:inputFieldHint]
       attribute :max_count, predicate: NS::SH[:maxCount]
       attribute :min_count, predicate: NS::SH[:minCount]
       attribute :max_length, predicate: NS::SH[:maxLength]

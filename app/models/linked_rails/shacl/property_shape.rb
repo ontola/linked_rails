@@ -26,6 +26,7 @@ module LinkedRails
       attr_accessor :sh_class,
                     :datatype,
                     :group,
+                    :input_field,
                     :model_class,
                     :node,
                     :node_kind,
