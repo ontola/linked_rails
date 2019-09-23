@@ -2,7 +2,7 @@
 
 module LinkedRails
   class WebSite < CreativeWork
-    attr_accessor :homepage, :navigations_menu
+    attr_accessor :homepage, :image, :navigations_menu
 
     class << self
       def iri
