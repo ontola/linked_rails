@@ -6,7 +6,7 @@ module LinkedRails
 
     attribute :base_url, predicate: LinkedRails::NS::SCHEMA[:url]
     attribute :title, predicate: NS::AS[:name]
-    attribute :total_count, predicate: NS::AS[:totalItems]
+    attribute :total_count, predicate: NS::AS[:totalItems], if: :paginated?
     attribute :iri_template, predicate: LinkedRails::NS::ONTOLA[:iriTemplate]
     attribute :default_type, predicate: LinkedRails::NS::ONTOLA[:defaultType]
     attribute :display, predicate: LinkedRails::NS::ONTOLA[:collectionDisplay]
@@ -57,6 +57,10 @@ module LinkedRails
       return object.class.iri unless object.filtered?
 
       LinkedRails::NS::ONTOLA[:FilteredCollection]
+    end
+
+    def paginated?
+      object.type == :paginated
     end
   end
 end
