@@ -10,7 +10,7 @@ module LinkedRails
       include LinkedRails::Model
 
       attr_accessor :list, :policy_arguments, :submit_label
-      attr_writer :target, :root_relative_iri, :user_context
+      attr_writer :parent, :target, :root_relative_iri, :user_context
       delegate :resource, :user_context, to: :list, allow_nil: true
       delegate :iri_opts, to: :resource, allow_nil: true
 
@@ -46,6 +46,16 @@ module LinkedRails
 
       def included_resource
         resource if include_resource
+      end
+
+      def parent
+        return @parent if instance_variable_defined?(:@parent)
+
+        if resource.is_a?(LinkedRails.collection_class)
+          resource.parent
+        else
+          resource
+        end
       end
 
       def root_relative_iri(_opts = {})

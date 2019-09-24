@@ -26,14 +26,6 @@ module LinkedRails
       def url
         object.target[:id] if object.target.is_a?(Hash)
       end
-
-      def parent
-        if object.resource.is_a?(LinkedRails.collection_class)
-          object.resource.parent
-        else
-          object.resource
-        end
-      end
     end
   end
 end
