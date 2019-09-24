@@ -3,7 +3,7 @@
 module LinkedRails
   class VocabulariesController < ApplicationController
     active_response :show
-    attr_reader :graph
+    attr_accessor :graph
 
     private
 
@@ -40,7 +40,9 @@ module LinkedRails
     def add_property_icon(property_iri, icon)
       return if icon.blank?
 
-      add_statement(RDF::Statement.new(property_iri, NS::SCHEMA[:image], RDF::URI("http://fontawesome.io/icon/#{icon}")))
+      add_statement(
+        RDF::Statement.new(property_iri, NS::SCHEMA[:image], RDF::URI("http://fontawesome.io/icon/#{icon}"))
+      )
     end
 
     def add_property_data(klass)
@@ -101,7 +103,7 @@ module LinkedRails
     end
 
     def vocab_graph
-      graph = ::RDF::Graph.new
+      self.graph = ::RDF::Graph.new
       ApplicationRecord.descendants.each do |klass|
         iri = klass.iri.is_a?(Array) ? klass.iri.first : klass.iri
         add_class_data(klass, iri)
