@@ -8,6 +8,11 @@ module LinkedRails
           relation_iri = current_resource.send(key).iri
           if key.to_s.ends_with?('_collection')
             [[NS::SP[:Variable], NS::ONTOLA[:baseCollection], relation_iri, NS::ONTOLA[:invalidate]]]
+          elsif current_resource.send(:association_has_destructed?, key)
+            [
+              [current_resource.iri, value.options[:predicate], relation_iri, NS::ONTOLA[:remove]],
+              [relation_iri, NS::SP[:Variable], NS::SP[:Variable], NS::ONTOLA[:invalidate]]
+            ]
           else
             [
               [current_resource.iri, value.options[:predicate], relation_iri, NS::ONTOLA[:replace]],
