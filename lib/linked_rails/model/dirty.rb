@@ -38,8 +38,10 @@ module LinkedRails
         return {} unless serializer_class
 
         serializer_class._reflections.select do |key, _value|
-          association_key = key.to_s.ends_with?('_collection') ? send(key).association : key
-          association_has_destructed?(association_key) || association_changed?(association_key)
+          if respond_to?(key)
+            association_key = key.to_s.ends_with?('_collection') ? send(key).association : key
+            association_has_destructed?(association_key) || association_changed?(association_key)
+          end
         end
       end
 
