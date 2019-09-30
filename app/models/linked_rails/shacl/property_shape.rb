@@ -70,6 +70,11 @@ module LinkedRails
 
       private
 
+      def apply_if_option(option)
+        return form.target.send(option) if option.is_a?(Symbol)
+        return form.target.instance_exec(option) if option.respond_to?(:call)
+      end
+
       def default_value_from_sh_in(value)
         sh_in.detect { |v| v.is_a?(LinkedRails::Form::Option) && v.key == value.to_sym }&.iri
       end
@@ -93,7 +98,16 @@ module LinkedRails
       end
 
       def validator_by_class(klass)
-        validators&.detect { |validator| validator.is_a?(klass) }
+        validator = validators&.detect { |validator| validator.is_a?(klass) }
+        return unless validator
+
+        if_value = apply_if_option(validator.options[:if])
+        return if if_value == false
+
+        unless_value = apply_if_option(validator.options[:unless])
+        return if unless_value == true
+
+        validator
       end
 
       def validator_option(klass, option_key)
