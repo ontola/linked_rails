@@ -5,7 +5,7 @@ module LinkedRails
     module Authorization
       extend ActiveSupport::Concern
 
-      def authorize_action # rubocop:disable Metrics/AbcSize
+      def authorize_action
         if action_name == 'index'
           raise ActiveRecord::RecordNotFound, 'No collection present to authorize' if index_collection.blank?
 

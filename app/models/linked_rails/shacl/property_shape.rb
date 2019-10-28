@@ -98,7 +98,7 @@ module LinkedRails
       end
 
       def validator_by_class(klass)
-        validator = validators&.detect { |validator| validator.is_a?(klass) }
+        validator = validators&.detect { |v| v.is_a?(klass) }
         return unless validator
 
         if_value = apply_if_option(validator.options[:if])

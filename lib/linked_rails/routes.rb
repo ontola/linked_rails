@@ -7,4 +7,4 @@ module RailsLDRoutingHelper
   end
 end
 
-ActionDispatch::Routing::Mapper::Resources::Resource.send(:prepend, RailsLDRoutingHelper)
+ActionDispatch::Routing::Mapper::Resources::Resource.prepend(RailsLDRoutingHelper)
