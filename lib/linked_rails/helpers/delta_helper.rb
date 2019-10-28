@@ -22,13 +22,21 @@ module LinkedRails
         end
       end
 
+      def change_triple(predicate, value)
+        if value.nil?
+          RDF::Statement.new(current_resource.iri, predicate, Vocab::SP[:Variable], graph_name: delta_iri(:remove))
+        else
+          RDF::Statement.new(current_resource.iri, predicate, value, graph_name: delta_iri(:replace))
+        end
+      end
+
       def changes_triples # rubocop:disable Metrics/AbcSize
         serializer = ActiveModelSerializers::SerializableResource.new(current_resource, {}).serializer_instance
         current_resource.previous_changes_by_predicate.map do |predicate, (_old_value, _new_value)|
           attr_name = current_resource.class.predicate_mapping[predicate].name
           serialized_value = serializer.read_attribute_for_serialization(attr_name)
           (serialized_value.is_a?(Array) ? serialized_value : [serialized_value]).map do |value|
-            RDF::Statement.new(current_resource.iri, predicate, value, graph_name: NS::ONTOLA[:replace])
+            change_triple(predicate, value)
           end
         end.flatten
       end

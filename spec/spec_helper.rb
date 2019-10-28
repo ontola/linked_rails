@@ -18,10 +18,13 @@
 #
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('dummy/config/environment', __dir__)
+require 'support/matchers'
 
 def create_table
   ActiveRecord::Base.connection.create_table :records do |t|
     t.integer :user_id
+    t.string :title
+    t.text :body
     t.timestamps
   end
 end
@@ -31,6 +34,8 @@ def drop_table
 end
 
 RSpec.configure do |config|
+  config.include Matchers
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

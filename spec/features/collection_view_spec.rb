@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../spec_helper'
-
 describe LinkedRails::Collection::View do
   subject { collection }
 
@@ -33,12 +31,12 @@ describe LinkedRails::Collection::View do
     context 'with paginated view' do
       subject { paginated_collection_view.iri }
 
-      it { is_expected.to eq('http://example.com/records?page=1&page_size=11') }
+      it { is_expected.to eq('http://example.com/records?page=1') }
 
       context 'with parent' do
-        let(:parent) { Record.new({}) }
+        let(:parent) { Record.create! }
 
-        it { is_expected.to eq('http://example.com/records/record_id/records?page=1&page_size=11') }
+        it { is_expected.to eq("http://example.com/records/#{parent.id}/records?page=1") }
       end
     end
 
@@ -47,14 +45,14 @@ describe LinkedRails::Collection::View do
 
       let(:type) { :infinite }
 
-      it { is_expected.to eq("http://example.com/records?page_size=11&type=infinite&before=#{encoded_before_time}") }
+      it { is_expected.to eq("http://example.com/records?type=infinite&before=#{encoded_before_time}") }
 
       context 'with parent' do
-        let(:parent) { Record.new({}) }
+        let(:parent) { Record.create! }
 
         it do
           is_expected.to(
-            eq("http://example.com/records/record_id/records?page_size=11&type=infinite&before=#{encoded_before_time}")
+            eq("http://example.com/records/#{parent.id}/records?type=infinite&before=#{encoded_before_time}")
           )
         end
       end

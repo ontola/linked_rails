@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../spec_helper'
-
 describe LinkedRails::Collection do
   subject { collection }
 
@@ -30,9 +28,9 @@ describe LinkedRails::Collection do
       it { is_expected.to eq('http://example.com/records') }
 
       context 'with parent' do
-        let(:parent) { Record.new({}) }
+        let(:parent) { Record.create! }
 
-        it { is_expected.to eq('http://example.com/records/record_id/records') }
+        it { is_expected.to eq("http://example.com/records/#{parent.id}/records") }
       end
     end
 
@@ -44,16 +42,14 @@ describe LinkedRails::Collection do
       it { is_expected.to eq("http://example.com/records?#{filter_string}") }
 
       context 'with parent' do
-        let(:parent) { Record.new({}) }
+        let(:parent) { Record.create! }
 
-        it { is_expected.to eq("http://example.com/records/record_id/records?#{filter_string}") }
+        it { is_expected.to eq("http://example.com/records/#{parent.id}/records?#{filter_string}") }
       end
     end
 
     context 'with default type' do
       subject { collection.iri }
-
-      let(:type) { :paginated }
 
       it { is_expected.to eq('http://example.com/records') }
     end
@@ -108,7 +104,7 @@ describe LinkedRails::Collection do
 
     context 'with filters' do
       let(:user_context) { {admin: false} }
-      let(:result) { 'SELECT "records".* FROM "records" WHERE "records"."admin" = 0' }
+      let(:result) { 'SELECT "records".* FROM "records" WHERE "records"."admin" = \'f\'' }
 
       it { is_expected.to eq(result) }
     end
