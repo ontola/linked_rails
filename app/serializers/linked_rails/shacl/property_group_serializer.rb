@@ -5,12 +5,12 @@ module LinkedRails
     class PropertyGroupSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      attribute :description, predicate: NS::SH[:description]
+      attribute :description, predicate: RDF::Vocab::SH.description
       attribute :label, predicate: RDF::RDFS[:label]
-      attribute :order, predicate: NS::SH[:order]
+      attribute :order, predicate: RDF::Vocab::SH.order
 
       def type
-        NS::SH[:PropertyGroup]
+        RDF::Vocab::SH.PropertyGroup
       end
     end
   end

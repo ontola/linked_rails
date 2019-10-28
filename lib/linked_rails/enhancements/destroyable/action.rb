@@ -15,7 +15,7 @@ module LinkedRails
 
           def destroy_options # rubocop:disable Metrics/MethodLength
             {
-              type: [NS::SCHEMA[:Action], NS::ONTOLA[:DestroyAction]],
+              type: [RDF::Vocab::SCHEMA.Action, Vocab::ONTOLA[:DestroyAction]],
               policy: :destroy?,
               image: 'fa-close',
               url: -> { resource.iri(destroy: true) },

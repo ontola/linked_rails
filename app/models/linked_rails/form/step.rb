@@ -11,7 +11,7 @@ module LinkedRails
 
       class << self
         def iri
-          NS::ONTOLA[:FormStep]
+          Vocab::ONTOLA[:FormStep]
         end
       end
     end

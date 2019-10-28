@@ -5,15 +5,15 @@ module LinkedRails
     class NodeShapeSerializer < ShapeSerializer
       include LinkedRails::Serializer
 
-      attribute :closed, predicate: NS::SH[:closed]
-      attribute :or, predicate: NS::SH[:or]
-      attribute :not, predicate: NS::SH[:not]
+      attribute :closed, predicate: RDF::Vocab::SH.closed
+      attribute :or, predicate: RDF::Vocab::SH.or
+      attribute :not, predicate: RDF::Vocab::SH.not
 
-      has_many :property, predicate: NS::SH[:property]
-      has_many :form_steps, predicate: NS::ONTOLA[:formSteps]
+      has_many :property, predicate: RDF::Vocab::SH.property
+      has_many :form_steps, predicate: Vocab::ONTOLA[:formSteps]
 
       def type
-        NS::SH[:NodeShape]
+        RDF::Vocab::SH.NodeShape
       end
     end
   end

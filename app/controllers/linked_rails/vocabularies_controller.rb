@@ -21,7 +21,9 @@ module LinkedRails
         label = I18n.t("#{klass.name.tableize}.tooltips.info", default: nil, locale: locale)
         next if label.blank?
 
-        add_statement(RDF::Statement.new(iri, NS::SCHEMA[:description], RDF::Literal.new(label, language: locale)))
+        add_statement(
+          RDF::Statement.new(iri, RDF::Vocab::SCHEMA.description, RDF::Literal.new(label, language: locale))
+        )
       end
     end
 
@@ -34,14 +36,16 @@ module LinkedRails
     end
 
     def add_input_select_property(iri, klass)
-      add_statement(RDF::Statement.new(iri, NS::ONTOLA['forms/inputs/select/displayProp'], klass.input_select_property))
+      add_statement(
+        RDF::Statement.new(iri, Vocab::ONTOLA['forms/inputs/select/displayProp'], klass.input_select_property)
+      )
     end
 
     def add_property_icon(property_iri, icon)
       return if icon.blank?
 
       add_statement(
-        RDF::Statement.new(property_iri, NS::SCHEMA[:image], RDF::URI("http://fontawesome.io/icon/#{icon}"))
+        RDF::Statement.new(property_iri, RDF::Vocab::SCHEMA.image, RDF::URI("http://fontawesome.io/icon/#{icon}"))
       )
     end
 
@@ -81,7 +85,7 @@ module LinkedRails
     def add_subclasses(iri, klass)
       parent =
         if klass.superclass == ApplicationRecord
-          NS::SCHEMA[:Thing]
+          RDF::Vocab::SCHEMA.Thing
         else
           klass.superclass.iri
         end

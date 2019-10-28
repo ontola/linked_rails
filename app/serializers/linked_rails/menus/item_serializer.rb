@@ -5,14 +5,14 @@ module LinkedRails
     class ItemSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      has_one :action, predicate: LinkedRails::NS::ONTOLA[:action]
-      attribute :label, predicate: NS::SCHEMA[:name]
-      attribute :href, predicate: LinkedRails::NS::ONTOLA[:href]
+      has_one :action, predicate: Vocab::ONTOLA[:action]
+      attribute :label, predicate: RDF::Vocab::SCHEMA.name
+      attribute :href, predicate: Vocab::ONTOLA[:href]
 
-      has_one :image, predicate: NS::SCHEMA[:image]
-      has_one :menu_sequence, predicate: LinkedRails::NS::ONTOLA[:menuItems], if: :menus_present?
-      has_one :parent, predicate: LinkedRails::NS::ONTOLA[:parentMenu], if: :parent_menu?
-      has_one :resource, predicate: NS::SCHEMA[:isPartOf]
+      has_one :image, predicate: RDF::Vocab::SCHEMA.image
+      has_one :menu_sequence, predicate: Vocab::ONTOLA[:menuItems], if: :menus_present?
+      has_one :parent, predicate: Vocab::ONTOLA[:parentMenu], if: :parent_menu?
+      has_one :resource, predicate: RDF::Vocab::SCHEMA.isPartOf
 
       def parent_menu?
         object.parent.is_a?(LinkedRails.menus_item_class)
@@ -35,7 +35,7 @@ module LinkedRails
       end
 
       def type
-        object.type || LinkedRails::NS::ONTOLA[:MenuItem]
+        object.type || Vocab::ONTOLA[:MenuItem]
       end
     end
   end

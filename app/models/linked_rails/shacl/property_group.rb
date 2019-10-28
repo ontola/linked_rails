@@ -32,7 +32,7 @@ module LinkedRails
       end
 
       def self.iri
-        NS::SH[:PropertyGroup]
+        RDF::Vocab::SH.PropertyGroup
       end
     end
   end

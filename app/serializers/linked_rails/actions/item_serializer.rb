@@ -5,16 +5,16 @@ module LinkedRails
     class ItemSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      attribute :label, predicate: NS::SCHEMA[:name]
-      attribute :description, predicate: NS::SCHEMA[:text]
-      attribute :result, predicate: NS::SCHEMA[:result]
-      attribute :action_status, predicate: NS::SCHEMA[:actionStatus]
-      attribute :favorite, predicate: LinkedRails::NS::ONTOLA[:favoriteAction]
-      attribute :url, predicate: NS::SCHEMA[:url]
+      attribute :label, predicate: RDF::Vocab::SCHEMA.name
+      attribute :description, predicate: RDF::Vocab::SCHEMA.text
+      attribute :result, predicate: RDF::Vocab::SCHEMA.result
+      attribute :action_status, predicate: RDF::Vocab::SCHEMA.actionStatus
+      attribute :favorite, predicate: Vocab::ONTOLA[:favoriteAction]
+      attribute :url, predicate: RDF::Vocab::SCHEMA.url
 
-      has_one :parent, predicate: NS::SCHEMA[:isPartOf]
-      has_one :resource, predicate: NS::SCHEMA[:object]
-      has_one :target, predicate: NS::SCHEMA[:target]
+      has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf
+      has_one :resource, predicate: RDF::Vocab::SCHEMA.object
+      has_one :target, predicate: RDF::Vocab::SCHEMA.target
       has_one :included_resource
 
       delegate :type, to: :object

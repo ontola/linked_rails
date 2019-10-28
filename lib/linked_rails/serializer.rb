@@ -12,7 +12,7 @@ module LinkedRails
       class_attribute :_enums
 
       attribute :type, predicate: RDF[:type]
-      attribute :canonical_iri, predicate: NS::DC[:identifier]
+      attribute :canonical_iri, predicate: RDF::Vocab::DC[:identifier]
     end
 
     def id
@@ -41,7 +41,7 @@ module LinkedRails
       if obj.is_a?(String) || obj.is_a?(Symbol)
         {
           id: RDF::URI(obj.to_s.gsub(/^fa-/, 'http://fontawesome.io/icon/')),
-          type: NS::ONTOLA[:FontAwesomeIcon]
+          type: Vocab::ONTOLA[:FontAwesomeIcon]
         }
       elsif obj.is_a?(RDF::URI)
         {id: obj}
@@ -69,9 +69,9 @@ module LinkedRails
         return if enum_opts.blank?
 
         {
-          type: NS::ONTOLA[:FormOption],
+          type: Vocab::ONTOLA[:FormOption],
           options: Hash[
-            enum_opts&.map { |k, _v| [k.to_sym, {iri: LinkedRails::NS::ONTOLA["form_option/#{key}/#{k}"]}] }
+            enum_opts&.map { |k, _v| [k.to_sym, {iri: Vocab::ONTOLA["form_option/#{key}/#{k}"]}] }
           ]
         }
       end

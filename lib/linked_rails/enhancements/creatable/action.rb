@@ -31,7 +31,7 @@ module LinkedRails
               policy: :create_child?,
               result: -> { result_class },
               type: lambda {
-                [LinkedRails::NS::ONTOLA["Create::#{result_class}"], LinkedRails::NS::SCHEMA[:CreateAction]]
+                [Vocab::ONTOLA["Create::#{result_class}"], LinkedRails::RDF::Vocab::SCHEMA.CreateAction]
               },
               url: -> { resource.iri }
             }

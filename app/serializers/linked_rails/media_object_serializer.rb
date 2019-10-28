@@ -3,25 +3,25 @@
 module LinkedRails
   class MediaObjectSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
-    attribute :content_url, predicate: NS::SCHEMA[:contentUrl]
-    attribute :content_type, predicate: NS::SCHEMA[:encodingFormat], datatype: RDF::XSD[:string]
-    attribute :description, predicate: NS::SCHEMA[:caption]
-    attribute :embed_url, predicate: NS::SCHEMA[:embedUrl]
-    attribute :filename, predicate: NS::DBO[:filename]
-    attribute :thumbnail_url, predicate: NS::SCHEMA[:thumbnail]
-    attribute :uploaded_at, predicate: NS::SCHEMA[:uploadDate]
-    attribute :url, predicate: NS::SCHEMA[:url]
-    attribute :cover_url, predicate: NS::ONTOLA[:imgUrl1500x2000]
-    attribute :position_y, predicate: NS::ONTOLA[:imagePositionY]
+    attribute :content_url, predicate: RDF::Vocab::SCHEMA.contentUrl
+    attribute :content_type, predicate: RDF::Vocab::SCHEMA.encodingFormat, datatype: RDF::XSD[:string]
+    attribute :description, predicate: RDF::Vocab::SCHEMA.caption
+    attribute :embed_url, predicate: RDF::Vocab::SCHEMA.embedUrl
+    attribute :filename, predicate: RDF::Vocab::DBO.filename
+    attribute :thumbnail_url, predicate: RDF::Vocab::SCHEMA.thumbnail
+    attribute :uploaded_at, predicate: RDF::Vocab::SCHEMA.uploadDate
+    attribute :url, predicate: RDF::Vocab::SCHEMA.url
+    attribute :cover_url, predicate: Vocab::ONTOLA[:imgUrl1500x2000]
+    attribute :position_y, predicate: Vocab::ONTOLA[:imagePositionY]
 
     def type
       case object.type&.to_sym
       when :image
-        NS::SCHEMA[:ImageObject]
+        RDF::Vocab::SCHEMA.ImageObject
       when :video
-        NS::SCHEMA[:VideoObject]
+        RDF::Vocab::SCHEMA.VideoObject
       else
-        NS::SCHEMA[:MediaObject]
+        RDF::Vocab::SCHEMA.MediaObject
       end
     end
   end

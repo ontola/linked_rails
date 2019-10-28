@@ -69,7 +69,7 @@ module LinkedRails
 
       class << self
         def iri
-          [super, NS::AS['CollectionPage']]
+          [super, RDF::Vocab::AS.CollectionPage]
         end
 
         def new(opts = {})

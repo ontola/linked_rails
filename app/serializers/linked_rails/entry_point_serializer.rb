@@ -4,16 +4,16 @@ module LinkedRails
   class EntryPointSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
 
-    attribute :label, predicate: NS::SCHEMA[:name]
-    attribute :description, predicate: NS::SCHEMA[:text]
-    attribute :url, predicate: NS::SCHEMA[:url]
-    attribute :http_method, key: :method, predicate: NS::SCHEMA[:httpMethod]
-    attribute :image, predicate: NS::SCHEMA[:image]
+    attribute :label, predicate: RDF::Vocab::SCHEMA.name
+    attribute :description, predicate: RDF::Vocab::SCHEMA.text
+    attribute :url, predicate: RDF::Vocab::SCHEMA.url
+    attribute :http_method, key: :method, predicate: RDF::Vocab::SCHEMA.httpMethod
+    attribute :image, predicate: RDF::Vocab::SCHEMA.image
 
-    has_one :action_body, predicate: NS::LL[:actionBody]
+    has_one :action_body, predicate: Vocab::LL[:actionBody]
 
     def type
-      NS::SCHEMA[:EntryPoint]
+      RDF::Vocab::SCHEMA.EntryPoint
     end
 
     def http_method

@@ -42,7 +42,7 @@ module LinkedRails
 
     class << self
       def iri
-        LinkedRails::NS::ONTOLA[:Widget]
+        Vocab::ONTOLA[:Widget]
       end
 
       def preview_includes

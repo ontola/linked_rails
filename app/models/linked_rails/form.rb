@@ -138,7 +138,7 @@ module LinkedRails
         when :decimal
           decimal_data_type(name)
         when :file
-          NS::LL[:blob]
+          Vocab::LL[:blob]
         else
           RDF::XSD[:string] if model_class.defined_enums.key?(name)
         end

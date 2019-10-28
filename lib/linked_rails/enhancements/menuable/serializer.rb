@@ -23,7 +23,7 @@ module LinkedRails
                 object.menu(menu, scope)
               end
 
-              has_one method_name, predicate: NS::ONTOLA["#{menu.to_s.camelize(:lower)}Menu"]
+              has_one method_name, predicate: Vocab::ONTOLA["#{menu.to_s.camelize(:lower)}Menu"]
             end
           end
         end

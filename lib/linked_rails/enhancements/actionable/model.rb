@@ -29,10 +29,10 @@ module LinkedRails
           @action_list[user_context] ||= self.class.action_list.new(resource: self, user_context: user_context)
         end
 
-        def action_triples(graph = NS::ONTOLA[:replace])
+        def action_triples(graph = Vocab::ONTOLA[:replace])
           predicates = actions&.map(&:predicate) || []
-          predicates += [NS::SCHEMA[:potentialAction], LinkedRails::NS::ONTOLA[:favoriteAction]]
-          predicates << LinkedRails::NS::ONTOLA[:createAction] if try(:collections).present?
+          predicates += [RDF::Vocab::SCHEMA.potentialAction, Vocab::ONTOLA[:favoriteAction]]
+          predicates << Vocab::ONTOLA[:createAction] if try(:collections).present?
           predicates.map { |predicate| [iri, predicate, actions_iri, graph].compact } + invalidate_actions_iri_triple
         end
 
@@ -43,7 +43,7 @@ module LinkedRails
         private
 
         def invalidate_actions_iri_triple
-          [[actions_iri, NS::SP[:Variable], NS::SP[:Variable], NS::ONTOLA[:invalidate]]]
+          [[actions_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], Vocab::ONTOLA[:invalidate]]]
         end
 
         module ClassMethods

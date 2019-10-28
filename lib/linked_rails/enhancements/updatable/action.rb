@@ -15,7 +15,7 @@ module LinkedRails
 
           def update_options # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             {
-              type: NS::SCHEMA[:UpdateAction],
+              type: RDF::Vocab::SCHEMA.UpdateAction,
               policy: :update?,
               label: lambda {
                 type = I18n.t("#{resource.class.name.tableize}.type", default: nil)

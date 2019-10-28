@@ -4,6 +4,7 @@ require 'active_response'
 require 'active_model_serializers'
 require 'kaminari'
 require 'rdf'
+require 'rdf/vocab'
 require 'uri_template'
 require 'linked_rails/engine'
 
@@ -48,7 +49,7 @@ module LinkedRails
   configurable_class(nil, :serializer_parent, default: 'ApplicationSerializer')
 end
 
-require 'linked_rails/ns'
+require 'linked_rails/vocab'
 require 'linked_rails/enhancements'
 require 'linked_rails/model'
 require 'linked_rails/enhanceable'

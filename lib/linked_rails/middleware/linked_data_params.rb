@@ -36,7 +36,7 @@ module LinkedRails
       end
 
       def blob_attribute(value)
-        base_params["<#{value}>"] if value.starts_with?(NS::LL['blobs/'])
+        base_params["<#{value}>"] if value.starts_with?(Vocab::LL['blobs/'])
       end
 
       def enum_attribute(klass, key, value)
@@ -47,7 +47,7 @@ module LinkedRails
       end
 
       def graph_from_request
-        request_graph = request.delete_param("<#{NS::LL[:graph].value}>")
+        request_graph = request.delete_param("<#{Vocab::LL[:graph].value}>")
         return if request_graph.blank?
 
         RDF::Graph.load(
@@ -165,7 +165,7 @@ module LinkedRails
       end
 
       def update_actor_param
-        actor = graph.query([NS::LL[:targetResource], NS::SCHEMA[:creator]]).first
+        actor = graph.query([Vocab::LL[:targetResource], RDF::Vocab::SCHEMA.creator]).first
         return if actor.blank?
 
         request.update_param(:actor_iri, actor.object)
@@ -175,7 +175,7 @@ module LinkedRails
       def update_target_params(target_class)
         request.update_param(
           target_class.to_s.underscore,
-          parse_resource(NS::LL[:targetResource], target_class)
+          parse_resource(Vocab::LL[:targetResource], target_class)
         )
       end
     end

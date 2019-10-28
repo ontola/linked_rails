@@ -10,7 +10,7 @@ module LinkedRails
                     :form_steps
 
       def self.iri
-        NS::SH[:NodeShape]
+        RDF::Vocab::SH.NodeShape
       end
     end
   end

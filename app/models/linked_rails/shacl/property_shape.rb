@@ -5,7 +5,7 @@ module LinkedRails
     class PropertyShape < Shape
       class << self
         def iri
-          NS::SH[:PropertyShape]
+          RDF::Vocab::SH.PropertyShape
         end
 
         def validations(*validations)

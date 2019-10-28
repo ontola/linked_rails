@@ -14,7 +14,7 @@ module LinkedRails
         opts =
           @default_sortings ||
           association_class.try(:default_sortings) ||
-          [{key: NS::SCHEMA[:dateCreated], direction: :desc}]
+          [{key: RDF::Vocab::SCHEMA.dateCreated, direction: :desc}]
         opts.respond_to?(:call) ? opts.call(parent) : opts
       end
 

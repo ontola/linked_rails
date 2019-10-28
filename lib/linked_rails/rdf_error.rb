@@ -13,8 +13,8 @@ module LinkedRails
 
     def graph
       g = ::RDF::Graph.new
-      g << [requested_url, LinkedRails::NS::SCHEMA[:name], title] if title
-      g << [requested_url, LinkedRails::NS::SCHEMA[:text], message]
+      g << [requested_url, LinkedRails::RDF::Vocab::SCHEMA.name, title] if title
+      g << [requested_url, LinkedRails::RDF::Vocab::SCHEMA.text, message]
       g << [requested_url, ::RDF[:type], type]
       g
     end
@@ -26,7 +26,7 @@ module LinkedRails
     end
 
     def type
-      @type ||= LinkedRails::NS::ONTOLA["errors/#{error.class.name.demodulize}Error"]
+      @type ||= Vocab::ONTOLA["errors/#{error.class.name.demodulize}Error"]
     end
   end
 end

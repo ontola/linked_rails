@@ -5,19 +5,19 @@ module LinkedRails
     class ViewSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      attribute :count, predicate: NS::AS[:totalItems]
-      attribute :display, predicate: LinkedRails::NS::ONTOLA[:collectionDisplay]
+      attribute :count, predicate: RDF::Vocab::AS.totalItems
+      attribute :display, predicate: Vocab::ONTOLA[:collectionDisplay]
 
       %i[next prev].each do |attr|
-        attribute attr, predicate: NS::AS[attr]
+        attribute attr, predicate: RDF::Vocab::AS[attr]
       end
 
-      has_one :collection, predicate: NS::AS[:partOf]
-      has_one :unfiltered_collection, predicate: LinkedRails::NS::ONTOLA[:baseCollection]
-      has_one :member_sequence, predicate: NS::AS[:items]
+      has_one :collection, predicate: RDF::Vocab::AS.partOf
+      has_one :unfiltered_collection, predicate: Vocab::ONTOLA[:baseCollection]
+      has_one :member_sequence, predicate: RDF::Vocab::AS.items
 
       def display
-        LinkedRails::NS::ONTOLA["collectionDisplay/#{object.display || :default}"]
+        Vocab::ONTOLA["collectionDisplay/#{object.display || :default}"]
       end
     end
   end

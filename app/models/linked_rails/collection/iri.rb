@@ -44,7 +44,7 @@ module LinkedRails
 
       class << self
         def iri
-          [super, NS::AS['Collection']]
+          [super, RDF::Vocab::AS.Collection]
         end
       end
     end

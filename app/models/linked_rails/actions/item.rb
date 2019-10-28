@@ -27,11 +27,11 @@ module LinkedRails
       end
 
       def action_status
-        return NS::SCHEMA[:CompletedActionStatus] if completed
-        return NS::SCHEMA[:PotentialActionStatus] if policy_valid?
-        return LinkedRails::NS::ONTOLA[:ExpiredActionStatus] if policy_expired?
+        return RDF::Vocab::SCHEMA.CompletedActionStatus if completed
+        return RDF::Vocab::SCHEMA.PotentialActionStatus if policy_valid?
+        return Vocab::ONTOLA[:ExpiredActionStatus] if policy_expired?
 
-        LinkedRails::NS::ONTOLA[:DisabledActionStatus]
+        Vocab::ONTOLA[:DisabledActionStatus]
       end
 
       def as_json(_opts = {})
@@ -39,7 +39,7 @@ module LinkedRails
       end
 
       def available?
-        return false unless action_status == NS::SCHEMA[:PotentialActionStatus]
+        return false unless action_status == RDF::Vocab::SCHEMA.PotentialActionStatus
 
         @condition.nil? || condition
       end
@@ -110,7 +110,7 @@ module LinkedRails
       end
 
       def predicate_fallback
-        LinkedRails::NS::ONTOLA["#{tag}_action".camelize(:lower)]
+        Vocab::ONTOLA["#{tag}_action".camelize(:lower)]
       end
 
       def resource_policy

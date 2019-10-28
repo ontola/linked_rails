@@ -35,7 +35,7 @@ module LinkedRails
 
       def index_type_triple
         [
-          [parent_resource!.actions_iri, RDF[:type], NS::LL[:LoadingResource]]
+          [parent_resource!.actions_iri, RDF[:type], Vocab::LL[:LoadingResource]]
         ]
       end
 
@@ -46,13 +46,13 @@ module LinkedRails
       def triples_for_action(action)
         [
           action.predicate,
-          action.available? ? NS::SCHEMA[:potentialAction] : nil,
-          action.available? && action.favorite ? NS::ONTOLA[:favoriteAction] : nil
-        ].compact.map { |predicate| [parent_resource!.iri, predicate, action.iri, NS::ONTOLA[:replace]] }
+          action.available? ? RDF::Vocab::SCHEMA.potentialAction : nil,
+          action.available? && action.favorite ? Vocab::ONTOLA[:favoriteAction] : nil
+        ].compact.map { |predicate| [parent_resource!.iri, predicate, action.iri, Vocab::ONTOLA[:replace]] }
       end
 
       def removed_triples
-        parent_resource!.action_triples(NS::ONTOLA[:remove])
+        parent_resource!.action_triples(Vocab::ONTOLA[:remove])
       end
 
       def show_includes
@@ -65,7 +65,7 @@ module LinkedRails
 
       def redirect_action # rubocop:disable Metrics/AbcSize
         resource = LinkedRails.actions_item_class.new(
-          http_method: :get, type: NS::SCHEMA[:Action],
+          http_method: :get, type: RDF::Vocab::SCHEMA.Action,
           label: params[:label],
           target: {id: RDF::URI(params[:location])}
         )

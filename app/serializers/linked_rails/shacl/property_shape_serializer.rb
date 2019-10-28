@@ -5,23 +5,23 @@ module LinkedRails
     class PropertyShapeSerializer < ShapeSerializer
       include LinkedRails::Serializer
 
-      attribute :datatype, predicate: NS::SH[:datatype]
-      attribute :default_value, predicate: NS::SH[:defaultValue]
-      attribute :description, predicate: NS::SH[:description]
-      attribute :group, predicate: NS::SH[:group]
-      attribute :input_field, predicate: NS::ONTOLA[:inputFieldHint]
-      attribute :max_count, predicate: NS::SH[:maxCount]
-      attribute :min_count, predicate: NS::SH[:minCount]
-      attribute :max_length, predicate: NS::SH[:maxLength]
-      attribute :min_length, predicate: NS::SH[:minLength]
-      attribute :name, predicate: NS::SH[:name]
-      attribute :node, predicate: NS::SH[:node]
-      attribute :node_kind, predicate: NS::SH[:nodeKind]
-      attribute :order, predicate: NS::SH[:order]
-      attribute :pattern, predicate: NS::SH[:pattern]
-      attribute :sh_class, predicate: NS::SH[:class]
-      attribute :sh_in, predicate: NS::SH[:in]
-      attribute :path, predicate: NS::SH[:path]
+      attribute :datatype, predicate: RDF::Vocab::SH.datatype
+      attribute :default_value, predicate: RDF::Vocab::SH.defaultValue
+      attribute :description, predicate: RDF::Vocab::SH.description
+      attribute :group, predicate: RDF::Vocab::SH.group
+      attribute :input_field, predicate: Vocab::ONTOLA[:inputFieldHint]
+      attribute :max_count, predicate: RDF::Vocab::SH.maxCount
+      attribute :min_count, predicate: RDF::Vocab::SH.minCount
+      attribute :max_length, predicate: RDF::Vocab::SH.maxLength
+      attribute :min_length, predicate: RDF::Vocab::SH.minLength
+      attribute :name, predicate: RDF::Vocab::SH.name
+      attribute :node, predicate: RDF::Vocab::SH.node
+      attribute :node_kind, predicate: RDF::Vocab::SH.nodeKind
+      attribute :order, predicate: RDF::Vocab::SH.order
+      attribute :pattern, predicate: RDF::Vocab::SH.pattern
+      attribute :sh_class, predicate: RDF::Vocab::SH.class
+      attribute :sh_in, predicate: RDF::Vocab::SH.in
+      attribute :path, predicate: RDF::Vocab::SH.path
 
       def default_value
         if object.default_value.respond_to?(:call)

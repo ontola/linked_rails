@@ -20,7 +20,7 @@ module LinkedRails
                     :target_subjects_of
 
       def self.iri
-        NS::SH[:Shape]
+        RDF::Vocab::SH.Shape
       end
     end
   end

@@ -7,16 +7,16 @@ module LinkedRails
         current_resource.previously_changed_relations.flat_map do |key, value|
           relation_iri = current_resource.send(key).iri
           if key.to_s.ends_with?('_collection')
-            [[NS::SP[:Variable], NS::ONTOLA[:baseCollection], relation_iri, NS::ONTOLA[:invalidate]]]
+            [[Vocab::SP[:Variable], Vocab::ONTOLA[:baseCollection], relation_iri, delta_iri(:invalidate)]]
           elsif current_resource.send(:association_has_destructed?, key)
             [
-              [current_resource.iri, value.options[:predicate], relation_iri, NS::ONTOLA[:remove]],
-              [relation_iri, NS::SP[:Variable], NS::SP[:Variable], NS::ONTOLA[:invalidate]]
+              [current_resource.iri, value.options[:predicate], relation_iri, delta_iri(:remove)],
+              [relation_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
             ]
           else
             [
-              [current_resource.iri, value.options[:predicate], relation_iri, NS::ONTOLA[:replace]],
-              [relation_iri, NS::SP[:Variable], NS::SP[:Variable], NS::ONTOLA[:invalidate]]
+              [current_resource.iri, value.options[:predicate], relation_iri, delta_iri(:replace)],
+              [relation_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
             ]
           end
         end
@@ -34,11 +34,11 @@ module LinkedRails
       end
 
       def delta_iri(delta)
-        %i[remove replace invalidate].include?(delta) ? NS::ONTOLA[delta] : NS::LL[delta]
+        %i[remove replace invalidate].include?(delta) ? Vocab::ONTOLA[delta] : Vocab::LL[delta]
       end
 
       def invalidate_collection_delta(collection)
-        [LinkedRails::NS::SP[:Variable], NS::ONTOLA[:baseCollection], collection.iri, NS::ONTOLA[:invalidate]]
+        [Vocab::SP[:Variable], Vocab::ONTOLA[:baseCollection], collection.iri, delta_iri(:invalidate)]
       end
 
       def invalidate_parent_collections_delta(resource)
@@ -46,7 +46,7 @@ module LinkedRails
       end
 
       def invalidate_resource_delta(resource)
-        [resource.iri, LinkedRails::NS::SP[:Variable], LinkedRails::NS::SP[:Variable], NS::ONTOLA[:invalidate]]
+        [resource.iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
       end
 
       def resource_added_delta(resource)

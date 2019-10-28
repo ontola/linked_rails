@@ -2,9 +2,9 @@
 
 module LinkedRails
   class CreativeWorkSerializer < LinkedRails.serializer_parent_class
-    attribute :description, predicate: LinkedRails::NS::SCHEMA[:description]
-    attribute :name, predicate: NS::SCHEMA[:name]
-    attribute :text, predicate: NS::SCHEMA[:text]
-    attribute :url, predicate: NS::SCHEMA[:url]
+    attribute :description, predicate: LinkedRails::RDF::Vocab::SCHEMA.description
+    attribute :name, predicate: RDF::Vocab::SCHEMA.name
+    attribute :text, predicate: RDF::Vocab::SCHEMA.text
+    attribute :url, predicate: RDF::Vocab::SCHEMA.url
   end
 end

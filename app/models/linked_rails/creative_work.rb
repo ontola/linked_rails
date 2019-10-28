@@ -15,7 +15,7 @@ module LinkedRails
 
     class << self
       def iri
-        NS::SCHEMA[:CreativeWork]
+        RDF::Vocab::SCHEMA.CreativeWork
       end
     end
   end

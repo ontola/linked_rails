@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '~> 5.2.2'
   spec.add_dependency 'rdf'
   spec.add_dependency 'rdf-serializers'
+  spec.add_dependency 'rdf-vocab'
   spec.add_dependency 'uri_template'
 
   spec.add_development_dependency 'rspec-rails'

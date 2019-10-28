@@ -8,7 +8,7 @@ module LinkedRails
 
         included do
           attribute :updated_at,
-                    predicate: NS::SCHEMA[:dateModified]
+                    predicate: RDF::Vocab::SCHEMA.dateModified
         end
 
         def updated_at

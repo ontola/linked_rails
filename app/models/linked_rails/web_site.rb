@@ -6,7 +6,7 @@ module LinkedRails
 
     class << self
       def iri
-        NS::SCHEMA[:WebSite]
+        RDF::Vocab::SCHEMA.WebSite
       end
 
       def show_includes

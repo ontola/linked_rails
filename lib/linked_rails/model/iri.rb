@@ -104,7 +104,7 @@ module LinkedRails
 
         def iri_namespace
           superclass.try(:iri_namespace) ||
-            (parents.include?(LinkedRails) ? LinkedRails::NS::ONTOLA : LinkedRails.app_ns)
+            (parents.include?(LinkedRails) ? Vocab::ONTOLA : LinkedRails.app_ns)
         end
 
         def iri_template

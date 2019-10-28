@@ -15,7 +15,7 @@ module LinkedRails
       object
         &.members
         &.map
-        &.with_index { |item, index| [rdf_subject, RDF["_#{index}"], item_iri(item), NS::LL[:supplant]] } || []
+        &.with_index { |item, index| [rdf_subject, RDF["_#{index}"], item_iri(item), Vocab::LL[:supplant]] } || []
     end
 
     def rdf_subject

@@ -5,7 +5,7 @@ module LinkedRails
     class OptionSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      attribute :label, predicate: NS::SCHEMA[:name]
+      attribute :label, predicate: RDF::Vocab::SCHEMA.name
       delegate :type, to: :object
     end
   end
