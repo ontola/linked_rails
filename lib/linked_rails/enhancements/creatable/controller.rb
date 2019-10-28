@@ -2,12 +2,12 @@
 
 module LinkedRails
   module Enhancements
-    module Updateable
+    module Creatable
       module Controller
         extend ActiveSupport::Concern
 
         included do
-          active_response :update, :edit
+          active_response :new, :create
         end
       end
     end

@@ -2,7 +2,7 @@
 
 module LinkedRails
   module Enhancements
-    module Createable
+    module Creatable
       module Action
         extend ActiveSupport::Concern
 

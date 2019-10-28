@@ -2,12 +2,12 @@
 
 module LinkedRails
   module Enhancements
-    module Updateable
+    module Updatable
       module Routing; end
 
       class << self
         def route_concerns(mapper)
-          mapper.concern :updateable do
+          mapper.concern :updatable do
             mapper.member do
               mapper.get :edit
               mapper.patch :update

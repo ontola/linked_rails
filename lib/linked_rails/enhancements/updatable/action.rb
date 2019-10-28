@@ -2,7 +2,7 @@
 
 module LinkedRails
   module Enhancements
-    module Updateable
+    module Updatable
       module Action
         extend ActiveSupport::Concern
 
