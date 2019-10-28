@@ -1,0 +1,33 @@
+language: ruby
+sudo: false
+
+cache:
+  directories:
+    - vendor/bundle
+
+before_install:
+  - "travis_retry gem update --system"
+  - "travis_retry gem update bundler"
+install: bundle install --path=vendor/bundle --retry=3 --jobs=3
+
+script:
+  - bundle exec rubocop
+  - bundle exec rspec
+
+env:
+  matrix:
+    - "RAILS_VERSION=4.2"
+    - "RAILS_VERSION=5.0"
+    - "RAILS_VERSION=5.2"
+    - "RAILS_VERSION=6.0"
+    - "RAILS_VERSION=master"
+
+rvm:
+  - 2.3.5
+  - 2.4.2
+  - ruby-head
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+  fast_finish: true
