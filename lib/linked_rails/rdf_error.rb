@@ -13,8 +13,8 @@ module LinkedRails
 
     def graph
       g = ::RDF::Graph.new
-      g << [requested_url, LinkedRails::RDF::Vocab::SCHEMA.name, title] if title
-      g << [requested_url, LinkedRails::RDF::Vocab::SCHEMA.text, message]
+      g << [requested_url, RDF::Vocab::SCHEMA.name, title] if title
+      g << [requested_url, RDF::Vocab::SCHEMA.text, message]
       g << [requested_url, ::RDF[:type], type]
       g
     end

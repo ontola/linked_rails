@@ -4,7 +4,7 @@ module LinkedRails
   class CollectionSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
 
-    attribute :base_url, predicate: LinkedRails::RDF::Vocab::SCHEMA.url
+    attribute :base_url, predicate: RDF::Vocab::SCHEMA.url
     attribute :title, predicate: RDF::Vocab::AS.name
     attribute :total_count, predicate: RDF::Vocab::AS.totalItems, if: :paginated?
     attribute :iri_template, predicate: Vocab::ONTOLA[:iriTemplate]
@@ -15,7 +15,7 @@ module LinkedRails
 
     has_one :unfiltered_collection, predicate: Vocab::ONTOLA[:baseCollection]
     has_one :part_of, predicate: RDF::Vocab::SCHEMA.isPartOf
-    has_one :default_view, predicate: RDF::Vocab::AS.pages
+    has_one :default_view, predicate: Vocab::ONTOLA[:pages]
     has_many :default_filtered_collections, predicate: Vocab::ONTOLA[:filteredCollections]
 
     has_many :filters, predicate: Vocab::ONTOLA[:collectionFilter]

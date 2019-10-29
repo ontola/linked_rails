@@ -11,7 +11,7 @@ module LinkedRails
 
     class << self
       def iri
-        LinkedRails::RDF::Vocab::SCHEMA.WebPage
+        RDF::Vocab::SCHEMA.WebPage
       end
 
       def show_includes
