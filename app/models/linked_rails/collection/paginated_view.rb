@@ -26,7 +26,7 @@ module LinkedRails
       end
 
       def prepare_members(scope)
-        return super unless scope.is_a?(Array)
+        return super unless scope.is_a?(Array) && !scope.is_a?(Kaminari::PaginatableArray)
 
         Kaminari.paginate_array(super)
       end
