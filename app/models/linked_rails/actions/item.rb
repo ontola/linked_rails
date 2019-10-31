@@ -9,7 +9,7 @@ module LinkedRails
       include ActiveModel::Serialization
       include LinkedRails::Model
 
-      attr_accessor :list, :policy_arguments, :submit_label
+      attr_accessor :exclude, :list, :policy_arguments, :submit_label
       attr_writer :parent, :target, :root_relative_iri, :user_context
       delegate :resource, :user_context, to: :list, allow_nil: true
       delegate :iri_opts, to: :resource, allow_nil: true

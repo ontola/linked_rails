@@ -11,6 +11,10 @@ module LinkedRails
         parent_resource!.action_list(user_context)
       end
 
+      def actions
+        @actions ||= action_list.actions + collection_actions
+      end
+
       def authorize_action; end
 
       def collection_actions
@@ -22,7 +26,7 @@ module LinkedRails
       end
 
       def index_association
-        action_list.actions + collection_actions
+        actions.reject(&:exclude)
       end
 
       def index_includes
@@ -40,7 +44,7 @@ module LinkedRails
       end
 
       def parent_triples
-        index_association.map(&method(:triples_for_action)).flatten(1)
+        actions.map(&method(:triples_for_action)).flatten(1)
       end
 
       def triples_for_action(action)
