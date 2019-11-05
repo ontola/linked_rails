@@ -62,7 +62,9 @@ module LinkedRails
       end
 
       def prepare_members(scope)
-        scope = scope.preload(association_class.includes_for_serializer) if scope.respond_to?(:preload)
+        if scope.respond_to?(:preload) && include_map.present?
+          scope = scope.preload(association_class.includes_for_serializer)
+        end
         scope = scope.reorder(parsed_sort_values) if scope.respond_to?(:reorder)
         scope
       end

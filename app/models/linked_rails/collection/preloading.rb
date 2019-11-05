@@ -19,7 +19,7 @@ module LinkedRails
 
       def preload_association(key, includes)
         preload = preload_keys(association_class, key, includes)
-        ActiveRecord::Associations::Preloader.new.preload(raw_members, key => preload) if preload
+        ActiveRecord::Associations::Preloader.new.preload(raw_members, key => preload) if preload.present?
       end
 
       def preload_keys(klass, key, includes)
