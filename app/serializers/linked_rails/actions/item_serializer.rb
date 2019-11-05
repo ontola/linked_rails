@@ -11,6 +11,7 @@ module LinkedRails
       attribute :action_status, predicate: RDF::Vocab::SCHEMA.actionStatus
       attribute :favorite, predicate: Vocab::ONTOLA[:favoriteAction]
       attribute :url, predicate: RDF::Vocab::SCHEMA.url
+      attribute :error, predicate: RDF::Vocab::SCHEMA.error
 
       has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf
       has_one :resource, predicate: RDF::Vocab::SCHEMA.object

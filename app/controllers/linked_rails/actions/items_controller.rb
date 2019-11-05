@@ -34,29 +34,23 @@ module LinkedRails
       end
 
       def index_meta
-        parent_triples + removed_triples + index_type_triple
-      end
-
-      def index_type_triple
-        [
-          [parent_resource!.actions_iri, RDF[:type], Vocab::LL[:LoadingResource]]
-        ]
-      end
-
-      def parent_triples
-        actions.map(&method(:triples_for_action)).flatten(1)
+        actions.map(&method(:triples_for_action)).flatten(1) + removed_triples
       end
 
       def triples_for_action(action)
         [
-          action.predicate,
           action.available? ? RDF::Vocab::SCHEMA.potentialAction : nil,
           action.available? && action.favorite ? Vocab::ONTOLA[:favoriteAction] : nil
-        ].compact.map { |predicate| [parent_resource!.iri, predicate, action.iri, Vocab::ONTOLA[:replace]] }
+        ].compact.map { |predicate| [parent_resource!.iri, predicate, action.iri, delta_iri(:replace)] }
       end
 
       def removed_triples
-        parent_resource!.action_triples(Vocab::ONTOLA[:remove])
+        %i[potentialAction favoriteAction].map do |type|
+          [
+            [parent_resource!.iri, Vocab::ONTOLA[type], parent_resource!.actions_iri(type), delta_iri(:remove)],
+            [parent_resource!.actions_iri(type), RDF[:type], Vocab::LL[:LoadingResource]]
+          ]
+        end.flatten(1)
       end
 
       def show_includes

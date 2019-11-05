@@ -56,7 +56,7 @@ module LinkedRails
 
         def resource(**opts)
           response_headers(opts)
-          if opts[:resource].blank? || head_request?
+          if (opts[:resource].blank? && opts[:meta].blank?) || head_request?
             controller.head 200, location: opts[:location]
           else
             opts[format] = opts.delete(:resource)

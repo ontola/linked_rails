@@ -29,21 +29,27 @@ module LinkedRails
           @action_list[user_context] ||= self.class.action_list.new(resource: self, user_context: user_context)
         end
 
-        def action_triples(graph = Vocab::ONTOLA[:replace])
-          predicates = actions&.map(&:predicate) || []
-          predicates += [RDF::Vocab::SCHEMA.potentialAction, Vocab::ONTOLA[:favoriteAction]]
-          predicates << Vocab::ONTOLA[:createAction] if try(:collections).present?
-          predicates.map { |predicate| [iri, predicate, actions_iri, graph].compact } + invalidate_actions_iri_triple
+        def action_triples
+          (actions + collection_actions).map do |action|
+            [iri, action.predicate, action.iri]
+          end + [
+            [iri, RDF::Vocab::SCHEMA.potentialAction, actions_iri(:potentialAction)],
+            [iri, LinkedRails::Vocab::ONTOLA[:favoriteAction], actions_iri(:favoriteAction)]
+          ]
         end
 
-        def actions_iri
+        def actions_iri(tag)
           @actions_iri ||= iri_with_root(RDF::URI(iri_template_expand_path(iri_template, '/actions').expand(iri_opts)))
+
+          return @actions_iri if tag.blank?
+
+          RDF::URI("#{@actions_iri}##{tag}")
         end
 
         private
 
-        def invalidate_actions_iri_triple
-          [[actions_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], Vocab::ONTOLA[:invalidate]]]
+        def collection_actions
+          (try(:collections) || []).map { |opts| collection_for(opts[:name]).actions }.flatten
         end
 
         module ClassMethods

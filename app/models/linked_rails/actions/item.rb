@@ -27,11 +27,16 @@ module LinkedRails
       end
 
       def action_status
-        return RDF::Vocab::SCHEMA.CompletedActionStatus if completed
-        return RDF::Vocab::SCHEMA.PotentialActionStatus if policy_valid?
-        return Vocab::ONTOLA[:ExpiredActionStatus] if policy_expired?
-
-        Vocab::ONTOLA[:DisabledActionStatus]
+        @action_status ||=
+          if completed
+            RDF::Vocab::SCHEMA.CompletedActionStatus
+          elsif policy_valid?
+            RDF::Vocab::SCHEMA.PotentialActionStatus
+          elsif policy_expired?
+            Vocab::ONTOLA[:ExpiredActionStatus]
+          else
+            Vocab::ONTOLA[:DisabledActionStatus]
+          end
       end
 
       def as_json(_opts = {})
@@ -42,6 +47,10 @@ module LinkedRails
         return false unless action_status == RDF::Vocab::SCHEMA.PotentialActionStatus
 
         @condition.nil? || condition
+      end
+
+      def error
+        I18n.t("actions.status.#{action_status.to_s.split('/').last}")
       end
 
       def included_resource
@@ -64,6 +73,10 @@ module LinkedRails
         return @root_relative_iri = value if value
 
         super
+      end
+
+      def same_as
+        parent.actions_iri(tag)
       end
 
       def iri_template
