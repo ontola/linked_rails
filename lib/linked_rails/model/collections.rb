@@ -58,7 +58,7 @@ module LinkedRails
         opts[:filter] ||= {}
         opts[:part_of] = opts.key?(:part_of) ? send(opts[:part_of]) : self
         collection = collection_class.new(opts)
-        @collection_instances[name] = collection if opts[:filter].blank?
+        @collection_instances[name] = collection if opts[:filter].blank? && opts[:user_context].present?
         collection
       end
 
