@@ -59,7 +59,7 @@ module LinkedRails
           if (opts[:resource].blank? && opts[:meta].blank?) || head_request?
             controller.head 200, location: opts[:location]
           else
-            opts[format] = opts.delete(:resource)
+            opts[format] = opts.delete(:resource) || []
             controller.render opts
           end
         end
