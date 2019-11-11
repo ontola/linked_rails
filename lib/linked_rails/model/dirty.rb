@@ -42,7 +42,7 @@ module LinkedRails
             association_key = key.to_s.ends_with?('_collection') ? send(key).association : key
             association_has_destructed?(association_key) || association_changed?(association_key)
           end
-        end
+        end.with_indifferent_access
       end
 
       private
@@ -70,9 +70,9 @@ module LinkedRails
         return false unless nested_attributes_options[association_name][:allow_destroy]
 
         if attributes.is_a?(Array)
-          attributes.any? { |attrs| has_destroy_flag?(attrs) }
+          attributes.any? { |attrs| has_destroy_flag?(attrs.with_indifferent_access) }
         else
-          has_destroy_flag?(attributes)
+          has_destroy_flag?(attributes.with_indifferent_access)
         end
       end
     end

@@ -6,18 +6,19 @@ module LinkedRails
       def changed_relations_triples # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         current_resource.previously_changed_relations.flat_map do |key, value|
           relation_iri = current_resource.send(key).iri
+          predicate = value.options[:predicate]
           if key.to_s.ends_with?('_collection')
             [[Vocab::SP[:Variable], Vocab::ONTOLA[:baseCollection], relation_iri, delta_iri(:invalidate)]]
           elsif current_resource.send(:association_has_destructed?, key)
             [
-              [current_resource.iri, value.options[:predicate], relation_iri, delta_iri(:remove)],
+              predicate ? [current_resource.iri, predicate, relation_iri, delta_iri(:remove)] : nil,
               [relation_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
-            ]
+            ].compact
           else
             [
-              [current_resource.iri, value.options[:predicate], relation_iri, delta_iri(:replace)],
+              predicate ? [current_resource.iri, predicate, relation_iri, delta_iri(:replace)] : nil,
               [relation_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
-            ]
+            ].compact
           end
         end
       end
