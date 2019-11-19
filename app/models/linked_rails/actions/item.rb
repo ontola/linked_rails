@@ -50,7 +50,7 @@ module LinkedRails
       end
 
       def error
-        I18n.t("actions.status.#{action_status.to_s.split('/').last}")
+        I18n.t("actions.status.#{action_status.to_s.split('/').last}", default: nil)
       end
 
       def included_resource
