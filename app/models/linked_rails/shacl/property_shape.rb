@@ -37,8 +37,8 @@ module LinkedRails
                     :validators
       attr_writer :default_value, :description, :min_count, :model_name
 
-      validations [:min_length, ActiveRecord::Validations::LengthValidator, :minimum],
-                  [:max_length, ActiveRecord::Validations::LengthValidator, :maximum],
+      validations [:min_length, ActiveModel::Validations::LengthValidator, :minimum],
+                  [:max_length, ActiveModel::Validations::LengthValidator, :maximum],
                   [:pattern, ActiveModel::Validations::FormatValidator, :with],
                   [:sh_in, ActiveModel::Validations::InclusionValidator, :in]
 
@@ -52,7 +52,7 @@ module LinkedRails
       end
 
       def min_count
-        @min_count || (validator_by_class(ActiveRecord::Validations::PresenceValidator).present? ? 1 : nil)
+        @min_count || (validator_by_class(ActiveModel::Validations::PresenceValidator).present? ? 1 : nil)
       end
 
       def model_name
