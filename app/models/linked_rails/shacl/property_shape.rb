@@ -72,7 +72,7 @@ module LinkedRails
 
       def apply_if_option(option)
         return form.target.send(option) if option.is_a?(Symbol)
-        return form.target.instance_exec(option) if option.respond_to?(:call)
+        return form.target.instance_exec(&option) if option.respond_to?(:call)
       end
 
       def default_value_from_sh_in(value)
