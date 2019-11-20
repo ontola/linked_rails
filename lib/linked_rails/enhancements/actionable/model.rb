@@ -40,10 +40,8 @@ module LinkedRails
 
         def actions_iri(tag)
           @actions_iri ||= iri_with_root(RDF::URI(iri_template_expand_path(iri_template, '/actions').expand(iri_opts)))
-
-          return @actions_iri if tag.blank?
-
-          RDF::URI("#{@actions_iri}##{tag}")
+          @actions_iri.fragment = tag if tag.present?
+          @actions_iri
         end
 
         private
