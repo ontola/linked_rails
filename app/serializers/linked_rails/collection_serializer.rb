@@ -36,10 +36,10 @@ module LinkedRails
     end
 
     def columns
-      case object.display
-      when 'table'
+      case object.display&.to_sym
+      when :table
         columns_list = object.association_class.try(:defined_columns).try(:[], :default)
-      when 'settingsTable'
+      when :settingsTable
         columns_list = object.association_class.try(:defined_columns).try(:[], :settings)
       end
       RDF::List[*columns_list] if columns_list.present?
