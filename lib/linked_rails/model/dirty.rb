@@ -48,12 +48,13 @@ module LinkedRails
       private
 
       def association_changed?(association)
+        return true if previous_changes.include?("#{association}_id")
         return false unless try(:association_cached?, association)
 
         if self.class.reflect_on_association(association).collection?
           send(association).any? { |a| a.previous_changes.present? }
         else
-          previous_changes.include?("#{association}_id") || send(association)&.previous_changes&.present?
+          send(association)&.previous_changes&.present?
         end
       end
 
