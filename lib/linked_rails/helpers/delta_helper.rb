@@ -34,12 +34,15 @@ module LinkedRails
       def changes_triples # rubocop:disable Metrics/AbcSize
         serializer = ActiveModelSerializers::SerializableResource.new(current_resource, {}).serializer_instance
         current_resource.previous_changes_by_predicate.map do |predicate, (_old_value, _new_value)|
-          attr_name = current_resource.class.predicate_mapping[predicate].name
+          serializer_attributes = current_resource.class.predicate_mapping[predicate]
+          next if serializer_attributes.is_a?(ActiveModel::Serializer::Reflection)
+
+          attr_name = serializer_attributes.name
           serialized_value = serializer.read_attribute_for_serialization(attr_name)
           (serialized_value.is_a?(Array) ? serialized_value : [serialized_value]).map do |value|
             change_triple(predicate, value)
           end
-        end.flatten
+        end.compact.flatten
       end
 
       def delta_iri(delta)
