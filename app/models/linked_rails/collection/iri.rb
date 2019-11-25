@@ -15,7 +15,7 @@ module LinkedRails
 
       def iri_opts
         opts = {}
-        iri_opts_add(opts, :display, display)
+        iri_opts_add(opts, :display, display) if @display
         iri_opts_add(opts, :type, type) if @type
         iri_opts_add(opts, :page_size, page_size) if @page_size
         iri_opts_add(opts, :'filter%5B%5D', filter_iri_opts)

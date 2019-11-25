@@ -12,7 +12,7 @@ require_relative 'collection/paginated_view'
 require_relative 'collection/infinite_view'
 
 module LinkedRails
-  class Collection
+  class Collection # rubocop:disable Metrics/ClassLength
     include ActiveModel::Serialization
     include ActiveModel::Model
     include LinkedRails::Model::Enhancements
@@ -23,9 +23,9 @@ module LinkedRails
 
     enhance LinkedRails::Enhancements::Actionable
 
-    attr_accessor :association, :association_class, :association_scope, :display, :include_map, :joins, :name,
+    attr_accessor :association, :association_class, :association_scope, :include_map, :joins, :name,
                   :parent, :part_of, :user_context, :page_size, :policy
-    attr_writer :association_base, :default_type, :title, :type, :views
+    attr_writer :association_base, :default_display, :default_type, :display, :title, :type, :views
 
     def action_list(user_context)
       association_class.try(:action_list)&.new(resource: self, user_context: user_context)
@@ -57,6 +57,10 @@ module LinkedRails
 
     def default_view
       @default_view ||= view_with_opts(default_view_opts)
+    end
+
+    def display
+      @display&.to_sym || default_display
     end
 
     def first
@@ -116,6 +120,10 @@ module LinkedRails
     end
 
     private
+
+    def default_display
+      @default_display || association_class.try(:default_collection_display)
+    end
 
     def default_type
       @default_type || association_class.try(:default_collection_type) || :paginated
