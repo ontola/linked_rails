@@ -21,8 +21,8 @@ module LinkedRails
           return if enhanced_with?(enhancement)
 
           self.enhancements[enhancement] = opts
-          enhance_routing(enhancement) if enhancement.const_defined?(:Routing)
-          include enhancement::Model if enhancement.const_defined?(:Model)
+          enhance_routing(enhancement) if enhancement.const_defined?(:Routing) && enhancement_module?(opts, :Routing)
+          include enhancement::Model if enhancement.const_defined?(:Model) && enhancement_module?(opts, :Model)
         end
 
         def enhanced_with?(enhancement)
