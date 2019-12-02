@@ -34,7 +34,9 @@ module LinkedRails
             [iri, action.predicate, action.iri]
           end + [
             [iri, RDF::Vocab::SCHEMA.potentialAction, actions_iri(:potentialAction)],
-            [iri, LinkedRails::Vocab::ONTOLA[:favoriteAction], actions_iri(:favoriteAction)]
+            [iri, LinkedRails::Vocab::ONTOLA[:favoriteAction], actions_iri(:favoriteAction)],
+            [actions_iri(:potentialAction), Vocab::SP[:Variable], Vocab::SP[:Variable], Vocab::ONTOLA[:invalidate]],
+            [actions_iri(:favoriteAction), Vocab::SP[:Variable], Vocab::SP[:Variable], Vocab::ONTOLA[:invalidate]]
           ]
         end
 

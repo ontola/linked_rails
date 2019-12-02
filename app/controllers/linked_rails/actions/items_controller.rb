@@ -46,8 +46,11 @@ module LinkedRails
 
       def removed_triples
         %i[potentialAction favoriteAction].map do |type|
-          [parent_resource!.iri, Vocab::ONTOLA[type], parent_resource!.actions_iri(type), delta_iri(:remove)]
-        end
+          [
+            [parent_resource!.iri, NS::ONTOLA[type], parent_resource!.actions_iri(type), delta_iri(:remove)],
+            [parent_resource!.actions_iri(type), RDF[:type], NS::LL[:LoadingResource]]
+          ]
+        end.flatten(1)
       end
 
       def show_includes
