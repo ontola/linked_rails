@@ -29,7 +29,7 @@ module LinkedRails
           @action_list[user_context] ||= self.class.action_list.new(resource: self, user_context: user_context)
         end
 
-        def action_triples
+        def action_triples # rubocop:disable Metrics/AbcSize
           (actions + collection_actions).map do |action|
             [iri, action.predicate, action.iri]
           end + [
