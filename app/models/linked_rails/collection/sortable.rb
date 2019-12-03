@@ -18,8 +18,16 @@ module LinkedRails
         opts.respond_to?(:call) ? opts.call(parent) : opts
       end
 
+      def parsed_sort_values
+        sortings.map(&:sort_value)
+      end
+
       def sort_direction
         @sort_direction ||= sortings.last.sort_value.values.first == :desc ? :lt : :gt
+      end
+
+      def sorted_association(scope)
+        scope.respond_to?(:reorder) ? scope.reorder(parsed_sort_values) : scope
       end
 
       def sorted?

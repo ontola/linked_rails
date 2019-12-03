@@ -48,7 +48,7 @@ module LinkedRails
     end
 
     def association_base
-      @association_base ||= apply_scope(filtered_association, scope: policy && policy::Scope)
+      @association_base ||= apply_scope(sorted_association(filtered_association), scope: policy && policy::Scope)
     end
 
     def default_page_size
