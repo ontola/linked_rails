@@ -55,6 +55,13 @@ module LinkedRails
     )
   end
 
+  Translate.translations_for(:property, :helper_text) do |object|
+    I18n.t(
+      "properties.#{object.model_name&.to_s&.tableize}.#{object.model_attribute}.helper_text",
+      default: [:"actions.default.#{object.model_attribute}.helper_text", '']
+    )
+  end
+
   Translate.translations_for(:property, :label) do |object|
     I18n.t(
       "properties.#{object.model_name&.to_s&.tableize}.#{object.model_attribute}.label",

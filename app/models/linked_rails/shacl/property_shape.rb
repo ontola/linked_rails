@@ -35,7 +35,7 @@ module LinkedRails
                     :order,
                     :path,
                     :validators
-      attr_writer :default_value, :description, :min_count, :model_name
+      attr_writer :default_value, :description, :helper_text, :min_count, :model_name
 
       validations [:min_length, ActiveModel::Validations::LengthValidator, :minimum],
                   [:max_length, ActiveModel::Validations::LengthValidator, :maximum],
@@ -49,6 +49,10 @@ module LinkedRails
       # The placeholder of the property.
       def description
         description_from_attribute || LinkedRails.translate(:property, :description, self)
+      end
+
+      def helper_text
+        helper_text_from_attribute || LinkedRails.translate(:property, :helper_text, self)
       end
 
       def min_count
@@ -89,6 +93,12 @@ module LinkedRails
         return if @description.blank?
 
         @description.respond_to?(:call) ? form.instance_exec(&@description) : @description
+      end
+
+      def helper_text_from_attribute
+        return if @helper_text.blank?
+
+        @helper_text.respond_to?(:call) ? form.instance_exec(&@helper_text) : @helper_text
       end
 
       def sanitized_default_value(value)

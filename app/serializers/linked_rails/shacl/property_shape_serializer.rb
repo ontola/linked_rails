@@ -9,6 +9,7 @@ module LinkedRails
       attribute :default_value, predicate: RDF::Vocab::SH.defaultValue
       attribute :description, predicate: RDF::Vocab::SH.description
       attribute :group, predicate: RDF::Vocab::SH.group
+      attribute :helper_text, predicate: Vocab::ONTOLA[:helperText]
       attribute :input_field, predicate: Vocab::ONTOLA[:inputFieldHint]
       attribute :max_count, predicate: RDF::Vocab::SH.maxCount
       attribute :min_count, predicate: RDF::Vocab::SH.minCount
