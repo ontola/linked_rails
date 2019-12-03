@@ -42,7 +42,7 @@ module LinkedRails
       end
 
       def parent_collections(user_context)
-        return [] if try(:parent).blank?
+        return [] if try(:parent).try(:collections).blank?
 
         parent
           .collections
