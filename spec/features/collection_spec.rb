@@ -98,13 +98,15 @@ describe LinkedRails::Collection do
 
     subject { collection.association_base.to_sql }
 
-    let(:result) { 'SELECT "records".* FROM "records"' }
+    let(:result) { 'SELECT "records".* FROM "records" ORDER BY "records"."created_at" DESC' }
 
     it { is_expected.to eq(result) }
 
     context 'with filters' do
       let(:user_context) { {admin: false} }
-      let(:result) { 'SELECT "records".* FROM "records" WHERE "records"."admin" = \'f\'' }
+      let(:result) do
+        'SELECT "records".* FROM "records" WHERE "records"."admin" = \'f\' ORDER BY "records"."created_at" DESC'
+      end
 
       it { is_expected.to eq(result) }
     end
