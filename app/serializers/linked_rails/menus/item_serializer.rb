@@ -31,7 +31,7 @@ module LinkedRails
       end
 
       def menus_present?
-        object.menu_sequence.present?
+        object.instance_variables.include?(:@menus)
       end
 
       def type
