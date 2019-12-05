@@ -30,6 +30,10 @@ module LinkedRails
 
       private
 
+      def default_label(tag, options)
+        I18n.t("menus.#{resource&.class&.name&.tableize}.#{tag}", options[:label_params])
+      end
+
       def menu_available?(_tag, options)
         options[:condition].nil? || call_option(options[:condition], resource)
       end
@@ -40,7 +44,7 @@ module LinkedRails
         end
         options[:label_params] ||= {}
         options[:label_params][:default] ||= ["menus.default.#{tag}".to_sym, tag.to_s.capitalize]
-        options[:label] ||= I18n.t("menus.#{resource&.class&.name&.tableize}.#{tag}", options[:label_params])
+        options[:label] ||= default_label(tag, options)
         options.except!(:policy_resource, :policy, :policy_arguments, :label_params)
         LinkedRails.menus_item_class.new(resource: resource, tag: tag, parent: self, **options)
       end
