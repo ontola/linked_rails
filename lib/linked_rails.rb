@@ -39,7 +39,7 @@ module LinkedRails
     RDF::URI.new({scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(opts))
   end
 
-  %i[collection entry_point].each { |klass| configurable_class(nil, klass) }
+  %i[collection entry_point vocabulary].each { |klass| configurable_class(nil, klass) }
   %i[filter sorting view infinite_view paginated_view].each { |klass| configurable_class(:collection, klass) }
   configurable_class(:actions, :item)
   configurable_class(:menus, :item)
