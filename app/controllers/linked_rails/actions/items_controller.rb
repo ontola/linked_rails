@@ -63,7 +63,8 @@ module LinkedRails
 
       def redirect_action # rubocop:disable Metrics/AbcSize
         resource = LinkedRails.actions_item_class.new(
-          http_method: :get, type: RDF::Vocab::SCHEMA.Action,
+          http_method: :get,
+          type: RDF::Vocab::SCHEMA.Action,
           label: params[:label],
           target: {id: RDF::URI(params[:location])}
         )

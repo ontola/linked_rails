@@ -10,12 +10,12 @@ module LinkedRails
       include LinkedRails::Model
 
       attr_accessor :exclude, :list, :policy_arguments, :submit_label
-      attr_writer :parent, :target, :root_relative_iri, :user_context
-      delegate :resource, :user_context, to: :list, allow_nil: true
+      attr_writer :parent, :resource, :root_relative_iri, :target, :user_context
+      delegate :user_context, to: :list, allow_nil: true
       delegate :iri_opts, to: :resource, allow_nil: true
 
       %i[description result type policy label image url include_resource collection condition form completed
-         tag http_method favorite path policy_resource predicate].each do |method|
+         tag http_method favorite path policy_resource predicate resource].each do |method|
         attr_writer method
         define_method method do
           var = instance_variable_get(:"@#{method}")
@@ -124,6 +124,10 @@ module LinkedRails
 
       def predicate_fallback
         Vocab::ONTOLA["#{tag}_action".camelize(:lower)]
+      end
+
+      def resource_fallback
+        list&.resource
       end
 
       def resource_policy
