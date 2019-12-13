@@ -29,8 +29,8 @@ module LinkedRails
           @action_list[user_context] ||= self.class.action_list.new(resource: self, user_context: user_context)
         end
 
-        def action_triples # rubocop:disable Metrics/AbcSize
-          (actions + collection_actions).map do |action|
+        def action_triples(user_context) # rubocop:disable Metrics/AbcSize
+          (actions(user_context) + collection_actions(user_context)).map do |action|
             [iri, action.predicate, action.iri]
           end + [
             [iri, RDF::Vocab::SCHEMA.potentialAction, actions_iri(:potentialAction)],
@@ -48,8 +48,8 @@ module LinkedRails
 
         private
 
-        def collection_actions
-          (try(:collections) || []).map { |opts| collection_for(opts[:name]).actions }.flatten
+        def collection_actions(user_context)
+          (try(:collections) || []).map { |opts| collection_for(opts[:name]).actions(user_context) }.flatten
         end
 
         module ClassMethods
