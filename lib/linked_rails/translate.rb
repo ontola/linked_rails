@@ -5,6 +5,14 @@ module LinkedRails
     Translate.call(*args)
   end
 
+  def self.translations(translation)
+    I18n.available_locales.map do |locale|
+      I18n.with_locale(locale) do
+        RDF::Literal.new(translation.call, language: locale)
+      end
+    end
+  end
+
   class Translate
     cattr_accessor :strategies, default: {}
 
