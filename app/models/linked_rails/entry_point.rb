@@ -7,7 +7,8 @@ module LinkedRails
     include LinkedRails::Model
 
     attr_accessor :parent
-    delegate :form, :description, :iri_opts, :url, :http_method, :image, :user_context,
+    attr_writer :url
+    delegate :form, :description, :iri_opts, :http_method, :image, :user_context,
              :resource, :tag, :translation_key, to: :parent
 
     def action_body
@@ -30,6 +31,10 @@ module LinkedRails
 
     def target
       @target ||= parent.collection ? build_target : resource
+    end
+
+    def url
+      @url || parent.url
     end
 
     private
