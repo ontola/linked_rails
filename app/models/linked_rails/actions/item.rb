@@ -4,15 +4,14 @@ require 'pundit'
 
 module LinkedRails
   module Actions
-    class Item
+    class Item # rubocop:disable Metrics/ClassLength
       include ActiveModel::Model
       include ActiveModel::Serialization
       include LinkedRails::Model
 
       attr_accessor :exclude, :list, :policy_arguments, :submit_label
-      attr_writer :parent, :resource, :root_relative_iri, :target, :user_context
+      attr_writer :parent, :resource, :root_relative_canonical_iri, :root_relative_iri, :target, :user_context
       delegate :user_context, to: :list, allow_nil: true
-      delegate :iri_opts, to: :resource, allow_nil: true
 
       %i[description result type policy label image url include_resource collection condition form completed
          tag http_method favorite path policy_resource predicate resource].each do |method|
@@ -67,8 +66,16 @@ module LinkedRails
         end
       end
 
+      def root_relative_canonical_iri(_opts = {})
+        value = root_relative_canonical_iri_from_var
+        value = RDF::URI(value) unless value.blank? || value.is_a?(RDF::URI)
+        return @root_relative_canonical_iri = value if value
+
+        super
+      end
+
       def root_relative_iri(_opts = {})
-        value = @root_relative_iri.respond_to?(:call) ? list.instance_exec(&@root_relative_iri) : @root_relative_iri
+        value = root_relative_iri_from_var
         value = RDF::URI(value) unless value.blank? || value.is_a?(RDF::URI)
         return @root_relative_iri = value if value
 
@@ -77,6 +84,10 @@ module LinkedRails
 
       def same_as
         parent.actions_iri(tag)
+      end
+
+      def iri_opts
+        resource&.iri_opts || {}
       end
 
       def iri_template
@@ -132,6 +143,22 @@ module LinkedRails
 
       def resource_policy
         @resource_policy ||= Pundit.policy!(user_context, policy_resource)
+      end
+
+      def root_relative_canonical_iri_from_var
+        return list.instance_exec(&@root_relative_canonical_iri) if @root_relative_canonical_iri.respond_to?(:call)
+
+        @root_relative_canonical_iri
+      end
+
+      def root_relative_iri_from_var
+        return list.instance_exec(&@root_relative_iri) if @root_relative_iri.respond_to?(:call)
+
+        @root_relative_iri
+      end
+
+      def type_fallback
+        RDF::Vocab::SCHEMA.UpdateAction
       end
     end
   end
