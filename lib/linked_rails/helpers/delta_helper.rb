@@ -54,7 +54,7 @@ module LinkedRails
       end
 
       def invalidate_parent_collections_delta(resource)
-        resource.parent_collections(try(:user_context)).map(&method(:invalidate_collection_delta))
+        resource&.parent_collections(try(:user_context))&.map(&method(:invalidate_collection_delta)) || []
       end
 
       def invalidate_resource_delta(resource)
