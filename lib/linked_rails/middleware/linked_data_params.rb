@@ -138,6 +138,8 @@ module LinkedRails
 
       def parsed_association(object, klass, association)
         reflection = klass.reflect_on_association(association)
+        raise "Association #{association} not found for #{klass}" if reflection.blank?
+
         association_klass = reflection.klass
         if graph.has_subject?(object)
           nested_attributes(object, association_klass, association, reflection.collection?)
