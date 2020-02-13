@@ -53,7 +53,7 @@ module LinkedRails
         status ||= error_status(error)
         error = error_resource(status, error)
         add_error_snackbar(error) if add_error_snackbar?(error)
-        render type => type == :json ? error.to_json : error.graph, status: status
+        render type => error, status: status
       end
 
       def error_status(error)
