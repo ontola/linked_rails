@@ -18,14 +18,14 @@ Gem::Specification.new do |spec|
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
   spec.add_dependency 'active_response'
-  spec.add_dependency 'kaminari'
+  spec.add_dependency 'kaminari-activerecord'
   spec.add_dependency 'pundit'
-  spec.add_dependency 'rails', '~> 5.2.2'
   spec.add_dependency 'rdf'
   spec.add_dependency 'rdf-serializers'
   spec.add_dependency 'rdf-vocab'
   spec.add_dependency 'uri_template'
 
+  spec.add_development_dependency 'rails'
   spec.add_development_dependency 'rspec-rails'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'sqlite3'

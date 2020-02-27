@@ -2,7 +2,7 @@
 
 require 'active_response'
 require 'active_model_serializers'
-require 'kaminari'
+require 'kaminari/activerecord'
 require 'rdf'
 require 'rdf/vocab'
 require 'uri_template'
