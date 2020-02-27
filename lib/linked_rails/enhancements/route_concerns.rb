@@ -34,11 +34,11 @@ module ActionDispatch
       def add_missing_concern(enhancement)
         return if @concerns.include?(concern_key_from_enhancement(enhancement))
 
-        enhancement.parent.route_concerns(self)
+        module_parent_for(enhancement).route_concerns(self)
       end
 
       def concern_key_from_enhancement(enhancement)
-        enhancement.parent.to_s.demodulize.underscore.to_sym
+        module_parent_for(enhancement).to_s.demodulize.underscore.to_sym
       end
 
       def route_concerns_for(klass)
@@ -46,6 +46,10 @@ module ActionDispatch
           .enhancement_modules(:Routing)
           .each(&method(:add_missing_concern))
           .map(&method(:concern_key_from_enhancement))
+      end
+
+      def module_parent_for(klass)
+        Rails.version < '6' ? klass.parent : klass.module_parent
       end
     end
   end

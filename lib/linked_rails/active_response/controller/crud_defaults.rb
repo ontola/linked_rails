@@ -17,7 +17,7 @@ module LinkedRails
         def default_form_options(action)
           return super unless active_responder.is_a?(RDFResponder)
 
-          action = ld_action(super.slice(:resource, :view))
+          action = ld_action(**super.slice(:resource, :view))
           {
             action: action || raise("No action found for #{action_name}"),
             include: action_form_includes(action)

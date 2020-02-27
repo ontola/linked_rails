@@ -36,7 +36,7 @@ module LinkedRails
   end
 
   def self.iri(opts = {})
-    RDF::URI.new({scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(opts))
+    RDF::URI.new(**{scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(opts))
   end
 
   %i[collection entry_point vocabulary].each { |klass| configurable_class(nil, klass) }
