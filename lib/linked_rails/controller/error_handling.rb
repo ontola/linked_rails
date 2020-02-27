@@ -63,7 +63,7 @@ module LinkedRails
       module ClassMethods
         def error_types
           @error_types =
-            YAML.safe_load(File.read(Rails.root.join('config', 'errors.yml'))).with_indifferent_access.freeze
+            YAML.safe_load(File.read(Rails.root.join('config/errors.yml'))).with_indifferent_access.freeze
         end
       end
     end

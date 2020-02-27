@@ -7,8 +7,8 @@ AllCops:
   UseCache: true
   CacheRootDirectory: tmp
 
-Rails:
-  Enabled: true
+require:
+  - rubocop-rails
 
 Bundler/DuplicatedGem:
   Enabled: false
@@ -30,7 +30,7 @@ Metrics/ClassLength:
   Exclude:
     - test/**/*.rb
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
 
 Metrics/MethodLength:

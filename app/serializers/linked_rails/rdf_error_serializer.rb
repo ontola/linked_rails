@@ -6,8 +6,6 @@ module LinkedRails
     attribute :title, predicate: NS::SCHEMA.name
     attribute :message, predicate: NS::SCHEMA.text
 
-    def type
-      object.type
-    end
+    delegate :type, to: :object
   end
 end
