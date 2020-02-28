@@ -80,16 +80,6 @@ module LinkedRails
         ]
       end
 
-      def opts_from_route(route, method = 'GET', klass: nil)
-        opts = Rails.application.routes.recognize_path(route, method: method)
-        route_klass = opts[:controller]&.classify&.safe_constantize
-        return {} unless klass.nil? || route_klass.present? && klass <=> route_klass
-
-        opts
-      rescue ActionController::RoutingError
-        {}
-      end
-
       # Converts a serialized graph from a multipart request body to a nested
       # attributes hash.
       #
@@ -102,9 +92,11 @@ module LinkedRails
       def params_from_graph
         @graph = graph_from_request
 
-        target_class = graph && target_class_from_path
+        return unless graph
+
+        target_class = target_class_from_path
         if target_class.blank?
-          logger.info("No class found for #{request.env['PATH_INFO']}") if graph
+          logger.info("No class found for #{request.env['REQUEST_URI']}") if graph
           return
         end
 
@@ -114,7 +106,7 @@ module LinkedRails
 
       def parse_nested_resource(subject, klass)
         resource = parse_resource(subject, klass)
-        resource[:id] ||= opts_from_route(subject.to_s, klass: klass)[:id]
+        resource[:id] ||= LinkedRails.opts_from_iri(subject)[:id] if subject.iri?
         resource
       end
 
@@ -144,7 +136,7 @@ module LinkedRails
         if graph.has_subject?(object)
           nested_attributes(object, association_klass, association, reflection.collection?)
         elsif object.iri?
-          ["#{association}_id", opts_from_route(object.to_s, klass: association_klass)[:id]]
+          ["#{association}_id", LinkedRails.opts_from_iri(object)[:id]]
         end
       end
 
@@ -158,8 +150,8 @@ module LinkedRails
         field
       end
 
-      def target_class_from_path
-        opts = opts_from_route(request.env['PATH_INFO'], request.request_method)
+      def target_class_from_path # rubocop:disable Metrics/AbcSize
+        opts = LinkedRails.opts_from_iri(request.base_url + request.env['REQUEST_URI'], method: request.request_method)
         return if opts.blank?
 
         controller = "#{opts[:controller]}_controller".classify.constantize

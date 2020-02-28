@@ -3,17 +3,6 @@
 module LinkedRails
   module Helpers
     module ResourceHelper
-      def opts_from_iri(iri)
-        opts = Rails.application.routes.recognize_path(iri)
-
-        return {} unless opts[:id].present? && opts[:controller].present?
-
-        opts[:type] = opts[:controller].singularize
-        opts
-      rescue ActionController::RoutingError
-        {}
-      end
-
       def params_for_parent
         params.dup
       end
@@ -30,7 +19,7 @@ module LinkedRails
       # @param iri [String, RDF::URI] The iri to resolve.
       # @return [ApplicationRecord, nil] The parent resource corresponding to the uri if found
       def parent_from_iri(iri)
-        route_opts = Rails.application.routes.recognize_path(iri)
+        route_opts = LinkedRails.opts_from_iri(iri)
         parent_from_params(route_opts)
       rescue ActionController::RoutingError
         nil
@@ -117,24 +106,6 @@ module LinkedRails
       def parent_resource_type(opts = params)
         key = parent_resource_key(opts)
         key[0..-4] if key
-      end
-
-      def resource_by_id_from_opts(opts)
-        opts[:class]&.find_by(id: opts[:id])
-      end
-
-      # @return [ApplicationRecord, nil] The resource corresponding to the iri, or nil if the IRI is not found
-      def resource_from_iri(iri)
-        raise "A full url is expected. #{iri} is given." if iri.blank? || URI(iri).relative?
-
-        resource_from_opts(opts_from_iri(iri))
-      end
-
-      def resource_from_opts(opts)
-        opts[:class] ||= ApplicationRecord.descendants.detect { |m| m.to_s == opts[:type].classify } if opts[:type]
-        return if opts[:class].blank? || opts[:id].blank?
-
-        resource_by_id_from_opts(opts)
       end
     end
   end

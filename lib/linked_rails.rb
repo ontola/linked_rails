@@ -7,6 +7,7 @@ require 'rdf'
 require 'rdf/vocab'
 require 'uri_template'
 require 'linked_rails/engine'
+require 'linked_rails/iri_mapper'
 
 module LinkedRails
   @model_classes = {}
@@ -25,18 +26,21 @@ module LinkedRails
     end
   end
 
-  def self.host
-    # rubocop:disable Style/ClassVars
-    @@host ||= Rails.application.routes.default_url_options[:host]&.split('//')&.last || 'example.com'
-    # rubocop:enable Style/ClassVars
-  end
+  class << self
+    delegate :opts_from_iri, :resource_from_iri, :resource_from_iri!, :resource_from_opts, to: :iri_mapper_class
+    def host
+      # rubocop:disable Style/ClassVars
+      @@host ||= Rails.application.routes.default_url_options[:host]&.split('//')&.last || 'example.com'
+      # rubocop:enable Style/ClassVars
+    end
 
-  def self.scheme
-    @@scheme ||= Rails.application.routes.default_url_options[:protocol] || :http # rubocop:disable Style/ClassVars
-  end
+    def scheme
+      @@scheme ||= Rails.application.routes.default_url_options[:protocol] || :http # rubocop:disable Style/ClassVars
+    end
 
-  def self.iri(opts = {})
-    RDF::URI.new(**{scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(opts))
+    def iri(opts = {})
+      RDF::URI.new(**{scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(opts))
+    end
   end
 
   %i[collection entry_point vocabulary].each { |klass| configurable_class(nil, klass) }
@@ -47,6 +51,7 @@ module LinkedRails
   configurable_class(nil, :controller_parent, default: 'ApplicationController')
   configurable_class(nil, :policy_parent, default: 'ApplicationPolicy')
   configurable_class(nil, :serializer_parent, default: 'ApplicationSerializer')
+  configurable_class(nil, :iri_mapper, default: 'LinkedRails::IRIMapper')
 end
 
 require 'linked_rails/vocab'
