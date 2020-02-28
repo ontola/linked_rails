@@ -3,15 +3,13 @@
 module LinkedRails
   module Middleware
     class LinkedDataParams # rubocop:disable Metrics/ClassLength
-      attr_reader :graph, :request
-
       def initialize(app)
         @app = app
       end
 
       def call(env)
-        @request = Rack::Request.new(env)
-        params_from_graph
+        params_from_graph(Rack::Request.new(env))
+
         @app.call(env)
       end
 
@@ -31,11 +29,7 @@ module LinkedRails
         hash
       end
 
-      def base_params
-        request.params
-      end
-
-      def blob_attribute(value)
+      def blob_attribute(base_params, value)
         base_params["<#{value}>"] if value.starts_with?(Vocab::LL['blobs/'])
       end
 
@@ -46,7 +40,7 @@ module LinkedRails
         opts[:options].detect { |_k, options| options[:iri] == value }&.first
       end
 
-      def graph_from_request
+      def graph_from_request(request)
         request_graph = request.delete_param("<#{Vocab::LL[:graph].value}>")
         return if request_graph.blank?
 
@@ -62,21 +56,21 @@ module LinkedRails
         Rails.logger
       end
 
-      def nested_attributes(subject, klass, association, collection)
+      def nested_attributes(base_params, graph, subject, klass, association, collection) # rubocop:disable Metrics/ParameterLists
         nested_resources =
           if graph.query([subject, RDF::RDFV[:first], nil]).present?
-            nested_attributes_from_list(subject, klass)
+            nested_attributes_from_list(base_params, graph, subject, klass)
           else
-            parsed = parse_nested_resource(subject, klass)
+            parsed = parse_nested_resource(base_params, graph, subject, klass)
             collection ? {rand(1_000_000_000).to_s => parsed} : parsed
           end
         ["#{association}_attributes", nested_resources]
       end
 
-      def nested_attributes_from_list(subject, klass)
+      def nested_attributes_from_list(base_params, graph, subject, klass)
         Hash[
           RDF::List.new(subject: subject, graph: graph)
-            .map { |nested| [rand(1_000_000_000).to_s, parse_nested_resource(nested, klass)] }
+            .map { |nested| [rand(1_000_000_000).to_s, parse_nested_resource(base_params, graph, nested, klass)] }
         ]
       end
 
@@ -89,59 +83,59 @@ module LinkedRails
       # resource to be created, updated, or deleted).
       #
       # @return [Hash] A hash of attributes, empty if no statements were given.
-      def params_from_graph
-        @graph = graph_from_request
+      def params_from_graph(request)
+        graph = graph_from_request(request)
 
         return unless graph
 
-        target_class = target_class_from_path
+        target_class = target_class_from_path(request)
         if target_class.blank?
           logger.info("No class found for #{request.env['REQUEST_URI']}") if graph
           return
         end
 
-        update_actor_param
-        update_target_params(target_class)
+        update_actor_param(request, graph)
+        update_target_params(request, graph, target_class)
       end
 
-      def parse_nested_resource(subject, klass)
-        resource = parse_resource(subject, klass)
+      def parse_nested_resource(base_params, graph, subject, klass)
+        resource = parse_resource(base_params, graph, subject, klass)
         resource[:id] ||= LinkedRails.opts_from_iri(subject)[:id] if subject.iri?
         resource
       end
 
       # Recursively parses a resource from graph
-      def parse_resource(subject, klass)
+      def parse_resource(base_params, graph, subject, klass)
         graph
           .query([subject])
-          .map { |statement| parse_statement(statement, klass) }
+          .map { |statement| parse_statement(base_params, graph, statement, klass) }
           .compact
           .reduce({}) { |h, (k, v)| add_param(h, k, v) }
       end
 
-      def parse_statement(statement, klass)
+      def parse_statement(base_params, graph, statement, klass)
         field = serializer_field(klass, statement.predicate)
         if field.is_a?(ActiveModel::Serializer::Attribute)
-          parsed_attribute(klass, field.name, statement.object.value)
+          parsed_attribute(base_params, klass, field.name, statement.object.value)
         elsif field.is_a?(ActiveModel::Serializer::Reflection)
-          parsed_association(statement.object, klass, field.options[:association] || field.name)
+          parsed_association(base_params, graph, statement.object, klass, field.options[:association] || field.name)
         end
       end
 
-      def parsed_association(object, klass, association)
+      def parsed_association(base_params, graph, object, klass, association)
         reflection = klass.reflect_on_association(association)
         raise "Association #{association} not found for #{klass}" if reflection.blank?
 
         association_klass = reflection.klass
         if graph.has_subject?(object)
-          nested_attributes(object, association_klass, association, reflection.collection?)
+          nested_attributes(base_params, graph, object, association_klass, association, reflection.collection?)
         elsif object.iri?
           ["#{association}_id", LinkedRails.opts_from_iri(object)[:id]]
         end
       end
 
-      def parsed_attribute(klass, key, value)
-        [key, blob_attribute(value) || enum_attribute(klass, key, value) || value]
+      def parsed_attribute(base_params, klass, key, value)
+        [key, blob_attribute(base_params, value) || enum_attribute(klass, key, value) || value]
       end
 
       def serializer_field(klass, predicate)
@@ -150,7 +144,7 @@ module LinkedRails
         field
       end
 
-      def target_class_from_path # rubocop:disable Metrics/AbcSize
+      def target_class_from_path(request)
         opts = LinkedRails.opts_from_iri(request.base_url + request.env['REQUEST_URI'], method: request.request_method)
         return if opts.blank?
 
@@ -158,7 +152,7 @@ module LinkedRails
         controller.try(:controller_class) || controller.controller_name.classify.safe_constantize
       end
 
-      def update_actor_param
+      def update_actor_param(request, graph)
         actor = graph.query([Vocab::LL[:targetResource], RDF::Vocab::SCHEMA.creator]).first
         return if actor.blank?
 
@@ -166,10 +160,10 @@ module LinkedRails
         graph.delete(actor)
       end
 
-      def update_target_params(target_class)
+      def update_target_params(request, graph, target_class)
         request.update_param(
           target_class.to_s.underscore,
-          parse_resource(Vocab::LL[:targetResource], target_class)
+          parse_resource(request.params, graph, Vocab::LL[:targetResource], target_class)
         )
       end
     end
