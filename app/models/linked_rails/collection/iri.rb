@@ -40,7 +40,7 @@ module LinkedRails
       end
 
       def sort_iri_opts
-        sort&.map { |key, value| "#{key}=#{value}" }
+        sort&.map { |s| "#{s[:key]}=#{s[:direction]}" }
       end
 
       class << self

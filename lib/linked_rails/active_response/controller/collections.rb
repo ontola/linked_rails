@@ -62,10 +62,9 @@ module LinkedRails
         def collection_params(opts = params, klass = controller_class)
           method = opts.is_a?(Hash) ? :slice : :permit
           params = opts.send(method, :display, :page_size, :type).to_h
-          params[:filter] = parse_filter(
-            opts.is_a?(Hash) ? opts[:filter] : opts.permit(filter: [])[:filter],
-            klass.try(:filter_options)
-          )
+          params[:filter] = parse_filters(opts, klass)
+          sort = parse_sort(opts.is_a?(Hash) ? opts[:sort] : opts.permit(sort: [])[:sort])
+          params[:sort] = sort if sort
           params
         end
 
@@ -117,6 +116,22 @@ module LinkedRails
           return {} if array.blank? || whitelist.blank?
 
           Hash[array&.map { |f| f.split('=') }].slice(*whitelist.keys)
+        end
+
+        def parse_filters(opts, klass)
+          parse_filter(
+            opts.is_a?(Hash) ? opts[:filter] : opts.permit(filter: [])[:filter],
+            klass.try(:filter_options)
+          )
+        end
+
+        def parse_sort(array)
+          return if array.blank?
+
+          array&.map do |f|
+            key, value = f.split('=')
+            {key: RDF::URI(key), direction: value}
+          end
         end
 
         def preview_includes
