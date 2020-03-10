@@ -33,6 +33,12 @@ module LinkedRails
         @members ||= raw_members
       end
 
+      def members_iri
+        uri = iri.dup
+        uri.fragment = :members
+        uri
+      end
+
       def page_size
         collection.page_size&.to_i || default_page_size
       end
@@ -49,12 +55,6 @@ module LinkedRails
 
       def arel_table
         @arel_table ||= association_class.arel_table
-      end
-
-      def members_iri
-        uri = iri.dup
-        uri.fragment = :members
-        uri
       end
 
       def prepare_members(scope)
