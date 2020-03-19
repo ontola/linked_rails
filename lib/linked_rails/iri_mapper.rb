@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  module IRIMapper
+  class IRIMapper
     class << self
       # Converts an IRI into a hash containing the type and id of the resource
       # @return [Hash] The id and type of the resource, or nil if the IRI is not found
@@ -17,7 +17,7 @@ module LinkedRails
       def opts_from_iri(iri, method: 'GET')
         opts = Rails.application.routes.recognize_path(iri.to_s, method: method)
 
-        return {} unless opts[:id].present? && opts[:controller].present?
+        return {} if opts[:controller].blank?
 
         opts[:type] = opts[:controller].singularize
         opts
