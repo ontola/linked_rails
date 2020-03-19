@@ -44,10 +44,7 @@ module LinkedRails
       def parent_collections(user_context)
         return [] if try(:parent).try(:collections).blank?
 
-        parent
-          .collections
-          .select { |collection| is_a?(collection[:options][:association_class]) }
-          .map { |collection| parent.collection_for(collection[:name], user_context: user_context) }
+        parent_collections_for(parent, user_context)
       end
 
       private
@@ -65,6 +62,13 @@ module LinkedRails
       def cached_collection(name, filter)
         @collection_instances ||= {}
         @collection_instances[name] if filter.blank?
+      end
+
+      def parent_collections_for(parent, user_context)
+        parent
+          .collections
+          .select { |collection| is_a?(collection[:options][:association_class]) }
+          .map { |collection| parent.collection_for(collection[:name], user_context: user_context) }
       end
 
       module ClassMethods
