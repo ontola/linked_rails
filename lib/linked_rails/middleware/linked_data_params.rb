@@ -123,14 +123,16 @@ module LinkedRails
       end
 
       def parsed_association(base_params, graph, object, klass, association)
-        reflection = klass.reflect_on_association(association)
-        raise "Association #{association} not found for #{klass}" if reflection.blank?
+        reflection = klass.reflect_on_association(association) || raise("#{association} not found for #{klass}")
 
         association_klass = reflection.klass
         if graph.has_subject?(object)
           nested_attributes(base_params, graph, object, association_klass, association, reflection.collection?)
         elsif object.iri?
-          ["#{association}_id", LinkedRails.opts_from_iri(object)[:id]]
+          [
+            reflection.association_foreign_key,
+            LinkedRails.resource_from_iri(object).send(reflection.association_primary_key)
+          ]
         end
       end
 
