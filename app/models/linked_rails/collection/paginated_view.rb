@@ -25,18 +25,16 @@ module LinkedRails
         }.merge(collection.iri_opts)
       end
 
+      def members_query
+        prepare_members(association_base)
+          .page(page)
+          .per(page_size)
+      end
+
       def prepare_members(scope)
         return super unless scope.is_a?(Array) && !scope.is_a?(Kaminari::PaginatableArray)
 
         Kaminari.paginate_array(super)
-      end
-
-      def raw_members
-        @raw_members ||=
-          prepare_members(association_base)
-            .page(page)
-            .per(page_size)
-            .to_a
       end
     end
   end

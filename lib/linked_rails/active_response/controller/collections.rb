@@ -45,7 +45,10 @@ module LinkedRails
 
         def collection_view_params(opts = params)
           method = opts.is_a?(Hash) ? :slice : :permit
-          opts.send(method, :before, :page)
+          options = opts.send(method, [:page, before: []])
+          before = parse_before(options[:before])
+          options[:before] = before if before
+          options
         end
 
         def collection_options
@@ -116,6 +119,15 @@ module LinkedRails
           return {} if array.blank? || whitelist.blank?
 
           Hash[array&.map { |f| f.split('=') }].slice(*whitelist.keys)
+        end
+
+        def parse_before(array)
+          return if array.blank?
+
+          array&.map do |f|
+            key, value = f.split('=')
+            {key: RDF::URI(CGI.unescape(key)), value: value}
+          end
         end
 
         def parse_filters(opts, klass)

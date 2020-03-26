@@ -13,7 +13,7 @@ module LinkedRails
 
       attr_accessor :collection, :filter, :include_map
       delegate :association_base, :association_class, :default_page_size, :parent, :policy, :user_context, :apply_scope,
-               :display, :unfiltered_collection, :sort_direction, :total_page_count, to: :collection
+               :display, :unfiltered_collection, :total_page_count, to: :collection
       delegate :count, to: :members
 
       def root_relative_canonical_iri(opts = {})
@@ -62,6 +62,10 @@ module LinkedRails
           scope = scope.preload(association_class.includes_for_serializer)
         end
         scope
+      end
+
+      def raw_members
+        @raw_members ||= members_query.to_a
       end
 
       class << self

@@ -7,7 +7,12 @@ module LinkedRails
       attr_writer :default_sortings
 
       def default_before_value
-        (sort_direction == :lt ? Time.current.utc : Time.new(1970, 1, 1).utc).iso8601(6)
+        sortings.map do |sorting|
+          {
+            key: sorting.key,
+            value: sorting.default_value
+          }
+        end
       end
 
       def default_sortings
@@ -22,8 +27,13 @@ module LinkedRails
         sortings.map(&:sort_value)
       end
 
-      def sort_direction
-        @sort_direction ||= sortings.last.sort_value.values.first == :desc ? :lt : :gt
+      def primary_key_sorting
+        [
+          {
+            key: Vocab::ONTOLA[:primaryKey],
+            direction: :asc
+          }
+        ]
       end
 
       def sorted_association(scope)
@@ -35,8 +45,10 @@ module LinkedRails
       end
 
       def sortings
-        @sortings ||=
-          LinkedRails.collection_sorting_class.from_array(association_class, sort || default_sortings)
+        @sortings ||= LinkedRails.collection_sorting_class.from_array(
+          association_class,
+          (sort || default_sortings) + primary_key_sorting
+        )
       end
     end
   end

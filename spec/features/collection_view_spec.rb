@@ -6,7 +6,7 @@ describe LinkedRails::Collection::View do
   let(:collection) do
     col = LinkedRails::Collection.new(
       name: :records,
-      association: :resource,
+      association: :children,
       association_class: Record,
       filter: try(:filter),
       parent: try(:parent),
@@ -14,64 +14,81 @@ describe LinkedRails::Collection::View do
     )
     col
   end
-  let(:filtered_collection) do
-    collection.send(:filtered_collection, a: 1, b: 2)
+  let(:collection_view) do
+    collection.default_view
   end
-  let(:paginated_collection_view) do
-    collection.view_with_opts(page: 1)
-  end
-  let(:infinite_collection_view) do
-    collection.view_with_opts(before: before_time)
-  end
-  let(:before_time) { Time.current.utc.iso8601(6) }
-  let(:encoded_before_time) { ERB::Util.url_encode(before_time) }
   let(:type) { nil }
 
-  describe '#id' do
-    context 'with paginated view' do
-      subject { paginated_collection_view.iri }
+  shared_examples_for 'view' do
+    subject { collection_view.iri }
 
-      it { is_expected.to eq('http://example.com/records?page=1') }
-
-      context 'with parent' do
-        let(:parent) { Record.create! }
-
-        it { is_expected.to eq("http://example.com/records/#{parent.id}/records?page=1") }
-      end
+    describe '#iri' do
+      it { is_expected.to eq(expected_iri) }
     end
 
-    context 'with infinite' do
-      subject { infinite_collection_view.iri }
+    describe '#collection' do
+      subject { collection_view.collection }
 
-      let(:type) { :infinite }
+      it { is_expected.to eq(collection) }
+    end
 
-      it { is_expected.to eq("http://example.com/records?type=infinite&before=#{encoded_before_time}") }
+    describe '#members_query' do
+      subject { collection_view.send(:members_query).to_sql }
 
-      context 'with parent' do
-        let(:parent) { Record.create! }
-
-        it do
-          is_expected.to(
-            eq("http://example.com/records/#{parent.id}/records?type=infinite&before=#{encoded_before_time}")
-          )
-        end
-      end
+      it { is_expected.to eq(expected_sql) }
     end
   end
 
-  describe '#collection' do
-    context 'with paginated' do
-      subject { paginated_collection_view.collection }
+  context 'with paginated view' do
+    let(:expected_iri) { 'http://example.com/records?page=1' }
+    let(:expected_where) { 'WHERE "records"."admin" = \'f\' ' }
+    let(:expected_order) { 'ORDER BY "records"."created_at" DESC, "records"."id" ASC ' }
+    let(:expected_sql) { "SELECT  \"records\".* FROM \"records\" #{expected_where}#{expected_order}LIMIT 11 OFFSET 0" }
 
-      it { is_expected.to eq(collection) }
+    it_behaves_like 'view'
+
+    context 'with parent' do
+      let(:parent) { Record.create! }
+      let(:expected_iri) { "http://example.com/records/#{parent.id}/records?page=1" }
+      let(:expected_where) { 'WHERE "records"."parent_id" = 1 AND "records"."admin" = \'f\' ' }
+
+      it_behaves_like 'view'
     end
+  end
 
-    context 'with infinite' do
-      subject { infinite_collection_view.collection }
+  context 'with infinite view' do
+    let(:type) { :infinite }
+    let(:before_time) { collection_view.before.first[:value] }
+    let(:create_before) do
+      "#{CGI.escape(RDF::Vocab::SCHEMA[:dateCreated])}=#{before_time}"
+    end
+    let(:primary_before) do
+      "#{CGI.escape(LinkedRails::Vocab::ONTOLA[:primaryKey])}=#{min_int}"
+    end
+    let(:min_int) { ActiveModel::Type::Integer.new.send(:min_value) }
+    let(:before_params) { [{'before[]': create_before}.to_param, {'before[]': primary_before}.to_param].join('&') }
+    let(:expected_iri) { "http://example.com/records?type=infinite&#{before_params}" }
+    let(:expected_where) { "WHERE \"records\".\"admin\" = 'f' #{infinite_where} " }
+    let(:infinite_where) do
+      "AND (\"records\".\"created_at\" < '#{Time.parse(before_time).iso8601(6).sub('T', ' ').sub('Z', '')}' "\
+      "OR \"records\".\"created_at\" = '#{Time.parse(before_time).iso8601(6).sub('T', ' ').sub('Z', '')}' "\
+      "AND \"records\".\"id\" > #{min_int})"
+    end
+    let(:expected_order) { 'ORDER BY "records"."created_at" DESC, "records"."id" ASC ' }
+    let(:expected_sql) { "SELECT  \"records\".* FROM \"records\" #{expected_where}#{expected_order}LIMIT 11" }
 
-      let(:type) { :infinite }
+    it_behaves_like 'view'
 
-      it { is_expected.to eq(collection) }
+    context 'with parent' do
+      let(:parent) { Record.create! }
+      let(:expected_iri) do
+        "http://example.com/records/#{parent.id}/records?type=infinite&#{before_params}"
+      end
+      let(:expected_where) do
+        "WHERE \"records\".\"parent_id\" = 1 AND \"records\".\"admin\" = 'f' #{infinite_where} "
+      end
+
+      it_behaves_like 'view'
     end
   end
 end

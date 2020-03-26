@@ -23,6 +23,7 @@ require 'support/matchers'
 def create_table
   ActiveRecord::Base.connection.create_table :records do |t|
     t.integer :user_id
+    t.integer :parent_id
     t.string :title
     t.text :body
     t.timestamps

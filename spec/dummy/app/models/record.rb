@@ -6,6 +6,9 @@ class Record < ApplicationRecord
   enhance LinkedRails::Enhancements::Creatable
   enhance LinkedRails::Enhancements::Updatable
 
+  belongs_to :parent, class_name: 'Record'
+  has_many :children, class_name: 'Record', foreign_key: :parent_id
+
   with_collection :records
 
   filterable key: {key: :actual_key, values: {value: 'actual_value'}}, key2: {}, key3: {values: {empty: 'NULL'}}

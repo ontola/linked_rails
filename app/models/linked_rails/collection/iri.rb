@@ -3,7 +3,7 @@
 module LinkedRails
   class Collection
     module Iri
-      COLLECTION_PARAMS = %w[display filter%5B%5D* page page_size type before sort%5B%5D*].freeze
+      COLLECTION_PARAMS = %w[display filter%5B%5D* page page_size type before%5B%5D* sort%5B%5D*].freeze
       attr_writer :canonical_iri_template, :iri_template
 
       def canonical_iri_template

@@ -91,21 +91,17 @@ describe LinkedRails::Collection do
   end
 
   describe '#apply_scope' do
-    before do
-      stub_const 'RecordPolicy::Scope', ApplicationPolicy::Scope
-      RecordPolicy::Scope.class_eval { define_method('resolve') { user[:admin] ? scope : scope.where(admin: false) } }
-    end
-
     subject { collection.association_base.to_sql }
 
-    let(:result) { 'SELECT "records".* FROM "records" ORDER BY "records"."created_at" DESC' }
+    let(:result) { 'SELECT "records".* FROM "records" ORDER BY "records"."created_at" DESC, "records"."id" ASC' }
 
     it { is_expected.to eq(result) }
 
     context 'with filters' do
       let(:user_context) { {admin: false} }
       let(:result) do
-        'SELECT "records".* FROM "records" WHERE "records"."admin" = \'f\' ORDER BY "records"."created_at" DESC'
+        'SELECT "records".* FROM "records" WHERE "records"."admin" = \'f\' ORDER BY "records"."created_at" DESC, '\
+        '"records"."id" ASC'
       end
 
       it { is_expected.to eq(result) }
