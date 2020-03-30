@@ -26,6 +26,7 @@ module LinkedRails
                 uri = resource.root_relative_iri.dup
                 uri.path ||= ''
                 uri.path += '/new'
+                uri.query = Rack::Utils.parse_nested_query(uri.query).except('display', 'sort').to_param.presence
                 uri.to_s
               },
               policy: :create_child?,
