@@ -31,6 +31,11 @@ module LinkedRails
           )
       end
 
+      def iri_template_opts
+        opts = iri_opts.with_indifferent_access.slice(:display, :'filter%5B%5D', :'sort%5B%5D', :page_size, :type)
+        Hash[opts.keys.map { |key| [CGI.unescape(key), opts[key]] }].to_param
+      end
+
       def filter_iri_opts
         filter&.map { |key, value| "#{CGI.escape(key.to_s)}=#{value}" }
       end

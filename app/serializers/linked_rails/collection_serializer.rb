@@ -8,6 +8,7 @@ module LinkedRails
     attribute :title, predicate: RDF::Vocab::AS.name
     attribute :total_count, predicate: RDF::Vocab::AS.totalItems, if: :paginated?
     attribute :iri_template, predicate: Vocab::ONTOLA[:iriTemplate]
+    attribute :iri_template_opts, predicate: Vocab::ONTOLA[:iriTemplateOpts]
     attribute :default_type, predicate: Vocab::ONTOLA[:defaultType]
     attribute :display, predicate: Vocab::ONTOLA[:collectionDisplay]
     attribute :columns, predicate: Vocab::ONTOLA[:columns]
