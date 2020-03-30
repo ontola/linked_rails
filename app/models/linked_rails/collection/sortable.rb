@@ -4,7 +4,7 @@ module LinkedRails
   class Collection
     module Sortable
       attr_accessor :sort
-      attr_writer :default_sortings
+      attr_writer :default_sortings, :sort_options
 
       def default_before_value
         sortings.map do |sorting|
@@ -34,6 +34,10 @@ module LinkedRails
             direction: :asc
           }
         ]
+      end
+
+      def sort_options
+        @sort_options || association_class.try(:sort_options, self)
       end
 
       def sorted_association(scope)

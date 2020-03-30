@@ -39,7 +39,7 @@ module LinkedRails
       end
 
       def sort_direction
-        direction.to_sym == :desc ? :lt : :gt
+        direction == :desc ? :lt : :gt
       end
 
       def sort_value
@@ -61,7 +61,7 @@ module LinkedRails
           array&.map do |sort|
             new(
               association_class: association_class,
-              direction: sort[:direction],
+              direction: sort[:direction]&.to_sym,
               key: sort[:key]
             )
           end

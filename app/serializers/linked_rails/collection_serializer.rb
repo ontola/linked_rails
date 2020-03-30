@@ -12,6 +12,7 @@ module LinkedRails
     attribute :display, predicate: Vocab::ONTOLA[:collectionDisplay]
     attribute :columns, predicate: Vocab::ONTOLA[:columns]
     attribute :collection_type, predicate: Vocab::ONTOLA[:collectionType]
+    attribute :sort_options, predicate: NS::ONTOLA[:sortOptions]
 
     has_one :unfiltered_collection, predicate: Vocab::ONTOLA[:baseCollection]
     has_one :part_of, predicate: RDF::Vocab::SCHEMA.isPartOf
