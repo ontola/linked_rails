@@ -32,7 +32,7 @@ module LinkedRails
       end
 
       def filter_iri_opts
-        filter&.map { |key, value| "#{key}=#{value}" }
+        filter&.map { |key, value| "#{CGI.escape(key.to_s)}=#{value}" }
       end
 
       def iri_opts_add(opts, key, value)
@@ -40,7 +40,7 @@ module LinkedRails
       end
 
       def sort_iri_opts
-        sort&.map { |s| "#{s[:key]}=#{s[:direction]}" }
+        sort&.map { |s| "#{CGI.escape(s[:key].to_s)}=#{s[:direction]}" }
       end
 
       class << self

@@ -115,12 +115,6 @@ module LinkedRails
           RDF::URI(request.original_url)
         end
 
-        def parse_filter(array, whitelist)
-          return {} if array.blank? || whitelist.blank?
-
-          Hash[array&.map { |f| f.split('=') }].slice(*whitelist.keys)
-        end
-
         def parse_before(array)
           return if array.blank?
 
@@ -128,6 +122,12 @@ module LinkedRails
             key, value = f.split('=')
             {key: RDF::URI(CGI.unescape(key)), value: value}
           end
+        end
+
+        def parse_filter(array, whitelist)
+          return {} if array.blank? || whitelist.blank?
+
+          Hash[array&.map { |f| f.split('=') }&.map { |key, value| [CGI.unescape(key), value] }].slice(*whitelist.keys)
         end
 
         def parse_filters(opts, klass)
@@ -142,7 +142,7 @@ module LinkedRails
 
           array&.map do |f|
             key, value = f.split('=')
-            {key: RDF::URI(key), direction: value}
+            {key: RDF::URI(CGI.unescape(key)), direction: value}
           end
         end
 
