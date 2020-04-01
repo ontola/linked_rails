@@ -9,6 +9,7 @@ module LinkedRails
     attribute :url, predicate: RDF::Vocab::SCHEMA.url
     attribute :http_method, key: :method, predicate: RDF::Vocab::SCHEMA.httpMethod
 
+    has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf
     has_one :action_body, predicate: Vocab::LL[:actionBody]
     has_one :image, predicate: RDF::Vocab::SCHEMA.image
 
