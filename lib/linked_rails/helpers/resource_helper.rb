@@ -72,7 +72,7 @@ module LinkedRails
       end
 
       def parent_resource_or_collection(opts)
-        resource = resource_from_opts(opts.merge(type: controller_name))
+        resource = LinkedRails.resource_from_opts(opts.merge(type: controller_name))
         return resource if opts[:collection].blank?
 
         parent_collection(resource, opts)
