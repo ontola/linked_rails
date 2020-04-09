@@ -116,7 +116,10 @@ module LinkedRails
     end
 
     def view_with_opts(opts)
-      LinkedRails.collection_view_class.new({collection: self, type: type}.merge(opts))
+      @views ||= []
+      view = LinkedRails.collection_view_class.new({collection: self, type: type}.merge(opts))
+      @views << view
+      view
     end
 
     private
