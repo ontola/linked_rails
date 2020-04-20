@@ -10,7 +10,7 @@ module LinkedRails
       STRING_MIN = 0.chr
       STRING_MAX = 255.chr
 
-      attr_accessor :association_class, :direction, :key
+      attr_accessor :association_class, :direction, :key, :collection
 
       def attribute_name
         @attribute_name ||= key_from_mapping || :created_at
@@ -56,9 +56,10 @@ module LinkedRails
       end
 
       class << self
-        def from_array(association_class, array)
+        def from_array(association_class, array, collection)
           array&.map do |sort|
             new(
+              collection: collection,
               association_class: association_class,
               direction: sort[:direction]&.to_sym,
               key: sort[:key]

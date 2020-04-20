@@ -51,7 +51,8 @@ module LinkedRails
       def sortings
         @sortings ||= LinkedRails.collection_sorting_class.from_array(
           association_class,
-          (sort || default_sortings) + primary_key_sorting
+          (sort || default_sortings) + primary_key_sorting,
+          self
         )
       end
     end
