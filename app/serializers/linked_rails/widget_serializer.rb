@@ -5,6 +5,7 @@ module LinkedRails
     include LinkedRails::Serializer
 
     attribute :size, predicate: Vocab::ONTOLA[:widgetSize]
+    attribute :topology, predicate: Vocab::ONTOLA[:topology]
     has_one :resource_sequence, predicate: Vocab::ONTOLA[:widgetResource]
     has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf
     has_many :property_shapes

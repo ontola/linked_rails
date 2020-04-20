@@ -7,7 +7,7 @@ module LinkedRails
     include LinkedRails::Model
 
     attr_writer :resources, :size
-    attr_accessor :parent
+    attr_accessor :parent, :topology
 
     def iri
       @iri ||= RDF::Node.new
