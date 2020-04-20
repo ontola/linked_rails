@@ -38,13 +38,20 @@ module LinkedRails
       end
 
       def resource_from_opts(opts)
-        opts[:class] ||= ApplicationRecord.descendants.detect { |m| m.to_s == opts[:type].classify } if opts[:type]
+        opts[:class] ||= class_from_type(opts[:type])
         return if opts[:class].blank? || opts[:id].blank?
 
         opts[:class]&.find_by(id: opts[:id])
       end
 
       private
+
+      def class_from_type(type)
+        return if type.blank?
+
+        ApplicationRecord.descendants.detect { |m| m.to_s == type.classify } ||
+          ApplicationRecord.descendants.detect { |m| m.to_s == type.split('/').last.classify }
+      end
 
       def resource_action?(action)
         %w[show update destroy].include?(action)
