@@ -130,7 +130,7 @@ module LinkedRails
           nested_attributes(base_params, graph, object, association_klass, association, reflection.collection?)
         elsif object.iri?
           [
-            reflection.options[:through] ? "#{association}_id" : reflection.association_foreign_key,
+            reflection.options[:through] ? "#{association}_id" : reflection.foreign_key,
             LinkedRails.resource_from_iri(object).send(reflection.association_primary_key)
           ]
         end
