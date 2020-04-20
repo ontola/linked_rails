@@ -28,6 +28,7 @@ module LinkedRails
         def collection_includes(member_includes = {})
           {
             default_view: collection_view_includes(member_includes),
+            filter_fields: :options,
             filters: [],
             sortings: []
           }
@@ -62,12 +63,16 @@ module LinkedRails
           collection_view_params.present? ? collection&.view_with_opts(collection_view_params) : collection
         end
 
-        def collection_params(opts = params, klass = controller_class)
+        def collection_params(opts = params, _klass = controller_class) # rubocop:disable Metrics/AbcSize
           method = opts.is_a?(Hash) ? :slice : :permit
           params = opts.send(method, :display, :page_size, :type).to_h
-          params[:filter] = parse_filters(opts, klass)
+
+          filter = parse_filter(opts.is_a?(Hash) ? opts[:filter] : opts.permit(filter: [])[:filter])
+          params[:filter] = filter if filter
+
           sort = parse_sort(opts.is_a?(Hash) ? opts[:sort] : opts.permit(sort: [])[:sort])
           params[:sort] = sort if sort
+
           params
         end
 
@@ -76,7 +81,9 @@ module LinkedRails
           return includes if action.blank?
 
           includes = [includes] if includes.is_a?(Hash)
-          includes << %i[filters sortings] if action.resource.is_a?(LinkedRails.collection_class)
+          if action.resource.is_a?(LinkedRails.collection_class)
+            includes << [:filters, :sortings, filter_fields: :options]
+          end
           includes << action.form&.referred_resources
           includes
         end
@@ -124,17 +131,15 @@ module LinkedRails
           end
         end
 
-        def parse_filter(array, whitelist)
-          return {} if array.blank? || whitelist.blank?
+        def parse_filter(array)
+          return {} if array.blank?
 
-          Hash[array&.map { |f| f.split('=') }&.map { |key, value| [CGI.unescape(key), value] }].slice(*whitelist.keys)
-        end
-
-        def parse_filters(opts, klass)
-          parse_filter(
-            opts.is_a?(Hash) ? opts[:filter] : opts.permit(filter: [])[:filter],
-            klass.try(:filter_options)
-          )
+          array.each_with_object({}) do |f, hash|
+            values = f.split('=')
+            key = RDF::URI(CGI.unescape(values.first))
+            hash[key] ||= []
+            hash[key] << values.second
+          end
         end
 
         def parse_sort(array)

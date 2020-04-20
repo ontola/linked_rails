@@ -5,8 +5,10 @@ module LinkedRails
     module Filtering
       extend ActiveSupport::Concern
 
-      def applicable_filters
-        Hash[self.class.filter_options.keys.map { |k| [k, send(k)] }]
+      included do
+        class_attribute :default_filters, instance_accessor: false, instance_predicate: false
+        class_attribute :filter_options
+        self.default_filters = {}
       end
 
       module ClassMethods
@@ -15,29 +17,37 @@ module LinkedRails
         end
 
         def filterable(options = {})
-          class_attribute :filter_options
-          self.filter_options = HashWithIndifferentAccess.new(options)
+          initialize_filter_options
+
+          filter_options.merge!(HashWithIndifferentAccess.new(options))
 
           options.map { |k, filter| define_filter_method(k, filter) }
         end
 
         private
 
-        def define_filter_method(key, filter)
-          return if method_defined?(key) || filter[:attr].blank?
+        def initialize_filter_options
+          return if filter_options && method(:filter_options).owner == singleton_class
 
-          enum_map = defined_enums[filter[:attr].to_s]
+          self.filter_options = superclass.try(:filter_options)&.dup || {}
+        end
+
+        def define_filter_method(key, filter)
+          method = predicate_mapping[key]&.key
+          return if !method || method_defined?(method) || !filter[:attr]
+
+          enum_map = defined_enums[method.to_s]
 
           if enum_map
-            define_enum_filter_method(key, filter, enum_map)
+            define_enum_filter_method(method, filter, enum_map)
           else
-            define_plain_filter_method(key, filter)
+            define_plain_filter_method(method, filter)
           end
         end
 
         def define_enum_filter_method(key, filter, enum_map)
           define_method key do
-            filter[:values].key(enum_map[send(filter[:attr])])
+            filter[:values].key(enum_map[send(filter[:attr] || key)])
           end
 
           define_method "#{key}=" do |value|
@@ -47,7 +57,7 @@ module LinkedRails
 
         def define_plain_filter_method(key, filter)
           define_method key do
-            filter.values[send(filter[:attr])]
+            filter[:values][send(filter[:attr])]
           end
 
           define_method "#{key}=" do |value|

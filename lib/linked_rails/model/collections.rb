@@ -10,11 +10,13 @@ module LinkedRails
         class_attribute :inc_nested_collection
         self.inc_nested_collection = [
           default_view: {member_sequence: :members},
+          filter_fields: :options,
           filters: [],
           sortings: []
         ].freeze
         class_attribute :inc_shallow_collection
         self.inc_shallow_collection = [
+          filter_fields: :options,
           filters: [],
           sortings: []
         ].freeze
@@ -50,6 +52,7 @@ module LinkedRails
       private
 
       def cache_collection(name, collection_class, opts)
+        opts = opts.with_indifferent_access
         opts[:name] = name
         opts[:parent] = self
         opts[:filter] ||= {}

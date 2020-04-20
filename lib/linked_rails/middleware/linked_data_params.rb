@@ -8,7 +8,9 @@ module LinkedRails
       end
 
       def call(env)
-        params_from_graph(Rack::Request.new(env))
+        req = Rack::Request.new(env)
+        params_from_query(req)
+        params_from_graph(req)
 
         @app.call(env)
       end
@@ -31,6 +33,20 @@ module LinkedRails
 
       def blob_attribute(base_params, value)
         base_params["<#{value}>"] if value.starts_with?(Vocab::LL['blobs/'])
+      end
+
+      def convert_query_params(request, target_class)
+        keys = target_class.predicate_mapping.keys.map(&:to_s)
+        class_key = target_class.to_s.underscore
+        data = request.params[class_key] || {}
+        request.params.slice(*keys.map(&:to_s)).each do |key, value|
+          add_param_from_query(data, target_class, key, value)
+        end
+        request.update_param(class_key, data) if data.present?
+      end
+
+      def add_param_from_query(data, target_class, key, value)
+        data[target_class.predicate_mapping[RDF::URI(key)].key] = value
       end
 
       def enum_attribute(klass, key, value)
@@ -96,6 +112,13 @@ module LinkedRails
 
         update_actor_param(request, graph)
         update_target_params(request, graph, target_class)
+      end
+
+      def params_from_query(request)
+        target_class = target_class_from_path(request)
+        return unless target_class.try(:predicate_mapping)
+
+        convert_query_params(request, target_class)
       end
 
       def parse_nested_resource(base_params, graph, subject, klass)

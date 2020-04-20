@@ -104,7 +104,7 @@ module LinkedRails
 
     def title_from_translation
       plural = association_class.name.tableize
-      I18n.t("#{plural}.collection.#{filter&.values&.join('.').presence || name}",
+      I18n.t("#{plural}.collection.#{@filter&.values&.join('.').presence || name}",
              count: ->(_opts) { total_count },
              default: I18n.t("#{plural}.plural",
                              default: plural.humanize))
@@ -160,7 +160,7 @@ module LinkedRails
 
     def new_child_values
       instance_values
-        .slice('association', 'association_class', 'association_scope', 'parent', 'default_filters')
+        .slice('association', 'association_class', 'association_scope', 'parent')
         .merge(
           unfiltered_collection: filtered? ? @unfiltered_collection : self,
           user_context: user_context

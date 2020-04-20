@@ -35,13 +35,21 @@ module LinkedRails
           )
       end
 
+      def iri_template_keys
+        %i[display filter%5B%5D sort%5B%5D page_size type]
+      end
+
       def iri_template_opts
-        opts = iri_opts.with_indifferent_access.slice(:display, :'filter%5B%5D', :'sort%5B%5D', :page_size, :type)
-        Hash[opts.keys.map { |key| [CGI.unescape(key), opts[key]] }].to_param
+        opts = iri_opts.with_indifferent_access.slice(*iri_template_keys)
+        Hash[opts.keys.map { |key| [CGI.unescape(key).sub('[]', ''), opts[key]] }].to_param
       end
 
       def filter_iri_opts
-        filter&.map { |key, value| "#{CGI.escape(key.to_s)}=#{value}" }
+        @filter&.map do |key, values|
+          predicate = key.is_a?(RDF::URI) ? key : association_class.predicate_for_key(key)
+
+          values.map { |value| "#{CGI.escape(predicate.to_s)}=#{CGI.escape(value.to_s)}" }
+        end&.flatten
       end
 
       def iri_opts_add(opts, key, value)

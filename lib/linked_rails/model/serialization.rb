@@ -17,6 +17,10 @@ module LinkedRails
           {}
         end
 
+        def predicate_for_key(key)
+          predicate_mapping.detect { |_key, value| value.key.to_sym == key.to_sym }&.first
+        end
+
         def predicate_mapping
           @predicate_mapping ||= Hash[attribute_mapping + reflection_mapping]
         end

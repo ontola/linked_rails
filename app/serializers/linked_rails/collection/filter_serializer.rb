@@ -7,6 +7,7 @@ module LinkedRails
 
       attribute :key, predicate: Vocab::ONTOLA[:filterKey]
       attribute :value, predicate: Vocab::ONTOLA[:filterValue]
+      has_one :collection, predicate: RDF::Vocab::SCHEMA.isPartOf
     end
   end
 end

@@ -2,15 +2,17 @@
 
 module LinkedRails
   class Collection
-    class Filter < RDF::Node
+    class FilterOption < RDF::Node
+      include ActiveModel::Serialization
       include ActiveModel::Model
       include LinkedRails::Model
 
-      attr_accessor :default_filter, :key, :value, :collection
+      attr_accessor :collection, :count, :value, :key
 
       def iri
         self
       end
+      alias canonical_iri iri
     end
   end
 end
