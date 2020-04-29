@@ -5,7 +5,6 @@ require_relative 'preloading'
 module LinkedRails
   class Collection
     class View
-      include ActiveModel::Serialization
       include ActiveModel::Model
 
       include LinkedRails::Model
@@ -15,6 +14,8 @@ module LinkedRails
       delegate :association_base, :association_class, :default_page_size, :parent, :policy, :user_context, :apply_scope,
                :display, :unfiltered_collection, :total_page_count, to: :collection
       delegate :count, to: :members
+
+      alias id iri
 
       def root_relative_canonical_iri(opts = {})
         collection.unfiltered.root_relative_canonical_iri(iri_opts.merge(opts))

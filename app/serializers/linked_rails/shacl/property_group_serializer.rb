@@ -8,10 +8,6 @@ module LinkedRails
       attribute :description, predicate: RDF::Vocab::SH.description
       attribute :label, predicate: RDF::RDFS[:label]
       attribute :order, predicate: RDF::Vocab::SH.order
-
-      def type
-        RDF::Vocab::SH.PropertyGroup
-      end
     end
   end
 end

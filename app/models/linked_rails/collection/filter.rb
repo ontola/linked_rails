@@ -3,7 +3,6 @@
 module LinkedRails
   class Collection
     class Filter < RDF::Node
-      include ActiveModel::Serialization
       include ActiveModel::Model
       include LinkedRails::Model
 

@@ -6,7 +6,6 @@ module LinkedRails
       include LinkedRails::Serializer
 
       attribute :label, predicate: RDF::Vocab::SCHEMA.name
-      delegate :type, to: :object
     end
   end
 end

@@ -13,6 +13,17 @@ module LinkedRails
       end
     end
 
+    def rdf_type
+      case type&.to_sym
+      when :image
+        RDF::Vocab::SCHEMA.ImageObject
+      when :video
+        RDF::Vocab::SCHEMA.VideoObject
+      else
+        RDF::Vocab::SCHEMA.MediaObject
+      end
+    end
+
     def type
       @type ||= content_type&.split('/')&.first
     end

@@ -3,7 +3,6 @@
 module LinkedRails
   class CreativeWork
     include ActiveModel::Model
-    include ActiveModel::Serialization
     include LinkedRails::Model
 
     attr_writer :iri

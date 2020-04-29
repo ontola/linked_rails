@@ -121,9 +121,9 @@ module LinkedRails
       end
 
       def attr_to_datatype(attr) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-        return nil if method_defined?(attr.name)
+        return nil if method_defined?(attr.key)
 
-        name = attr.name.to_s
+        name = attr.key.to_s
         case model_class.attribute_types[name].type
         when :string, :text
           RDF::XSD[:string]
@@ -180,21 +180,21 @@ module LinkedRails
       end
 
       def literal_or_node_property_attrs(serializer_attr, attrs)
-        if serializer_attr.is_a?(ActiveModel::Serializer::Attribute) || attrs[:model_attribute].to_s.ends_with?('_id')
+        if serializer_attr.is_a?(FastJsonapi::Attribute) || attrs[:model_attribute].to_s.ends_with?('_id')
           literal_property_attrs(serializer_attr, attrs)
-        elsif serializer_attr.is_a?(ActiveModel::Serializer::Reflection)
+        elsif serializer_attr.is_a?(FastJsonapi::Relationship)
           node_property_attrs(serializer_attr, attrs)
         end
       end
 
       def literal_property_attrs(attr, attrs) # rubocop:disable Metrics/AbcSize
-        enum = serializer_enum(attr.name.to_sym)
+        enum = serializer_enum(attr.key.to_sym)
         attrs[:datatype] ||=
-          attr.dig(:options, :datatype) ||
+          attr.datatype ||
           (enum ? RDF::XSD[:string] : attr_to_datatype(attr)) ||
-          raise("No datatype found for #{attr.name}")
+          raise("No datatype found for #{attr.key}")
         attrs[:max_count] ||= 1
-        attrs[:sh_in] ||= enum && form_options(attr.name.to_s, enum)
+        attrs[:sh_in] ||= enum && form_options(attr.key.to_s, enum)
         attrs
       end
 
@@ -203,19 +203,19 @@ module LinkedRails
       end
 
       def node_property_attrs(attr, attrs) # rubocop:disable Metrics/AbcSize
-        name = attr.dig(:options, :association) || attr.name
+        name = attr.association || attr.key
         _referred_resources << name
         collection = model_class.try(:collections)&.find { |c| c[:name] == name }
         klass_name = model_class.try(:reflections).try(:[], name.to_s)&.class_name || name.to_s.classify
 
-        attrs[:max_count] ||= collection || attr.is_a?(ActiveModel::Serializer::HasManyReflection) ? nil : 1
+        attrs[:max_count] ||= collection || attr.try(:relationship_type) == :has_many ? nil : 1
         attrs[:sh_class] ||= klass_name.constantize.iri
         attrs[:referred_shapes] ||= ["#{klass_name}Form".safe_constantize]
         attrs
       end
 
       def predicate_from_serializer(serializer_attr)
-        serializer_attr&.dig(:options, :predicate)
+        serializer_attr&.predicate
       end
 
       def property_group(name, opts = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -253,21 +253,21 @@ module LinkedRails
         field(key, opts)
       end
 
-      def serializer_attribute(key) # rubocop:disable Metrics/AbcSize
+      def serializer_attribute(key)
         return serializer_attributes[key] if serializer_attributes[key]
 
         normalized_key = key.to_s.ends_with?('_id') ? key.to_s[0...-3].to_sym : key
 
-        k_v = serializer_reflections.find { |_k, v| (v[:options][:association] || v.name) == normalized_key }
+        k_v = serializer_reflections.find { |_k, v| (v.association || v.key) == normalized_key }
         k_v[1] if k_v
       end
 
       def serializer_class
-        @serializer_class ||= ActiveModel::Serializer.serializer_for(model_class)
+        @serializer_class ||= RDF::Serializers.serializer_for(model_class)
       end
 
       def serializer_attributes
-        serializer_class&._attributes_data || {}
+        serializer_class&.attributes_to_serialize || {}
       end
 
       def serializer_enum(attr)
@@ -277,7 +277,7 @@ module LinkedRails
       end
 
       def serializer_reflections
-        serializer_class&._reflections || {}
+        serializer_class&.relationships_to_serialize || {}
       end
 
       def validators(model_attribute)

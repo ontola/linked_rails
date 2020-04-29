@@ -6,11 +6,9 @@ module LinkedRails
 
     attribute :size, predicate: Vocab::ONTOLA[:widgetSize]
     attribute :topology, predicate: Vocab::ONTOLA[:topology]
-    has_one :resource_sequence, predicate: Vocab::ONTOLA[:widgetResource]
-    has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf
-    has_many :property_shapes
-
-    def property_shapes
+    has_one :resource_sequence, predicate: Vocab::ONTOLA[:widgetResource], polymorphic: true
+    has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
+    has_many :property_shapes, polymorphic: true do |object|
       object.property_shapes.values
     end
   end

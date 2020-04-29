@@ -23,21 +23,21 @@ module LinkedRails
       end
 
       def previous_changes_by_predicate
-        serializer_class = ActiveModel::Serializer.serializer_for(self)
+        serializer_class = RDF::Serializers.serializer_for(self)
         return {} unless respond_to?(:previous_changes) && serializer_class
 
         Hash[
           previous_changes
-            .map { |k, v| [serializer_class._attributes_data[k.to_sym]&.options.try(:[], :predicate), v] }
+            .map { |k, v| [serializer_class.attributes_to_serialize[k.to_sym]&.predicate, v] }
             .select { |k, _v| k.present? }
         ]
       end
 
       def previously_changed_relations
-        serializer_class = ActiveModel::Serializer.serializer_for(self)
-        return {} unless serializer_class
+        serializer_class = RDF::Serializers.serializer_for(self)
+        return {} unless serializer_class.try(:relationships_to_serialize)
 
-        serializer_class._reflections.select do |key, _value|
+        serializer_class.relationships_to_serialize.select do |key, _value|
           if respond_to?(key)
             association_key = key.to_s.ends_with?('_collection') ? send(key).association : key
             association_has_destructed?(association_key) || association_changed?(association_key)

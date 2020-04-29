@@ -2,7 +2,6 @@
 
 module LinkedRails
   class Resource
-    include ActiveModel::Serialization
     include ActiveModel::Model
 
     include LinkedRails::Model

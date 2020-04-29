@@ -6,7 +6,6 @@ module LinkedRails
   module Actions
     class Item # rubocop:disable Metrics/ClassLength
       include ActiveModel::Model
-      include ActiveModel::Serialization
       include LinkedRails::Model
 
       attr_accessor :exclude, :list, :policy_arguments, :submit_label
@@ -94,6 +93,10 @@ module LinkedRails
         path_suffix = path.blank? ? "/actions/#{tag}" : "/#{path}"
 
         @iri_template ||= iri_template_expand_path(resource.send(:iri_template), path_suffix)
+      end
+
+      def rdf_type
+        type
       end
 
       def target

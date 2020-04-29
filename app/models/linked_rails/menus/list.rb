@@ -11,7 +11,7 @@ module LinkedRails
       delegate :iri_opts, to: :resource
 
       def available_menus
-        return [] if defined_menus.blank?
+        return {} if defined_menus.blank?
 
         @available_menus ||= defined_menus.select(&method(:menu_available?)).compact
       end

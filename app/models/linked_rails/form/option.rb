@@ -4,7 +4,6 @@ module LinkedRails
   class Form
     class Option
       include ActiveModel::Model
-      include ActiveModel::Serialization
       include LinkedRails::Model
 
       attr_accessor :attr, :iri, :key, :klass, :type
@@ -16,6 +15,10 @@ module LinkedRails
             "activerecord.attributes.#{class_name}.#{attr.pluralize}",
             default: [:"#{class_name.tableize}.#{attr}.#{key}", key.to_s.humanize]
           )
+      end
+
+      def rdf_type
+        type
       end
 
       def to_param

@@ -3,7 +3,6 @@
 module LinkedRails
   class EntryPoint
     include ActiveModel::Model
-    include ActiveModel::Serialization
     include LinkedRails::Model
 
     attr_accessor :parent
@@ -53,6 +52,12 @@ module LinkedRails
 
     def route_fragment
       :entrypoint
+    end
+
+    class << self
+      def iri
+        RDF::Vocab::SCHEMA.EntryPoint
+      end
     end
   end
 end

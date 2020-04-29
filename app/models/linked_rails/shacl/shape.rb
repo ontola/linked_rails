@@ -19,8 +19,26 @@ module LinkedRails
                     :target_objects_of,
                     :target_subjects_of
 
-      def self.iri
-        RDF::Vocab::SH.Shape
+      def referred_shape_instances(user_context)
+        @referred_shape_instances ||= referred_shapes&.map do |shape|
+          if shape.is_a?(Class) && shape < LinkedRails::Form
+            build_shape(shape, user_context)
+          else
+            shape
+          end
+        end
+      end
+
+      private
+
+      def build_shape(shape, user_context)
+        shape.new(form.target.build_child(shape.model_class), form.iri_template, user_context).shape
+      end
+
+      class << self
+        def iri
+          RDF::Vocab::SH.Shape
+        end
       end
     end
   end

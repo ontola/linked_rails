@@ -9,12 +9,8 @@ module LinkedRails
       attribute :or, predicate: RDF::Vocab::SH.or
       attribute :not, predicate: RDF::Vocab::SH.not
 
-      has_many :property, predicate: RDF::Vocab::SH.property
-      has_many :form_steps, predicate: Vocab::ONTOLA[:formSteps]
-
-      def type
-        RDF::Vocab::SH.NodeShape
-      end
+      has_many :property, predicate: RDF::Vocab::SH.property, polymorphic: true
+      has_many :form_steps, predicate: Vocab::ONTOLA[:formSteps], polymorphic: true
     end
   end
 end

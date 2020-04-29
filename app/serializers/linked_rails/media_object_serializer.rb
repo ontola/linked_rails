@@ -13,16 +13,5 @@ module LinkedRails
     attribute :url, predicate: RDF::Vocab::SCHEMA.url
     attribute :cover_url, predicate: Vocab::ONTOLA[:imgUrl1500x2000]
     attribute :position_y, predicate: Vocab::ONTOLA[:imagePositionY]
-
-    def type
-      case object.type&.to_sym
-      when :image
-        RDF::Vocab::SCHEMA.ImageObject
-      when :video
-        RDF::Vocab::SCHEMA.VideoObject
-      else
-        RDF::Vocab::SCHEMA.MediaObject
-      end
-    end
   end
 end

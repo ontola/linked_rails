@@ -34,7 +34,7 @@ module LinkedRails
       end
 
       def enum_attribute(klass, key, value)
-        opts = ActiveModel::Serializer.serializer_for(klass).try(:enum_options, key)
+        opts = RDF::Serializers.serializer_for(klass).try(:enum_options, key)
         return if opts.blank?
 
         opts[:options].detect { |_k, options| options[:iri] == value }&.first
@@ -115,10 +115,10 @@ module LinkedRails
 
       def parse_statement(base_params, graph, statement, klass)
         field = serializer_field(klass, statement.predicate)
-        if field.is_a?(ActiveModel::Serializer::Attribute)
-          parsed_attribute(base_params, klass, field.name, statement.object.value)
-        elsif field.is_a?(ActiveModel::Serializer::Reflection)
-          parsed_association(base_params, graph, statement.object, klass, field.options[:association] || field.name)
+        if field.is_a?(FastJsonapi::Attribute)
+          parsed_attribute(base_params, klass, field.key, statement.object.value)
+        elsif field.is_a?(FastJsonapi::Relationship)
+          parsed_association(base_params, graph, statement.object, klass, field.association || field.key)
         end
       end
 

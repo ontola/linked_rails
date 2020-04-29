@@ -16,22 +16,8 @@ module LinkedRails
       attribute :target_objects_of, predicate: RDF::Vocab::SH.targetObjectsOf
       attribute :target_subjects_of, predicate: RDF::Vocab::SH.targetSubjectsOf
 
-      has_many :referred_shapes, predicate: Vocab::ONTOLA[:referredShapes]
-
-      def referred_shapes
-        object.referred_shapes&.map do |shape|
-          if shape.is_a?(Class) && shape < LinkedRails::Form
-            build_shape(shape)
-          else
-            shape
-          end
-        end
-      end
-
-      private
-
-      def build_shape(shape)
-        shape.new(object.form.target.build_child(shape.model_class), object.form.iri_template, scope).shape
+      has_many :referred_shapes, predicate: Vocab::ONTOLA[:referredShapes], polymorphic: true do |object, params|
+        object.referred_shape_instances(params[:scope])
       end
     end
   end

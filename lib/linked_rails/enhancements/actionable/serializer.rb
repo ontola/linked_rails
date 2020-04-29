@@ -7,11 +7,13 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          triples :action_triples
+          statements :action_triples
         end
 
-        def action_triples
-          object.action_triples(scope)
+        class_methods do
+          def action_triples(object, params)
+            object.action_triples(params[:scope])
+          end
         end
       end
     end

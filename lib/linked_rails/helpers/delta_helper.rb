@@ -6,7 +6,7 @@ module LinkedRails
       def changed_relations_triples # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         current_resource.previously_changed_relations.flat_map do |key, value|
           relation_iri = current_resource.send(key).iri
-          predicate = value.options[:predicate]
+          predicate = value.predicate
           if key.to_s.ends_with?('_collection')
             [[Vocab::SP[:Variable], Vocab::ONTOLA[:baseCollection], relation_iri, delta_iri(:invalidate)]]
           elsif current_resource.send(:association_has_destructed?, key)
@@ -31,14 +31,16 @@ module LinkedRails
         end
       end
 
-      def changes_triples # rubocop:disable Metrics/AbcSize
-        serializer = ActiveModelSerializers::SerializableResource.new(current_resource, {}).serializer_instance
+      def changes_triples # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        serializer = RDF::Serializers.serializer_for(current_resource).new(current_resource)
+
         current_resource.previous_changes_by_predicate.map do |predicate, (_old_value, _new_value)|
           serializer_attributes = current_resource.class.predicate_mapping[predicate]
-          next if serializer_attributes.is_a?(ActiveModel::Serializer::Reflection)
+          next if serializer_attributes.is_a?(FastJsonapi::Relationship)
 
-          attr_name = serializer_attributes.name
-          serialized_value = serializer.read_attribute_for_serialization(attr_name)
+          attr_name = serializer_attributes.key
+          serialized_value =
+            serializer.class.attributes_to_serialize[attr_name]&.serialize(current_resource, serializer_params, {})
           (serialized_value.is_a?(Array) ? serialized_value : [serialized_value]).map do |value|
             change_triple(predicate, value)
           end

@@ -18,12 +18,11 @@ module LinkedRails
 
           def include_menus
             serializable_class.try(:menu_class)&.defined_menus&.keys&.each do |menu|
-              method_name = "#{menu}_menu"
-              define_method method_name do
-                object.menu(menu, scope)
+              has_one "#{menu}_menu",
+                      predicate: Vocab::ONTOLA["#{menu.to_s.camelize(:lower)}Menu"],
+                      polymorphic: true do |object, opts|
+                object.menu(menu, opts[:scope])
               end
-
-              has_one method_name, predicate: Vocab::ONTOLA["#{menu.to_s.camelize(:lower)}Menu"]
             end
           end
         end

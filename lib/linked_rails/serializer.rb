@@ -11,58 +11,33 @@ module LinkedRails
 
       class_attribute :_enums
 
-      attribute :type, predicate: RDF[:type]
-      attribute :canonical_iri, predicate: RDF::Vocab::DC[:identifier]
-    end
+      set_id :iri
 
-    def id
-      rdf_subject
-    end
-
-    def canonical_iri
-      object.try(:canonical_iri) || rdf_subject
-    end
-
-    def rdf_subject
-      object.iri
-    end
-
-    def serializable_class
-      self.class.serializable_class
-    end
-
-    def type
-      object.class.iri
-    end
-
-    private
-
-    def serialize_image(obj)
-      if obj.is_a?(String) || obj.is_a?(Symbol)
-        {
-          id: RDF::URI(obj.to_s.gsub(/^fa-/, 'http://fontawesome.io/icon/')),
-          type: Vocab::ONTOLA[:FontAwesomeIcon]
-        }
-      elsif obj.is_a?(RDF::URI)
-        {id: obj}
-      else
-        obj.presence
+      attribute :rdf_type, predicate: RDF[:type], datatype: RDF::XSD[:anyURI]
+      attribute :canonical_iri, predicate: RDF::Vocab::DC[:identifier] do |object|
+        object.try(:canonical_iri) || object.iri
       end
     end
 
     module ClassMethods
       def enum(key, opts = nil)
         self._enums ||= {}
-        self._enums[key] = opts
+        self._enums[key] = opts.except(:if, :predicate).presence
+        enum_opts = enum_options(key).try(:[], :options)
 
-        define_method(key) do
-          self.class.enum_options(key) &&
-            self.class.enum_options(key)[:options][object.send(key)&.to_sym].try(:[], :iri)
+        attribute(key, if: opts[:if], predicate: opts[:predicate]) do |object|
+          enum_value(key, enum_opts, object) if enum_opts
         end
       end
 
       def enum_options(key)
         _enums && _enums[key] || default_enum_opts(key, serializable_class.try(:defined_enums).try(:[], key.to_s))
+      end
+
+      def enum_value(key, enum_opts, object)
+        raw_value = object.send(key)
+
+        enum_opts[raw_value&.to_sym].try(:[], :iri) if raw_value.present?
       end
 
       def default_enum_opts(key, enum_opts)
@@ -76,8 +51,38 @@ module LinkedRails
         }
       end
 
+      # rubocop:disable Naming/PredicateName
+      def has_one(key, opts = {})
+        opts[:id_method_name] = :iri
+
+        return super if block_given?
+
+        super do |object|
+          object.send(key)
+        end
+      end
+
+      def has_many(key, opts = {})
+        opts[:id_method_name] = :iri
+
+        return super if block_given?
+
+        super do |object|
+          object.send(key)
+        end
+      end
+      # rubocop:enable Naming/PredicateName
+
       def serializable_class
         @serializable_class ||= name.gsub('Serializer', '').safe_constantize
+      end
+
+      def serialize_image(obj)
+        if obj.is_a?(String) || obj.is_a?(Symbol)
+          RDF::URI(obj.to_s.gsub(/^fa-/, 'http://fontawesome.io/icon/'))
+        else
+          obj.presence
+        end
       end
 
       def with_collection(name, opts = {})
@@ -85,10 +90,8 @@ module LinkedRails
         page_size = opts.delete(:page_size)
         display = opts.delete(:display)
 
-        has_one collection_name, opts.merge(association: name)
-
-        define_method collection_name do
-          object.send(collection_name, user_context: scope, display: display, page_size: page_size)
+        has_one collection_name, opts.merge(association: name, polymorphic: true) do |object, params|
+          object.send(collection_name, user_context: params[:scope], display: display, page_size: page_size)
         end
       end
     end

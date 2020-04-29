@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'active_response'
-require 'active_model_serializers'
 require 'kaminari/activerecord'
 require 'rdf'
 require 'rdf/vocab'
 require 'uri_template'
+require 'nill_class_renderer'
 require 'linked_rails/engine'
 require 'linked_rails/iri_mapper'
 
@@ -20,7 +20,6 @@ module LinkedRails
     default ||= "LinkedRails::#{[parent&.to_s&.camelize, klass.to_s.classify].compact.join('::')}"
 
     mattr_writer method, default: default
-
     define_singleton_method method do
       @model_classes[method] ||= class_variable_get("@@#{method}").constantize
     end

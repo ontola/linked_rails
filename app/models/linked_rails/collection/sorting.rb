@@ -3,7 +3,6 @@
 module LinkedRails
   class Collection
     class Sorting < RDF::Node
-      include ActiveModel::Serialization
       include ActiveModel::Model
       include LinkedRails::Model
       DATE_MIN = Date.new(1970, 1, 1)
@@ -52,7 +51,7 @@ module LinkedRails
         if key == Vocab::ONTOLA[:primaryKey]
           association_class.try(:primary_key)
         else
-          association_class.try(:predicate_mapping).try(:[], key)&.name
+          association_class.try(:predicate_mapping).try(:[], key)&.key
         end
       end
 

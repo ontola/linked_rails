@@ -31,6 +31,10 @@ module LinkedRails
         }
       end
 
+      def rdf_type
+        self.class.iri
+      end
+
       def reload(_opts = {})
         @iri = nil
         super

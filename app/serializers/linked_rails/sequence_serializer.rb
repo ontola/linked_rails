@@ -4,27 +4,18 @@ module LinkedRails
   class SequenceSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
 
-    triples :sequence
-    has_many :members
+    statements :sequence
+    has_many :members, polymorphic: true
 
-    def type
-      RDF[:Seq]
+    def self.sequence(object, _params)
+      return [] unless object.members
+
+      object.members.map.with_index do |item, index|
+        [object.iri, RDF["_#{index}"], item_iri(item), Vocab::LL[:supplant]]
+      end
     end
 
-    def sequence
-      object
-        &.members
-        &.map
-        &.with_index { |item, index| [rdf_subject, RDF["_#{index}"], item_iri(item), Vocab::LL[:supplant]] } || []
-    end
-
-    def rdf_subject
-      object.node
-    end
-
-    private
-
-    def item_iri(item)
+    def self.item_iri(item)
       item.is_a?(RDF::Resource) ? item : item.iri
     end
   end

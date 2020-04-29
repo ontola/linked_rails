@@ -5,5 +5,9 @@ module LinkedRails
     include LinkedRails::Serializer
 
     statements :graph
+
+    def self.graph(object, _params)
+      object.graph
+    end
   end
 end

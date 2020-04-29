@@ -2,7 +2,6 @@
 
 module LinkedRails
   class Vocabulary # rubocop:disable Metrics/ClassLength
-    include ActiveModel::Serialization
     include ActiveModel::Model
 
     include LinkedRails::Model
@@ -63,8 +62,8 @@ module LinkedRails
       def add_property_data(klass)
         klass.predicate_mapping.each do |property_iri, value|
           add_statement(RDF::Statement.new(property_iri, RDF[:type], RDF[:Property]))
-          add_property_label(property_iri, klass, value.name)
-          add_property_icon(property_iri, value.options[:image])
+          add_property_label(property_iri, klass, value.key)
+          add_property_icon(property_iri, value.image)
         end
       end
 
@@ -104,9 +103,8 @@ module LinkedRails
       def authorize_action; end
 
       def dump_sh_in(option)
-        ActiveModelSerializers::SerializableResource
-          .new(option, adapter: :rdf, scope: user_context)
-          .adapter
+        RDF::Serializers.serializer_for(option)
+          .new(option, params: {scope: user_context})
           .triples
           .each(&method(:add_statement))
       end

@@ -13,7 +13,6 @@ require_relative 'collection/infinite_view'
 
 module LinkedRails
   class Collection # rubocop:disable Metrics/ClassLength
-    include ActiveModel::Serialization
     include ActiveModel::Model
     include LinkedRails::Model::Enhancements
     include LinkedRails::Model::Iri
@@ -26,6 +25,8 @@ module LinkedRails
     attr_accessor :association, :association_class, :association_scope, :include_map, :joins, :name,
                   :parent, :part_of, :user_context, :page_size, :policy
     attr_writer :association_base, :default_display, :default_type, :display, :title, :type, :views
+
+    alias id iri
 
     def action_list(user_context)
       association_class.try(:action_list)&.new(resource: self, user_context: user_context)
@@ -44,11 +45,21 @@ module LinkedRails
 
     # prevents a `stack level too deep`
     def as_json(options = {})
-      super(options.merge(except: %w[association_class]))
+      super(options.merge(except: %w[association_class unfiltered_collection collection]))
     end
 
     def association_base
       @association_base ||= apply_scope(sorted_association(filtered_association), scope: policy && policy::Scope)
+    end
+
+    def columns
+      case display&.to_sym
+      when :table
+        columns_list = association_class.try(:defined_columns).try(:[], :default)
+      when :settingsTable
+        columns_list = association_class.try(:defined_columns).try(:[], :settings)
+      end
+      RDF::List[*columns_list] if columns_list.present?
     end
 
     def default_page_size
@@ -100,7 +111,7 @@ module LinkedRails
     end
 
     def total_count
-      @total_count ||= association_base.try(:total_count) || association_base.count
+      @total_count ||= association_base.try(:total_count) || association_base.count if paginated?
     end
 
     def total_page_count
@@ -141,6 +152,10 @@ module LinkedRails
       opts[:page] = 1 if type == :paginated
       opts[:before] = default_before_value if type == :infinite
       opts
+    end
+
+    def paginated?
+      type == :paginated
     end
 
     def new_child_values

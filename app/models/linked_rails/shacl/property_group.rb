@@ -3,7 +3,6 @@
 module LinkedRails
   module SHACL
     class PropertyGroup
-      include ActiveModel::Serialization
       include ActiveModel::Model
 
       # Custom attributes
@@ -31,8 +30,14 @@ module LinkedRails
         @label.respond_to?(:call) ? @label.call : @label
       end
 
-      def self.iri
-        RDF::Vocab::SH.PropertyGroup
+      def rdf_type
+        self.class.iri
+      end
+
+      class << self
+        def iri
+          RDF::Vocab::SH.PropertyGroup
+        end
       end
     end
   end

@@ -2,7 +2,6 @@
 
 module LinkedRails
   class RDFError
-    include ActiveModel::Serialization
     include ActiveModel::Model
 
     attr_accessor :error, :iri, :status
@@ -18,7 +17,7 @@ module LinkedRails
       g = ::RDF::Graph.new
       g << [iri, RDF::Vocab::SCHEMA.name, title] if title
       g << [iri, RDF::Vocab::SCHEMA.text, message]
-      g << [iri, ::RDF[:type], type]
+      g << [iri, ::RDF[:type], rdf_type]
       g
     end
 
@@ -26,8 +25,12 @@ module LinkedRails
       @title ||= I18n.t('status')[status] || I18n.t('status')[500]
     end
 
-    def type
-      @type ||= Vocab::ONTOLA["errors/#{error.class.name.demodulize}Error"]
+    def rdf_type
+      @rdf_type ||= Vocab::ONTOLA["errors/#{error.class.name.demodulize}Error"]
+    end
+
+    def self.serializer_class
+      RDFErrorSerializer
     end
   end
 end

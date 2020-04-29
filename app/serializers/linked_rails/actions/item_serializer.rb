@@ -7,26 +7,20 @@ module LinkedRails
 
       attribute :label, predicate: RDF::Vocab::SCHEMA.name
       attribute :description, predicate: RDF::Vocab::SCHEMA.text
-      attribute :result, predicate: RDF::Vocab::SCHEMA.result
-      attribute :action_status, predicate: RDF::Vocab::SCHEMA.actionStatus
-      attribute :favorite, predicate: Vocab::ONTOLA[:favoriteAction]
-      attribute :url, predicate: RDF::Vocab::SCHEMA.url
-      attribute :error, predicate: RDF::Vocab::SCHEMA.error
-
-      has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf
-      has_one :resource, predicate: RDF::Vocab::SCHEMA.object
-      has_one :target, predicate: RDF::Vocab::SCHEMA.target
-      has_one :included_resource
-
-      delegate :type, to: :object
-
-      def result
+      attribute :result, predicate: RDF::Vocab::SCHEMA.result do |object|
         object.result&.iri
       end
-
-      def url
+      attribute :action_status, predicate: RDF::Vocab::SCHEMA.actionStatus
+      attribute :favorite, predicate: Vocab::ONTOLA[:favoriteAction]
+      attribute :url, predicate: RDF::Vocab::SCHEMA.url do |object|
         object.target[:id] if object.target.is_a?(Hash)
       end
+      attribute :error, predicate: RDF::Vocab::SCHEMA.error
+
+      has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
+      has_one :resource, predicate: RDF::Vocab::SCHEMA.object, polymorphic: true
+      has_one :target, predicate: RDF::Vocab::SCHEMA.target, polymorphic: true
+      has_one :included_resource, polymorphic: true
     end
   end
 end

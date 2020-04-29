@@ -4,7 +4,6 @@ module LinkedRails
   module Menus
     class Item
       include ActiveModel::Model
-      include ActiveModel::Serialization
       include LinkedRails::Model
       include LinkedRails::CallableVariable
 
@@ -12,6 +11,7 @@ module LinkedRails
       attr_writer :action, :href, :image, :iri_base, :label, :menus
       delegate :iri_opts, to: :parent
 
+      alias id iri
       %i[action href image label menus iri_base].each do |method|
         callable_variable(method, instance: :parent)
       end
@@ -48,6 +48,10 @@ module LinkedRails
         sequence_iri.path ||= ''
         sequence_iri.path += '/menus'
         sequence_iri
+      end
+
+      def rdf_type
+        type || Vocab::ONTOLA[:MenuItem]
       end
 
       def route_fragment

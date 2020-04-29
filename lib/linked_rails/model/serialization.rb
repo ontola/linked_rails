@@ -34,25 +34,25 @@ module LinkedRails
         private
 
         def attribute_mapping
-          serializer = ActiveModel::Serializer.serializer_for(self)
-          return [] if serializer.blank?
+          serializer = RDF::Serializers.serializer_for(self)
+          return [] if serializer.try(:attributes_to_serialize).blank?
 
           serializer
-            ._attributes_data
+            .attributes_to_serialize
             .values
-            .select { |value| value.options[:predicate].present? }
-            .map { |value| [value.options[:predicate], value] }
+            .select { |attr| attr.predicate.present? }
+            .map { |attr| [attr.predicate, attr] }
         end
 
         def reflection_mapping
-          serializer = ActiveModel::Serializer.serializer_for(self)
-          return [] if serializer.blank?
+          serializer = RDF::Serializers.serializer_for(self)
+          return [] if serializer.try(:relationships_to_serialize).blank?
 
           serializer
-            ._reflections
+            .relationships_to_serialize
             .values
-            .select { |value| value.options[:predicate].present? }
-            .map { |value| [value.options[:predicate], value] }
+            .select { |value| value.predicate.present? }
+            .map { |value| [value.predicate, value] }
         end
       end
     end
