@@ -20,7 +20,7 @@ module LinkedRails
           if opts[:meta].present?
             controller.render(format => [], location: opts[:location], meta: opts[:meta])
           else
-            controller.head 200, location: opts[:location]
+            controller.head 200, location: opts[:location], content_type: content_type
           end
         end
 
@@ -35,7 +35,7 @@ module LinkedRails
         def invalid_resource(**opts)
           message = error_message(opts[:resource])
           response_headers(opts.merge(notice: message))
-          controller.head :unprocessable_entity
+          controller.head :unprocessable_entity, content_type: content_type
         end
 
         def new_resource(**opts)
@@ -51,13 +51,13 @@ module LinkedRails
             controller.response.headers,
             ontola_redirect_action(opts[:location], reload: opts[:reload])
           )
-          controller.head 200
+          controller.head 200, content_type: content_type
         end
 
         def resource(**opts)
           response_headers(opts)
           if (opts[:resource].blank? && opts[:meta].blank?) || head_request?
-            controller.head 200, location: opts[:location]
+            controller.head 200, location: opts[:location], content_type: content_type
           else
             opts[format] = opts.delete(:resource) || []
             controller.render opts
@@ -69,7 +69,7 @@ module LinkedRails
           if opts[:meta].present?
             controller.render(format => [], meta: opts[:meta], location: opts[:location])
           else
-            controller.head 200, location: opts[:location]
+            controller.head 200, location: opts[:location], content_type: content_type
           end
         end
 
