@@ -20,7 +20,7 @@ module LinkedRails
       end
 
       # Custom attributes
-      attr_accessor :model_attribute, :form
+      attr_accessor :model_attribute, :form, :label
 
       # SHACL attributes
       attr_accessor :sh_class,
@@ -64,7 +64,7 @@ module LinkedRails
       end
 
       def name
-        LinkedRails.translate(:property, :label, self)
+        label || LinkedRails.translate(:property, :label, self)
       end
 
       def sh_in
