@@ -41,15 +41,40 @@ module LinkedRails
         end
 
         def actions_iri(tag)
-          @actions_iri ||= iri_with_root(RDF::URI(iri_template_expand_path(iri_template, '/actions').expand(iri_opts)))
-          @actions_iri.fragment = tag if tag.present?
-          @actions_iri
+          actions_iri = iri_with_root(RDF::URI(iri_template_expand_path(iri_template, '/actions').expand(iri_opts)))
+          actions_iri.fragment = tag if tag.present?
+          actions_iri
+        end
+
+        def collection_actions(user_context)
+          (try(:collections) || []).map do |opts|
+            collection_for(opts[:name], user_context: user_context).actions(user_context)
+          end.flatten
+        end
+
+        def potential_and_favorite_triples(user_context)
+          remove_actions_iri_triples +
+            (actions(user_context) + collection_actions(user_context))
+              .map(&method(:potential_and_favorite_for_action))
+              .flatten(1)
         end
 
         private
 
-        def collection_actions(user_context)
-          (try(:collections) || []).map { |opts| collection_for(opts[:name]).actions(user_context) }.flatten
+        def potential_and_favorite_for_action(action)
+          [
+            action.available? ? RDF::Vocab::SCHEMA.potentialAction : nil,
+            action.available? && action.favorite ? Vocab::ONTOLA[:favoriteAction] : nil
+          ].compact.map { |predicate| [iri, predicate, action.iri, Vocab::ONTOLA[:replace]] }
+        end
+
+        def remove_actions_iri_triples
+          [
+            [iri, RDF::Vocab::SCHEMA.potentialAction, actions_iri(:potentialAction), Vocab::ONTOLA[:remove]],
+            [actions_iri(:potentialAction), RDF[:type], NS::LL[:LoadingResource]],
+            [iri, Vocab::ONTOLA[:favoriteAction], actions_iri(:favoriteAction), Vocab::ONTOLA[:remove]],
+            [actions_iri(:favoriteAction), RDF[:type], NS::LL[:LoadingResource]]
+          ]
         end
 
         module ClassMethods
