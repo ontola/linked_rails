@@ -68,14 +68,12 @@ module LinkedRails
         end
       end
 
-      def add_property_label(property_iri, klass, name) # rubocop:disable Metrics/AbcSize
+      def add_property_label(property_iri, klass, name)
         I18n.available_locales.each do |locale|
-          label = I18n.with_locale(locale) do
-            I18n.t(
-              "properties.#{name}.label",
-              default: I18n.t("#{klass.name.tableize}.properties.#{name}.label", default: nil)
-            ) || LinkedRails::SHACL::PropertyShape.new(model_name: klass.model_name, model_attribute: name).name
-          end
+          next if property_label_present?(property_iri, locale)
+
+          label = property_label(klass, name, locale)
+
           next if label.blank?
 
           add_statement(RDF::Statement.new(property_iri, RDF::RDFS[:label], RDF::Literal.new(label, language: locale)))
@@ -125,6 +123,21 @@ module LinkedRails
         end
 
         @graph
+      end
+
+      def property_label(klass, name, locale)
+        I18n.with_locale(locale) do
+          I18n.t(
+            "properties.#{name}.label",
+            default: I18n.t("#{klass.name.tableize}.properties.#{name}.label", default: nil)
+          ) || LinkedRails::SHACL::PropertyShape.new(model_name: klass.model_name, model_attribute: name).name
+        end
+      end
+
+      def property_label_present?(property_iri, locale)
+        @graph.query([property_iri, RDF::RDFS[:label]]).any? do |statement|
+          statement.object.language == locale
+        end
       end
 
       def user_context; end
