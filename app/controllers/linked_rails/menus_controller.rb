@@ -23,7 +23,7 @@ module LinkedRails
     end
 
     def requested_resource
-      @requested_resource ||= menu_list.menu(params[:id].to_sym)
+      @requested_resource ||= menu_list.menu(params[:id]&.to_sym)
     end
   end
 end
