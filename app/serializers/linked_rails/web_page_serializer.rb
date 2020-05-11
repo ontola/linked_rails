@@ -5,5 +5,6 @@ module LinkedRails
     has_one :cover_photo, predicate: Vocab::ONTOLA[:coverPhoto]
     has_one :widget_sequence, predicate: Vocab::ONTOLA[:widgets]
     has_many :includes
+    attribute :hide_header, predicate: Vocab::ONTOLA[:hideHeader]
   end
 end

@@ -3,7 +3,7 @@
 module LinkedRails
   class WebPage < CreativeWork
     attr_writer :widgets
-    attr_accessor :cover_photo, :includes
+    attr_accessor :cover_photo, :includes, :hide_header
 
     def widget_sequence
       @widget_sequence ||= LinkedRails::Sequence.new(@widgets) if @widgets
