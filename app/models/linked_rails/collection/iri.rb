@@ -27,7 +27,11 @@ module LinkedRails
       def iri_template
         @iri_template ||=
           URITemplate.new(
-            "#{[parent&.root_relative_iri, association_class.route_key].join('/')}{?#{COLLECTION_PARAMS.join(',')}}"
+            [
+              LinkedRails.iri,
+              [parent&.root_relative_iri, association_class.route_key].join('/'),
+              "{?#{COLLECTION_PARAMS.join(',')}}"
+            ].join('')
           )
       end
 
