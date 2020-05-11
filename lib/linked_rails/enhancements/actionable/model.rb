@@ -95,7 +95,7 @@ module LinkedRails
           end
 
           def define_action_list
-            list = const_set("#{name}ActionList", Class.new(action_superclass))
+            list = const_set("#{name.demodulize}ActionList", Class.new(action_superclass))
             list.include_enhancements(:actionable_class, :Action)
             list
           end

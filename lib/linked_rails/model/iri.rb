@@ -99,12 +99,16 @@ module LinkedRails
 
       module ClassMethods
         def iri
-          @iri ||= iri_namespace[name.demodulize]
+          @iri ||= iri_namespace[iri_value]
         end
 
         def iri_namespace
           superclass.try(:iri_namespace) ||
             (linked_rails_module? ? Vocab::ONTOLA : LinkedRails.app_ns)
+        end
+
+        def iri_value
+          linked_rails_module? ? name.demodulize : name
         end
 
         def iri_template
