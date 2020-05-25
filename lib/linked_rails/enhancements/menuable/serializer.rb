@@ -12,8 +12,8 @@ module LinkedRails
 
         module ClassMethods
           def inherited(target)
-            target.include_menus
             super
+            target.include_menus
           end
 
           def include_menus
