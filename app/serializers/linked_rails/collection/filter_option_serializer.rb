@@ -2,7 +2,7 @@
 
 module LinkedRails
   class Collection
-    class FilterOptionSerializer < BaseSerializer
+    class FilterOptionSerializer < LinkedRails.serializer_parent_class
       attribute :count, predicate: NS::ONTOLA[:filterCount]
       attribute :key, predicate: NS::ONTOLA[:filterKey]
       attribute :value, predicate: NS::ONTOLA[:filterValue]
