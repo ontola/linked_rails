@@ -111,7 +111,7 @@ module LinkedRails
     end
 
     def total_count
-      @total_count ||= association_base.try(:total_count) || association_base.count if paginated?
+      @total_count ||= association_base.try(:total_count) || association_base.count
     end
 
     def total_page_count

@@ -8,7 +8,9 @@ module LinkedRails
       object.iri(display: nil, page_size: nil)
     end
     attribute :title, predicate: RDF::Vocab::AS.name
-    attribute :total_count, predicate: RDF::Vocab::AS.totalItems
+    attribute :total_count, predicate: RDF::Vocab::AS.totalItems do |object|
+      object.total_count if object.type == :paginated
+    end
     attribute :iri_template, predicate: Vocab::ONTOLA[:iriTemplate]
     attribute :iri_template_opts, predicate: Vocab::ONTOLA[:iriTemplateOpts]
     attribute :default_type, predicate: Vocab::ONTOLA[:defaultType], &:type
