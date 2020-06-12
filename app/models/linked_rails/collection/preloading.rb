@@ -91,7 +91,7 @@ module LinkedRails
           .order(
             LinkedRails
               .collection_sorting_class
-              .from_array(opts[:klass], opts[:klass].default_sortings)
+              .from_array(opts[:klass], opts[:klass].default_sortings, collection)
               .map(&:sort_value)
           ).order_values
       end
