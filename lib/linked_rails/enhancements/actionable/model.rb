@@ -64,7 +64,7 @@ module LinkedRails
         def potential_and_favorite_for_action(action)
           [
             action.available? ? RDF::Vocab::SCHEMA.potentialAction : nil,
-            action.available? && action.favorite ? Vocab::ONTOLA[:favoriteAction] : nil
+            action.favorite ? Vocab::ONTOLA[:favoriteAction] : nil
           ].compact.map { |predicate| [iri, predicate, action.iri, Vocab::ONTOLA[:replace]] }
         end
 
