@@ -80,7 +80,7 @@ module LinkedRails
       end
 
       def default_value_from_sh_in(value)
-        sh_in.detect { |v| v.is_a?(LinkedRails::Form::Option) && v.key == value.to_sym }&.iri
+        sh_in_values.detect { |v| v.is_a?(LinkedRails::EnumValue) && v.key.to_sym == value.to_sym }&.iri
       end
 
       def default_value_from_target
@@ -95,6 +95,10 @@ module LinkedRails
         @description.respond_to?(:call) ? form.instance_exec(&@description) : @description
       end
 
+      def enum_options
+        @enum_options ||= serializer_class.enum_options(model_attribute)
+      end
+
       def helper_text_from_attribute
         return if @helper_text.blank?
 
@@ -102,9 +106,19 @@ module LinkedRails
       end
 
       def sanitized_default_value(value)
-        return default_value_from_sh_in(value) if value.is_a?(String) && sh_in.is_a?(Array)
+        return default_value_from_sh_in(value) if value.is_a?(String) && sh_in_values
 
         value if value.is_a?(String) || value.is_a?(RDF::URI) || RDF::Literal.new(value).class < RDF::Literal
+      end
+
+      def serializer_class
+        form.class.send(:serializer_class)
+      end
+
+      def sh_in_values
+        return sh_in if sh_in.is_a?(Array)
+
+        serializer_class.enum_options(model_attribute)
       end
 
       def validator_by_class(klass)

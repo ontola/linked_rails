@@ -83,10 +83,8 @@ module LinkedRails
         target._referred_resources = []
       end
 
-      def form_options(attr, opts)
-        opts[:options].map do |key, values|
-          LinkedRails::Form::Option.new({key: key, attr: attr, klass: model_class, type: opts[:type]}.merge(values))
-        end
+      def form_options_iri(attr)
+        LinkedRails.iri(path: "/enums/#{model_class.to_s.tableize}/#{attr}")
       end
 
       def model_class
@@ -194,7 +192,7 @@ module LinkedRails
           (enum ? RDF::XSD[:string] : attr_to_datatype(attr)) ||
           raise("No datatype found for #{attr.key}")
         attrs[:max_count] ||= 1
-        attrs[:sh_in] ||= enum && form_options(attr.key.to_s, enum)
+        attrs[:sh_in] = form_options_iri(attr.key.to_s) if enum && !attrs[:sh_in]
         attrs
       end
 

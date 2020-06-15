@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  class Vocabulary # rubocop:disable Metrics/ClassLength
+  class Vocabulary
     include ActiveModel::Model
 
     include LinkedRails::Model
@@ -79,13 +79,6 @@ module LinkedRails
         end
       end
 
-      def add_sh_in_options(form)
-        form
-          .property_shapes_attrs
-          .select { |opts| opts[:sh_in].is_a?(Array) }
-          .each { |opts| opts[:sh_in].each(&method(:dump_sh_in)) }
-      end
-
       def add_statement(statement)
         @graph << statement
       end
@@ -102,22 +95,12 @@ module LinkedRails
 
       def authorize_action; end
 
-      def dump_sh_in(option)
-        RDF::Serializers.serializer_for(option)
-          .new(option, params: {scope: user_context})
-          .triples
-          .each(&method(:add_statement))
-      end
-
       def generate_graph
         @graph = ::RDF::Graph.new
 
         ApplicationRecord.descendants.each do |klass|
           iri = klass.iri.is_a?(Array) ? klass.iri.first : klass.iri
           add_class_data(klass, iri)
-        end
-        LinkedRails::Form.descendants.each do |form|
-          add_sh_in_options(form)
         end
 
         @graph
@@ -137,8 +120,6 @@ module LinkedRails
           statement.object.language == locale
         end
       end
-
-      def user_context; end
     end
   end
 end

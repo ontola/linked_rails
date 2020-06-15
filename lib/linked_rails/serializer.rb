@@ -20,35 +20,37 @@ module LinkedRails
     end
 
     module ClassMethods
-      def enum(key, opts = nil)
-        self._enums ||= {}
-        self._enums[key] = opts.except(:if, :predicate).presence
-        enum_opts = enum_options(key).try(:[], :options)
+      def enum(attr, opts = nil)
+        self._enums ||= HashWithIndifferentAccess.new
+        opts[:type] ||= Vocab::ONTOLA[:FormOption]
+        opts[:options] ||= default_enum_opts(attr)
+        self._enums[attr] = enum_values(attr, opts)
 
-        attribute(key, if: opts[:if], predicate: opts[:predicate]) do |object|
-          enum_value(key, enum_opts, object) if enum_opts
+        attribute(attr, if: opts[:if], predicate: opts[:predicate]) do |object|
+          enum_value(attr, object)
         end
       end
 
       def enum_options(key)
-        _enums && _enums[key] || default_enum_opts(key, serializable_class.try(:defined_enums).try(:[], key.to_s))
+        _enums && _enums[key]
       end
 
-      def enum_value(key, enum_opts, object)
+      def enum_value(key, object)
+        options = enum_options(key)
+        return if options.blank?
+
         raw_value = object.send(key)
 
-        enum_opts[raw_value&.to_sym].try(:[], :iri) if raw_value.present?
+        options[raw_value].try(:iri) if raw_value.present?
       end
 
-      def default_enum_opts(key, enum_opts)
-        return if enum_opts.blank?
+      def default_enum_opts(attr)
+        enum_opts = serializable_class.try(:defined_enums).try(:[], attr.to_s)
+        return [] if enum_opts.blank?
 
-        {
-          type: Vocab::ONTOLA[:FormOption],
-          options: Hash[
-            enum_opts&.map { |k, _v| [k.to_sym, {iri: Vocab::ONTOLA["form_option/#{key}/#{k}"]}] }
-          ]
-        }
+        HashWithIndifferentAccess[
+          enum_opts&.map { |k, _v| [k.to_sym, {}] }
+        ]
       end
 
       # rubocop:disable Naming/PredicateName
@@ -93,6 +95,26 @@ module LinkedRails
         has_one collection_name, opts.merge(association: name, polymorphic: true) do |object, params|
           object.send(collection_name, user_context: params[:scope], display: display, page_size: page_size)
         end
+      end
+
+      private
+
+      def enum_values(attr, opts) # rubocop:disable Metrics/MethodLength
+        Hash[
+          opts[:options].map do |option_key, option_values|
+            [
+              option_key,
+              LinkedRails::EnumValue.new(
+                {
+                  key: option_key,
+                  attr: attr,
+                  klass: serializable_class,
+                  type: opts[:type]
+                }.merge(option_values)
+              )
+            ]
+          end
+        ]
       end
     end
   end
