@@ -17,7 +17,7 @@ module LinkedRails
     end
 
     def iri
-      @iri ||= iri_with_root(RDF::URI("/enums/#{klass.name.tableize}/#{attr}##{key}"))
+      iri_with_root(RDF::URI("/enums/#{klass.name.tableize}/#{attr}##{key}"))
     end
 
     def rdf_type
