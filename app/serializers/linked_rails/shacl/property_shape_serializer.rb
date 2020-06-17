@@ -19,6 +19,8 @@ module LinkedRails
       attribute :input_field, predicate: Vocab::ONTOLA[:inputFieldHint]
       attribute :max_count, predicate: RDF::Vocab::SH.maxCount
       attribute :min_count, predicate: RDF::Vocab::SH.minCount
+      attribute :max_inclusive, predicate: RDF::Vocab::SH.maxInclusive
+      attribute :min_inclusive, predicate: RDF::Vocab::SH.minInclusive
       attribute :max_length, predicate: RDF::Vocab::SH.maxLength
       attribute :min_length, predicate: RDF::Vocab::SH.minLength
       attribute :name, predicate: RDF::Vocab::SH.name

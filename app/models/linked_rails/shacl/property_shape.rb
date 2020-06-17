@@ -2,7 +2,7 @@
 
 module LinkedRails
   module SHACL
-    class PropertyShape < Shape
+    class PropertyShape < Shape # rubocop:disable Metrics/ClassLength
       class << self
         def iri
           RDF::Vocab::SH.PropertyShape
@@ -32,6 +32,8 @@ module LinkedRails
                     :node_kind,
                     :node_shape,
                     :max_count,
+                    :max_inclusive,
+                    :min_inclusive,
                     :order,
                     :path,
                     :validators
