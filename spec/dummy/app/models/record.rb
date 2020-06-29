@@ -11,7 +11,21 @@ class Record < ApplicationRecord
 
   with_collection :records
 
-  filterable key: {key: :actual_key, values: {value: 'actual_value'}}, key2: {}, key3: {values: {empty: 'NULL'}}
+  attr_accessor :key, :key1, :key2, :key3
+  filterable(
+    LinkedRails.app_ns[:key] => {
+      filter: lambda { |scope, value|
+        scope.where(actual_key: value)
+      }
+    },
+    LinkedRails.app_ns[:key2] => {},
+    LinkedRails.app_ns[:key3] => {
+      filter: lambda { |scope, value|
+        value ? scope.where.not(key3: nil) : scope.where(key3: nil)
+      },
+      values: [true, false]
+    }
+  )
 
   def self.default_per_page
     11

@@ -16,7 +16,7 @@ describe LinkedRails::Collection do
     col
   end
   let(:filtered_collection) do
-    collection.send(:new_child, filter: {key: :value, key2: 'value2', key3: 'empty'})
+    collection.send(:new_child, filter: {key: [:value], key2: ['value2'], key3: [false]})
   end
   let(:user_context) { {admin: true} }
   let(:type) { nil }
@@ -37,7 +37,11 @@ describe LinkedRails::Collection do
     context 'with filtered collection' do
       subject { filtered_collection.iri }
 
-      let(:filter_string) { 'filter%5B%5D=key%3Dvalue&filter%5B%5D=key2%3Dvalue2&filter%5B%5D=key3%3Dempty' }
+      let(:filter_string) do
+        'filter%5B%5D=http%253A%252F%252Fexample.com%252Fmy_vocab%2523key%3Dvalue'\
+        '&filter%5B%5D=http%253A%252F%252Fexample.com%252Fmy_vocab%2523key2%3Dvalue2'\
+        '&filter%5B%5D=http%253A%252F%252Fexample.com%252Fmy_vocab%2523key3%3Dfalse'
+      end
 
       it { is_expected.to eq("http://example.com/records?#{filter_string}") }
 
@@ -83,7 +87,7 @@ describe LinkedRails::Collection do
 
       let(:result) do
         'SELECT "records".* FROM "records" WHERE '\
-        '"records"."actual_key" = \'actual_value\' AND "records"."key2" = \'value2\' AND "records"."key3" IS NULL'
+        '"records"."actual_key" = \'value\' AND "records"."key2" = \'value2\' AND "records"."key3" IS NULL'
       end
 
       it { is_expected.to eq(result) }
