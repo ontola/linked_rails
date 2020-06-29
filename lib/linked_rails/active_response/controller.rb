@@ -21,13 +21,17 @@ module LinkedRails
 
       serializer_opts = RDF::Serializers::Renderers.transform_opts(
         options,
-        respond_to?(:serializer_params, true) ? serializer_params : {}
+        serializer_params
       )
 
       serializer = RDF::Serializers.serializer_for(record)&.new(record, serializer_opts)
       return record.to_json unless serializer
 
       Oj.dump(serializer.serializable_hash, mode: :compat)
+    end
+
+    def serializer_params
+      {}
     end
   end
 end
