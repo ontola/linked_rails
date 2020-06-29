@@ -28,7 +28,8 @@ module LinkedRails
           response_headers(opts)
           controller.respond_with_resource(
             resource: opts[:action],
-            include: opts[:include]
+            include: opts[:include],
+            meta: opts[:meta]
           )
         end
 

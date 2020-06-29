@@ -29,7 +29,11 @@ module LinkedRails
     alias id iri
 
     def action_list(user_context)
-      association_class.try(:action_list)&.new(resource: self, user_context: user_context)
+      @action_list ||= {}
+      @action_list[user_context] ||= association_class.try(:action_list)&.new(
+        resource: self,
+        user_context: user_context
+      )
     end
 
     def actions(user_context = nil)
@@ -50,6 +54,11 @@ module LinkedRails
 
     def association_base
       @association_base ||= apply_scope(sorted_association(filtered_association), scope: policy && policy::Scope)
+    end
+
+    def build_child
+      parent&.build_child(association_class, collection: self, user_context: user_context) ||
+        association_class.build_new(collection: self, user_context: user_context)
     end
 
     def columns

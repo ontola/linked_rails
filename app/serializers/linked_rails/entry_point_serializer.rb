@@ -12,7 +12,7 @@ module LinkedRails
     end
 
     has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
-    has_one :action_body, predicate: Vocab::LL[:actionBody], polymorphic: true
+    attribute :action_body, predicate: Vocab::LL[:actionBody], polymorphic: true
     attribute :image, predicate: RDF::Vocab::SCHEMA.image do |object|
       serialize_image(object.image)
     end

@@ -7,7 +7,7 @@ module LinkedRails
         private
 
         def action_form_includes(action = nil)
-          LinkedRails::Enhancements::Actionable::FORM_INCLUDES + [included_resource: form_resource_includes(action)]
+          [:target, included_object: form_resource_includes(action)]
         end
 
         def collection_from_parent
@@ -65,7 +65,7 @@ module LinkedRails
 
         def collection_params(opts = params, _klass = controller_class) # rubocop:disable Metrics/AbcSize
           method = opts.is_a?(Hash) ? :slice : :permit
-          params = opts.send(method, :display, :page_size, :type).to_h
+          params = opts.send(method, :display, :page_size, :type).to_h.with_indifferent_access
 
           filter = parse_filter(opts.is_a?(Hash) ? opts[:filter] : opts.permit(filter: [])[:filter])
           params[:filter] = filter if filter
@@ -77,14 +77,15 @@ module LinkedRails
         end
 
         def form_resource_includes(action)
-          includes = controller_class.try(:show_includes)&.presence || []
-          return includes if action.blank?
+          included_object = action&.included_object
 
+          return {} if included_object.nil? || included_object.anonymous_iri?
+
+          includes = included_object.class.try(:show_includes)&.presence || []
           includes = [includes] if includes.is_a?(Hash)
           if action.resource.is_a?(LinkedRails.collection_class)
             includes << [:filters, :sortings, filter_fields: :options]
           end
-          includes << action.form&.referred_resources
           includes
         end
 

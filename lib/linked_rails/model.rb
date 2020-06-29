@@ -19,13 +19,23 @@ module LinkedRails
     include Serialization
     include Sorting
 
-    def build_child(klass)
+    def build_child(klass, _opts = {})
       klass.new
     end
 
     module ClassMethods
+      def build_new(opts = {})
+        new(attribute_for_new(opts))
+      end
+
       def form_class
         @form_class ||= "#{name}Form".safe_constantize
+      end
+
+      private
+
+      def attribute_for_new(_opts)
+        {}
       end
     end
   end

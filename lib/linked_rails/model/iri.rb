@@ -5,6 +5,14 @@ module LinkedRails
     module Iri
       extend ActiveSupport::Concern
 
+      def anonymous_iri
+        @anonymous_iri ||= RDF::Node.new
+      end
+
+      def anonymous_iri?
+        self.class < ActiveRecord::Base && !persisted?
+      end
+
       # @return [RDF::URI].
       def canonical_iri(opts = {})
         return iri_with_root(root_relative_canonical_iri(opts)) if opts.present?
@@ -19,6 +27,7 @@ module LinkedRails
       # @return [RDF::URI].
       def iri(opts = {})
         return iri_with_root(root_relative_iri(opts)) if opts.present?
+        return anonymous_iri if anonymous_iri?
 
         @iri ||= iri_with_root(root_relative_iri)
       end

@@ -20,12 +20,12 @@ module LinkedRails
       end
     end
 
-    def create_child?(klass)
-      child_policy(klass).create?
+    def create_child?(klass, opts = {})
+      child_policy(klass, opts).create?
     end
 
-    def index_children?(klass)
-      child_policy(klass).show?
+    def index_children?(klass, opts = {})
+      child_policy(klass, opts).show?
     end
 
     def show?
@@ -46,8 +46,9 @@ module LinkedRails
 
     private
 
-    def child_policy(klass)
-      Pundit.policy(user_context, record.build_child(klass.constantize))
+
+    def child_policy(klass, opts = {})
+      Pundit.policy(user_context, record.build_child(klass.constantize, opts.merge(user_context: user_context)))
     end
 
     def policy_class

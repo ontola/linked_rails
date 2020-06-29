@@ -111,8 +111,14 @@ module LinkedRails
           I18n.t(
             "properties.#{name}.label",
             default: I18n.t("#{klass.name.tableize}.properties.#{name}.label", default: nil)
-          ) || LinkedRails::SHACL::PropertyShape.new(model_name: klass.model_name, model_attribute: name).name
+          ) || label_from_form(klass, name)
         end
+      end
+
+      def label_from_form(klass, name)
+        return if klass.blank?
+
+        klass.form_class && LinkedRails::Form::Field.new(form: klass.form_class, model_attribute: name).name
       end
 
       def property_label_present?(property_iri, locale)

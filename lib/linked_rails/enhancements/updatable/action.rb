@@ -22,7 +22,7 @@ module LinkedRails
                 type.present? ? I18n.t('edit_type', type: type) : I18n.t('update')
               },
               image: 'fa-pencil-square-o',
-              include_resource: false,
+              include_object: false,
               url: -> { resource.iri },
               http_method: :put,
               form: -> { "#{resource.class}Form".safe_constantize },

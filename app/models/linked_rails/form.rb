@@ -3,88 +3,97 @@
 require 'pundit'
 
 module LinkedRails
-  class Form # rubocop:disable Metrics/ClassLength
+  class Form
     include LinkedRails::Model
 
-    class_attribute :_fields, :_property_groups, :_referred_resources
-    attr_accessor :iri_template_base, :user_context, :target
+    class_attribute :pages
 
-    def initialize(target, iri_template_base, user_context)
-      @target = target
-      @iri_template_base = iri_template_base
-      @user_context = user_context
+    def iri
+      self.class.form_iri
     end
 
-    def iri_template
-      @iri_template ||= iri_template_with_fragment(iri_template_base, self.class.name)
-    end
-
-    def shape # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      klass =
-        if target.is_a?(Class)
-          target
-        elsif target.new_record?
-          target.class
-        end
-      LinkedRails::SHACL::NodeShape.new(
-        iri: iri,
-        target_class: klass&.iri,
-        target_node: klass ? nil : target.iri,
-        property: permitted_properties,
-        form_steps: form_steps,
-        referred_shapes: _property_groups.values
-      )
-    end
-
-    private
-
-    def attribute_permitted?(attr)
-      permitted_attributes.find do |p_a|
-        if p_a.is_a?(Hash)
-          p_a.key?("#{attr[:model_attribute]}_attributes".to_sym)
-        else
-          p_a == attr[:model_attribute]
-        end
-      end
-    end
-
-    def form_steps
-      @form_steps ||=
-        _fields
-          .values
-          .select { |attr| attr[:type] == :resource && (attr[:if].blank? || instance_exec(&attr[:if])) }
-          .map { |attrs| LinkedRails::Form::Step.new(attrs.except(:if, :type).merge(form: self)) }
-    end
-
-    def include_attribute?(attr)
-      return true if _property_groups[attr[:model_attribute]] || attr[:model_attribute] == :type
-      return false if attr[:if] && !instance_exec(&attr[:if])
-
-      attribute_permitted?(attr)
-    end
-
-    def permitted_attributes
-      @permitted_attributes ||= Pundit.policy(user_context, target).try(:permitted_attributes) || []
-    end
-
-    def permitted_properties
-      @permitted_properties ||=
-        self.class.property_shapes_attrs.select(&method(:include_attribute?)).map(&method(:property_shape))
-    end
-
-    def property_shape(attrs)
-      LinkedRails::SHACL::PropertyShape.new(attrs.except(:if, :type).merge(form: self))
+    def canonical_iri
+      iri
     end
 
     class << self
       def inherited(target)
-        target._fields = {}
-        target._property_groups = {}
-        target._referred_resources = []
+        target.pages = []
+      end
+
+      def current_group
+        @current_group || default_group
+      end
+
+      def current_page
+        @current_page || default_page
+      end
+
+      def default_group
+        @default_group ||= group(:default, collapsible: false)
+      end
+
+      def default_page
+        @default_page ||= page(:default)
+      end
+
+      def field(key, opts = {})
+        current_group.fields << Form::FieldFactory.new(
+          field_options: opts,
+          form: self,
+          key: key
+        ).field
+      end
+
+      def footer
+        @current_group = current_page.footer_group
+
+        yield if block_given?
+
+        @current_group = nil
+        current_page.footer_group
+      end
+
+      def form_iri
+        LinkedRails.iri(path: "/forms/#{to_s.sub('Form', '').tableize}")
       end
 
       def form_options_iri(attr)
         LinkedRails.iri(path: "/enums/#{model_class.to_s.tableize}/#{attr}")
+      end
+
+      def group(key, opts = {})
+        opts[:collapsible] = true unless opts.key?(:collapsible)
+        opts[:key] = key
+        group = current_page.add_group(opts)
+        @current_group = group
+
+        yield if block_given?
+
+        @current_group = nil
+        group
+      end
+
+      # rubocop:disable Naming/PredicateName
+      def has_many(key, opts = {})
+        opts[:input_field] = Form::Field::AssociationInput
+        opts[:max_count] = 99
+        field(key, opts)
+      end
+
+      def has_one(key, opts = {})
+        opts[:input_field] = Form::Field::AssociationInput
+        opts[:max_count] = 1
+        field(key, opts)
+      end
+      # rubocop:enable Naming/PredicateName
+
+      def hidden(&block)
+        group(:hidden, collapsible: false, hidden: true, &block)
+      end
+
+      def iri
+        Vocab::FORM[:Form]
       end
 
       def model_class
@@ -93,193 +102,30 @@ module LinkedRails
           name.deconstantize.classify.sub(/Form$/, '').safe_constantize
       end
 
-      def property_shapes_attrs
-        @property_shapes_attrs ||=
-          _fields
-            .select { |_k, attr| attr[:type] == :property }
-            .map { |k, attr| property_shape_attrs(k, attr || {}) }
-            .compact
-      end
-
-      def referred_resources
-        property_shapes_attrs
-        _referred_resources
-      end
-
-      private
-
-      def attr_column(name)
-        column_model =
-          if model_class.is_delegated_attribute?(name)
-            model_class.class_for_delegated_attribute(name)
-          else
-            model_class
-          end
-        column_model.column_for_attribute(name)
-      end
-
-      def attr_to_datatype(attr) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-        return nil if method_defined?(attr.key)
-
-        name = attr.key.to_s
-        case model_class.attribute_types[name].type
-        when :string, :text
-          RDF::XSD[:string]
-        when :integer
-          RDF::XSD[:integer]
-        when :datetime
-          RDF::XSD[:dateTime]
-        when :date
-          RDF::XSD[:date]
-        when :boolean
-          RDF::XSD[:boolean]
-        when :decimal
-          decimal_data_type(name)
-        when :file
-          Vocab::LL[:blob]
-        else
-          RDF::XSD[:string] if model_class.defined_enums.key?(name)
-        end
-      end
-
-      def decimal_data_type(name) # rubocop:disable Metrics/MethodLength
-        case attr_column(name).precision
-        when 64
-          RDF::XSD[:long]
-        when 32
-          RDF::XSD[:int]
-        when 16
-          RDF::XSD[:short]
-        when 8
-          RDF::XSD[:byte]
-        else
-          RDF::XSD[:decimal]
-        end
-      end
-
-      def fields(arr, group_iri = nil)
-        arr.each do |f|
-          key = f.is_a?(Hash) ? f.keys.first : f
-          opts = f.is_a?(Hash) ? f.values.first : {}
-          field(key, opts.merge(group: group_iri))
-        end
-      end
-
-      def field(key, opts = {}) # rubocop:disable Metrics/AbcSize
-        if key.is_a?(Hash)
-          opts.merge!(key.values.first)
-          key = key.keys.first
-        end
-        raise "Field '#{key}' defined twice" if _fields[key].present?
-
-        opts[:order] ||= _fields.keys.length
-        opts[:type] ||= :property
-        _fields[key.try(:to_sym)] = opts
-      end
-
-      def literal_or_node_property_attrs(serializer_attr, attrs)
-        if serializer_attr.is_a?(FastJsonapi::Attribute) || attrs[:model_attribute].to_s.ends_with?('_id')
-          literal_property_attrs(serializer_attr, attrs)
-        elsif serializer_attr.is_a?(FastJsonapi::Relationship)
-          node_property_attrs(serializer_attr, attrs)
-        end
-      end
-
-      def literal_property_attrs(attr, attrs) # rubocop:disable Metrics/AbcSize
-        enum = serializer_enum(attr.key.to_sym)
-        attrs[:datatype] ||=
-          attr.datatype ||
-          (enum ? RDF::XSD[:string] : attr_to_datatype(attr)) ||
-          raise("No datatype found for #{attr.key}")
-        attrs[:max_count] ||= 1
-        attrs[:sh_in] = form_options_iri(attr.key.to_s) if enum && !attrs[:sh_in]
-        attrs
-      end
-
-      def model_attribute(attr)
-        (model_class.try(:attribute_alias, attr) || attr).to_sym
-      end
-
-      def node_property_attrs(attr, attrs) # rubocop:disable Metrics/AbcSize
-        name = attr.association || attr.key
-        _referred_resources << name
-        collection = model_class.try(:collections)&.find { |c| c[:name] == name }
-        klass_name = model_class.try(:reflections).try(:[], name.to_s)&.class_name || name.to_s.classify
-
-        attrs[:max_count] ||= collection || attr.try(:relationship_type) == :has_many ? nil : 1
-        attrs[:sh_class] ||= klass_name.constantize.iri
-        attrs[:referred_shapes] ||= ["#{klass_name}Form".safe_constantize]
-        attrs
-      end
-
-      def predicate_from_serializer(serializer_attr)
-        serializer_attr&.predicate
-      end
-
-      def property_group(name, opts = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        raise "Property group '#{name}' defined twice" if _property_groups[name].present?
-        raise "Property group '#{name}' not available in fields" if _fields[name].nil?
-
-        group = LinkedRails::SHACL::PropertyGroup.new(
-          description: opts[:description],
-          label: opts[:label],
-          iri: opts[:iri],
-          order: opts[:order] || _fields[name][:order]
-        )
-        _fields[name][:is_group] = true
-        _property_groups[name] = group
-        fields opts[:properties], group.iri if opts[:properties]
-        group
-      end
-
-      def property_shape_attrs(attr_key, attrs = {}) # rubocop:disable Metrics/AbcSize
-        return if _property_groups.key?(attr_key)
-
-        serializer_attr = serializer_attribute(attr_key)
-        attrs[:path] ||= predicate_from_serializer(serializer_attr)
-        raise "No predicate found for #{attr_key} in #{name}" if attrs[:path].blank?
-
-        attrs[:model_attribute] ||= model_attribute(attr_key)
-        attrs[:validators] ||= validators(attrs[:model_attribute])
-        return attrs if attrs.delete(:custom) || serializer_attr.blank?
-
-        literal_or_node_property_attrs(serializer_attr, attrs)
+      def page(key, opts = {})
+        page = Form::Page.new(opts.merge(key: key))
+        @current_page = page
+        pages << @current_page
+        yield if block_given?
+        @current_page = nil
+        page
       end
 
       def resource(key, opts = {})
-        opts[:type] = :resource
+        opts[:input_field] = Form::Field::ResourceField
         field(key, opts)
       end
 
-      def serializer_attribute(key)
-        return serializer_attributes[key] if serializer_attributes[key]
-
-        normalized_key = key.to_s.ends_with?('_id') ? key.to_s[0...-3].to_sym : key
-
-        k_v = serializer_reflections.find { |_k, v| (v.association || v.key) == normalized_key }
-        k_v[1] if k_v
+      def serializer_attributes
+        @serializer_attributes ||= serializer_class&.attributes_to_serialize || {}
       end
 
       def serializer_class
         @serializer_class ||= RDF::Serializers.serializer_for(model_class)
       end
 
-      def serializer_attributes
-        serializer_class&.attributes_to_serialize || {}
-      end
-
-      def serializer_enum(attr)
-        return if serializer_class.blank?
-
-        serializer_class.enum_options(attr)
-      end
-
       def serializer_reflections
-        serializer_class&.relationships_to_serialize || {}
-      end
-
-      def validators(model_attribute)
-        model_class.validators.select { |v| v.attributes.include?(model_attribute) }
+        @serializer_reflections ||= serializer_class&.relationships_to_serialize || {}
       end
     end
   end

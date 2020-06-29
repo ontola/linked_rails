@@ -18,9 +18,9 @@ module LinkedRails
       attribute :error, predicate: RDF::Vocab::SCHEMA.error
 
       has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
-      has_one :resource, predicate: RDF::Vocab::SCHEMA.object, polymorphic: true
+      has_one :object, predicate: RDF::Vocab::SCHEMA.object, polymorphic: true
       has_one :target, predicate: RDF::Vocab::SCHEMA.target, polymorphic: true
-      has_one :included_resource, polymorphic: true
+      has_one :included_object, polymorphic: true
     end
   end
 end

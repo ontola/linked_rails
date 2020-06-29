@@ -9,10 +9,10 @@ module LinkedRails
       include LinkedRails::Model
 
       attr_accessor :exclude, :list, :policy_arguments, :submit_label
-      attr_writer :parent, :resource, :root_relative_canonical_iri, :root_relative_iri, :target, :user_context
+      attr_writer :parent, :resource, :root_relative_canonical_iri, :root_relative_iri, :user_context, :object
       delegate :user_context, to: :list, allow_nil: true
 
-      %i[description result type policy label image url include_resource collection condition form completed
+      %i[description result type policy label image url include_object collection condition form completed
          tag http_method favorite path policy_resource predicate resource].each do |method|
         attr_writer method
         define_method method do
@@ -48,11 +48,17 @@ module LinkedRails
       end
 
       def error
-        I18n.t("actions.status.#{action_status.to_s.split('/').last}", default: nil)
+        I18n.t("actions.status.#{action_status.to_s.split('#').last}", default: nil)
       end
 
-      def included_resource
-        resource if include_resource
+      def included_object
+        object if include_object || object.iri.anonymous?
+      end
+
+      def object
+        @object = list.instance_exec(&@object) if @object.respond_to?(:call)
+
+        @object || resource
       end
 
       def parent

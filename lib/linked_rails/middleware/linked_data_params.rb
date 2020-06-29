@@ -151,7 +151,7 @@ module LinkedRails
         association_klass = reflection.klass
         if graph.has_subject?(object)
           nested_attributes(base_params, graph, object, association_klass, association, reflection.collection?)
-        elsif object.iri?
+        elsif object.iri? && reflection.belongs_to?
           [
             reflection.options[:through] ? "#{association}_id" : reflection.foreign_key,
             LinkedRails.resource_from_iri(object).send(reflection.association_primary_key)
@@ -169,12 +169,17 @@ module LinkedRails
         field
       end
 
+      def target_class_from_controller(controller_name)
+        return if controller_name.blank?
+
+        controller = "#{controller_name}_controller".classify.constantize
+        controller.try(:controller_class) || controller.controller_name.classify.safe_constantize
+      end
+
       def target_class_from_path(request)
         opts = LinkedRails.opts_from_iri(request.base_url + request.env['REQUEST_URI'], method: request.request_method)
-        return if opts.blank?
 
-        controller = "#{opts[:controller]}_controller".classify.constantize
-        controller.try(:controller_class) || controller.controller_name.classify.safe_constantize
+        target_class_from_controller(opts.try(:[], :controller))
       end
 
       def update_actor_param(request, graph)

@@ -20,6 +20,10 @@ module LinkedRails
     end
 
     module ClassMethods
+      def anonymous_object?(object)
+        object.iri.anonymous?
+      end
+
       def enum(attr, opts = nil)
         self._enums ||= HashWithIndifferentAccess.new
         opts[:type] ||= Vocab::ONTOLA[:FormOption]
@@ -75,6 +79,10 @@ module LinkedRails
       end
       # rubocop:enable Naming/PredicateName
 
+      def named_object?(object)
+        !object.iri.anonymous?
+      end
+
       def serializable_class
         @serializable_class ||= name.gsub('Serializer', '').safe_constantize
       end
@@ -91,8 +99,11 @@ module LinkedRails
         collection_name = "#{name.to_s.singularize}_collection"
         page_size = opts.delete(:page_size)
         display = opts.delete(:display)
+        opts[:association] ||= name
+        opts[:polymorphic] ||= true
+        opts[:if] ||= method(:named_object?)
 
-        has_one collection_name, opts.merge(association: name, polymorphic: true) do |object, params|
+        has_one collection_name, opts do |object, params|
           object.send(collection_name, user_context: params[:scope], display: display, page_size: page_size)
         end
       end

@@ -3,16 +3,6 @@
 module LinkedRails
   module Enhancements
     module Actionable
-      FORM_INCLUDES = [
-        target: {
-          action_body: [
-            :form_steps,
-            referred_shapes: %i[form_steps property],
-            property: [referred_shapes: %i[form_steps property]].freeze
-          ].freeze
-        }.freeze
-      ].freeze
-
       module Model
         extend ActiveSupport::Concern
 

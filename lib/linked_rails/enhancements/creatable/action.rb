@@ -17,10 +17,10 @@ module LinkedRails
             {
               collection: true,
               favorite: false,
-              form: -> { result_class.try(:form_class) },
+              form: actionable_class.try(:form_class),
               http_method: :post,
               image: 'fa-plus',
-              include_resource: false,
+              include_object: false,
               label: -> { I18n.t("#{association}.type_new", default: "New #{result_class.name.humanize}") },
               root_relative_iri: lambda {
                 uri = resource.root_relative_iri.dup
@@ -29,6 +29,7 @@ module LinkedRails
                 uri.query = Rack::Utils.parse_nested_query(uri.query).except('display', 'sort').to_param.presence
                 uri.to_s
               },
+              object: create_target,
               policy: :create_child?,
               result: -> { result_class },
               type: lambda {
@@ -36,6 +37,10 @@ module LinkedRails
               },
               url: -> { resource.iri }
             }
+          end
+
+          def create_target
+            -> { resource.build_child }
           end
         end
       end

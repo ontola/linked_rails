@@ -20,6 +20,7 @@ module LinkedRails
             serializable_class.try(:menu_class)&.defined_menus&.keys&.each do |menu|
               has_one "#{menu}_menu",
                       predicate: Vocab::ONTOLA["#{menu.to_s.camelize(:lower)}Menu"],
+                      if: method(:named_object?),
                       polymorphic: true do |object, opts|
                 object.menu(menu, opts[:scope])
               end

@@ -4,7 +4,7 @@ LinkedRails is a gem for Ruby on Rails that helps you create a Linked Data appli
 It includes among other things:
 * Linked data serialization to Turtle, JSON-LD, N-Triples and more using [rdf-serializers](https://github.com/ontola/rdf-serializers)
 * Controller abstraction using [active_response](https://github.com/ontola/active_response)
-* Serialization of forms using the [SHACL spec](http://www.w3.org/ns/shacl)
+* Serialization of forms
 * Serialization of collections using the [Activity Streams spec](https://www.w3.org/ns/activitystreams)
 * Serialization of menus
 * Communicating actions to be executed by the frontend using Exec Actions header

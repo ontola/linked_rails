@@ -11,7 +11,7 @@ module LinkedRails
              :resource, :tag, :translation_key, to: :parent
 
     def action_body
-      @action_body ||= form&.new(target, iri_template, user_context)&.shape
+      form&.form_iri
     end
 
     def as_json(_opts = {})
@@ -28,23 +28,11 @@ module LinkedRails
       value || label_fallback
     end
 
-    def target
-      @target ||= parent.collection ? build_target : resource
-    end
-
     def url
       @url || parent.url
     end
 
     private
-
-    def build_target
-      if resource.parent
-        resource.parent.build_child(resource.association_class)
-      else
-        resource.association_class.new
-      end
-    end
 
     def label_fallback
       LinkedRails.translate(:action, :submit, self)
