@@ -2,143 +2,51 @@
 
 module LinkedRails
   module SHACL
-    class PropertyShape < Shape # rubocop:disable Metrics/ClassLength
+    class PropertyShape < Shape
+      # SHACL attributes
+      attr_accessor(
+        :datatype,
+        :default_value,
+        :description,
+        :disjoint,
+        :equals,
+        :flags,
+        :group,
+        :language,
+        :less_than,
+        :less_than_or_equals,
+        :max_count,
+        :max_exclusive,
+        :max_inclusive,
+        :max_length,
+        :min_count,
+        :min_exclusive,
+        :min_inclusive,
+        :min_length,
+        :name,
+        :node,
+        :path,
+        :pattern,
+        :sh_class,
+        :unique_language,
+        :qualified_max_count,
+        :qualified_min_count,
+        :qualified_value_shape
+      )
+      attr_writer :has_value, :sh_in
+
+      def has_value
+        @has_value.respond_to?(:call) ? @has_value.call : @has_value
+      end
+
+      def sh_in
+        @sh_in.respond_to?(:call) ? @sh_in.call : @sh_in
+      end
+
       class << self
         def iri
           RDF::Vocab::SH.PropertyShape
         end
-
-        def validations(*validations)
-          validations.each do |key, klass, option_key|
-            attr_writer key
-
-            define_method key do
-              instance_variable_get(:"@#{key}") || validator_option(klass, option_key)
-            end
-          end
-        end
-      end
-
-      # Custom attributes
-      attr_accessor :model_attribute, :form, :label
-
-      # SHACL attributes
-      attr_accessor :sh_class,
-                    :datatype,
-                    :group,
-                    :input_field,
-                    :model_class,
-                    :node,
-                    :node_kind,
-                    :node_shape,
-                    :max_count,
-                    :max_inclusive,
-                    :min_inclusive,
-                    :order,
-                    :path,
-                    :validators
-      attr_writer :default_value, :description, :helper_text, :min_count, :model_name
-
-      validations [:min_length, ActiveModel::Validations::LengthValidator, :minimum],
-                  [:max_length, ActiveModel::Validations::LengthValidator, :maximum],
-                  [:pattern, ActiveModel::Validations::FormatValidator, :with],
-                  [:sh_in, ActiveModel::Validations::InclusionValidator, :in]
-
-      def default_value
-        @default_value ||= default_value_from_target
-      end
-
-      # The placeholder of the property.
-      def description
-        description_from_attribute || LinkedRails.translate(:property, :description, self)
-      end
-
-      def helper_text
-        helper_text_from_attribute || LinkedRails.translate(:property, :helper_text, self)
-      end
-
-      def min_count
-        @min_count || (validator_by_class(ActiveModel::Validations::PresenceValidator).present? ? 1 : nil)
-      end
-
-      def model_name
-        @model_name ||= form&.target&.model_name&.i18n_key
-      end
-
-      def name
-        label || LinkedRails.translate(:property, :label, self)
-      end
-
-      def sh_in
-        @sh_in = form.instance_exec(&@sh_in) if @sh_in.respond_to?(:call)
-        @sh_in
-      end
-
-      private
-
-      def apply_if_option(option)
-        return form.target.send(option) if option.is_a?(Symbol)
-        return form.target.instance_exec(&option) if option.respond_to?(:call)
-      end
-
-      def default_value_from_sh_in(value)
-        sh_in_values.detect { |v| v.is_a?(LinkedRails::EnumValue) && v.key.to_sym == value.to_sym }&.iri
-      end
-
-      def default_value_from_target
-        return if model_attribute.blank? || !form&.target&.respond_to?(model_attribute) || sh_class.present?
-
-        sanitized_default_value(form.target.send(model_attribute))
-      end
-
-      def description_from_attribute
-        return if @description.blank?
-
-        @description.respond_to?(:call) ? form.instance_exec(&@description) : @description
-      end
-
-      def enum_options
-        @enum_options ||= serializer_class.enum_options(model_attribute)
-      end
-
-      def helper_text_from_attribute
-        return if @helper_text.blank?
-
-        @helper_text.respond_to?(:call) ? form.instance_exec(&@helper_text) : @helper_text
-      end
-
-      def sanitized_default_value(value)
-        return default_value_from_sh_in(value) if value.is_a?(String) && sh_in_values
-
-        value if value.is_a?(String) || value.is_a?(RDF::URI) || RDF::Literal.new(value).class < RDF::Literal
-      end
-
-      def serializer_class
-        form.class.send(:serializer_class)
-      end
-
-      def sh_in_values
-        return sh_in if sh_in.is_a?(Array)
-
-        serializer_class.enum_options(model_attribute)
-      end
-
-      def validator_by_class(klass)
-        validator = validators&.detect { |v| v.is_a?(klass) }
-        return unless validator
-
-        if_value = apply_if_option(validator.options[:if])
-        return if if_value == false
-
-        unless_value = apply_if_option(validator.options[:unless])
-        return if unless_value == true
-
-        validator
-      end
-
-      def validator_option(klass, option_key)
-        option = validator_by_class(klass)&.options.try(:[], option_key)
-        option.respond_to?(:call) ? option.call(form.target) : option
       end
     end
   end

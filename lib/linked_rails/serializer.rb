@@ -15,7 +15,7 @@ module LinkedRails
 
       attribute :rdf_type, predicate: RDF[:type], datatype: RDF::XSD[:anyURI]
       attribute :canonical_iri, predicate: RDF::Vocab::DC[:identifier] do |object|
-        object.try(:canonical_iri) || object.iri
+        object.try(:canonical_iri)
       end
     end
 

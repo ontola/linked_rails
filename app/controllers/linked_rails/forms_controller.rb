@@ -21,7 +21,7 @@ module LinkedRails
     end
 
     def show_includes
-      [pages: {groups: :fields, footer_group: :fields}]
+      [pages: {groups: [fields: [:fail, :pass, shape: [:property, nested_shapes: :property]]]}]
     end
   end
 end

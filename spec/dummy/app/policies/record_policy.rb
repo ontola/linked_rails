@@ -7,7 +7,5 @@ class RecordPolicy < ApplicationPolicy
     end
   end
 
-  def permitted_attributes
-    %i[title body]
-  end
+  permit_attributes %i[title body]
 end

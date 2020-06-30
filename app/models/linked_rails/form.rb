@@ -42,7 +42,7 @@ module LinkedRails
           field_options: opts,
           form: self,
           key: key
-        ).field
+        ).condition_or_field
       end
 
       def footer
@@ -100,6 +100,14 @@ module LinkedRails
         @model_class ||=
           name.sub(/Form$/, '').safe_constantize ||
           name.deconstantize.classify.sub(/Form$/, '').safe_constantize
+      end
+
+      def model_policy
+        @model_policy ||= Pundit::PolicyFinder.new(model_class).policy
+      end
+
+      def model_policy!
+        model_policy || raise("No policy found for #{model_class}")
       end
 
       def page(key, opts = {})

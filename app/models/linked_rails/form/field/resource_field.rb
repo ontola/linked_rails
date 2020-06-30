@@ -10,6 +10,10 @@ module LinkedRails
 
         def path; end
 
+        def permission_required?
+          false
+        end
+
         def url
           @url = @url.call if @url.respond_to?(:call)
 

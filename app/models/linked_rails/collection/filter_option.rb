@@ -12,7 +12,8 @@ module LinkedRails
       def iri
         self
       end
-      alias canonical_iri iri
+
+      def canonical_iri; end
     end
   end
 end

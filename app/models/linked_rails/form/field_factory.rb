@@ -17,13 +17,19 @@ module LinkedRails
 
       delegate :form_options_iri,
                :model_class,
+               :model_policy!,
                :serializer_attributes,
                :serializer_class,
                :serializer_reflections,
                to: :form
 
-      def field
-        field_class.new(field_attributes)
+      def condition_or_field
+        @condition_or_field ||= model_policy!.condition_for(
+          key,
+          field,
+          property: field_options[:if] || [],
+          sh_not: field_options[:unless] || []
+        )
       end
 
       private
@@ -89,6 +95,10 @@ module LinkedRails
         else
           RDF::XSD[:decimal]
         end
+      end
+
+      def field
+        field_class.new(field_attributes)
       end
 
       def field_attributes # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

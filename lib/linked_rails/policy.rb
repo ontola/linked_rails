@@ -2,6 +2,7 @@
 
 require_relative 'active_response/controller'
 require_relative 'controller/error_handling'
+require_relative 'policy/attribute_conditions'
 
 module LinkedRails
   module Policy
@@ -9,8 +10,10 @@ module LinkedRails
 
     included do
       extend Enhanceable
+      include AttributeConditions
 
       enhanceable :policy_class, :Policy
+      class_attribute :_permitted_attributes
 
       attr_reader :user_context, :record
 
@@ -26,6 +29,13 @@ module LinkedRails
 
     def index_children?(klass, opts = {})
       child_policy(klass, opts).show?
+    end
+
+    def permitted_attributes
+      self.class.permitted_attributes
+        .select { |opts| attribute_permitted?(opts[:conditions]) }
+        .map { |opts| sanitized_attributes(opts[:attributes], opts[:options] || {}) }
+        .flatten
     end
 
     def show?
@@ -46,6 +56,13 @@ module LinkedRails
 
     private
 
+    def attribute_permitted?(conditions)
+      conditions.all? do |key, opts|
+        raise "Unknown attribute condition #{key}" unless respond_to?("check_#{key}", true)
+
+        send(:"check_#{key}", opts)
+      end
+    end
 
     def child_policy(klass, opts = {})
       Pundit.policy(user_context, record.build_child(klass.constantize, opts.merge(user_context: user_context)))
@@ -55,9 +72,100 @@ module LinkedRails
       self.class.policy_class
     end
 
+    def sanitize_array_attribute(attr)
+      [attr, attr => []]
+    end
+
+    def sanitize_attribute(attr)
+      attr
+    end
+
+    def sanitized_attributes(attributes, opts)
+      if opts[:nested]
+        attributes.map(&method(:sanitize_nested_attribute))
+      elsif opts[:array]
+        attributes.map(&method(:sanitize_array_attribute))
+      else
+        attributes.map(&method(:sanitize_attribute))
+      end
+    end
+
+    def sanitize_nested_attribute(key)
+      klass = record.class.reflect_on_association(key)&.klass
+      return if klass.blank?
+
+      child = record.build_child(klass, user_context: user_context)
+      nested_attributes = Pundit.policy(context, child).permitted_attributes
+
+      {"#{key}_attributes" => nested_attributes + %i[id _destroy]}
+    end
+
     module ClassMethods
+      def condition_for(attr, pass, shape_opts = {})
+        raise("#{attr} not permitted by #{self}") if attribute_options(attr).blank? && pass.permission_required?
+
+        alternatives = node_shapes_for(attr, **shape_opts)
+        if alternatives.count == 1
+          Condition.new(shape: alternatives.first, pass: pass)
+        elsif alternatives.count.positive?
+          Condition.new(shape: SHACL::NodeShape.new(or: alternatives), pass: pass)
+        else
+          pass
+        end
+      end
+
+      def permitted_attributes
+        initialize_permitted_attributes
+
+        _permitted_attributes
+      end
+
+      private
+
+      def attribute_options(attr)
+        permitted_attributes.select { |opts| opts[:attributes].include?(attr) }
+      end
+
+      def condition_alternatives(attr)
+        attribute_options(attr)
+          .select { |opts| opts[:conditions].present? }
+          .map { |opts| opts[:conditions] }
+      end
+
+      def node_shapes_for(attr, property: [], sh_not: [])
+        alternatives = condition_alternatives(attr)
+        alternatives = [[]] if alternatives.empty? && (property.any? || sh_not.any?)
+
+        alternatives.map do |props|
+          properties = property_shapes(props) + property
+          SHACL::NodeShape.new(property: properties, sh_not: sh_not)
+        end
+      end
+
+      def initialize_permitted_attributes
+        return if _permitted_attributes && method(:_permitted_attributes).owner == singleton_class
+
+        self._permitted_attributes = superclass.try(:_permitted_attributes)&.dup || []
+      end
+
+      def permit_attributes(attrs, conditions = {})
+        permitted_attributes << {attributes: attrs, conditions: conditions, options: {}}
+      end
+
+      def permit_array_attributes(attrs, conditions = {})
+        permitted_attributes << {attributes: attrs, conditions: conditions, options: {array: true}}
+      end
+
+      def permit_nested_attributes(attrs, conditions = {})
+        permitted_attributes << {attributes: attrs, conditions: conditions, options: {nested: true}}
+      end
+
       def policy_class
         @policy_class ||= name.sub(/Policy/, '').classify.safe_constantize
+      end
+
+      def property_shapes(conditions)
+        conditions.map { |key, options| send("#{key}_shapes", options) }.flatten.compact
       end
     end
   end

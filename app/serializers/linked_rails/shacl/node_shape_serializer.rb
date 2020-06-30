@@ -3,14 +3,10 @@
 module LinkedRails
   module SHACL
     class NodeShapeSerializer < ShapeSerializer
-      include LinkedRails::Serializer
-
       attribute :closed, predicate: RDF::Vocab::SH.closed
-      attribute :or, predicate: RDF::Vocab::SH.or
-      attribute :not, predicate: RDF::Vocab::SH.not
-
+      attribute :ignored_properties, predicate: RDF::Vocab::SH.ignoredProperties
+      attribute :sparql, predicate: RDF::Vocab::SH.sparql
       has_many :property, predicate: RDF::Vocab::SH.property, polymorphic: true
-      has_many :form_steps, predicate: Vocab::ONTOLA[:formSteps], polymorphic: true
     end
   end
 end

@@ -8,7 +8,10 @@ module LinkedRails
 
     attr_accessor :iri
     alias_attribute :id, :iri
-    alias_attribute :canonical_iri, :iri
+
+    def canonical_iri
+      iri unless iri.anonymous?
+    end
 
     def initialize(attrs = {})
       super(attrs)

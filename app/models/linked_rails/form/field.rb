@@ -59,6 +59,10 @@ module LinkedRails
         @path || raise("No predicate found for #{key} in #{form.name}")
       end
 
+      def permission_required?
+        true
+      end
+
       def sh_in
         return validators[:sh_in] if @sh_in.blank?
 
