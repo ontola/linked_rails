@@ -30,8 +30,8 @@ module LinkedRails
         opts[:options] ||= default_enum_opts(attr)
         self._enums[attr] = enum_values(attr, opts)
 
-        attribute(attr, if: opts[:if], predicate: opts[:predicate]) do |object|
-          enum_value(attr, object)
+        attribute(attr, if: opts[:if], predicate: opts[:predicate]) do |object, params|
+          block_given? ? yield(object, params) : enum_value(attr, object)
         end
       end
 
