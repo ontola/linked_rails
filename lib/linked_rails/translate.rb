@@ -58,21 +58,21 @@ module LinkedRails
 
   Translate.translations_for(:property, :description) do |object|
     I18n.t(
-      "properties.#{object.model_name&.to_s&.tableize}.#{object.model_attribute}.description",
+      "properties.#{object.model_class&.to_s&.tableize}.#{object.model_attribute}.description",
       default: [:"actions.default.#{object.model_attribute}.description", '']
     )
   end
 
   Translate.translations_for(:property, :helper_text) do |object|
     I18n.t(
-      "properties.#{object.model_name&.to_s&.tableize}.#{object.model_attribute}.helper_text",
+      "properties.#{object.model_class&.to_s&.tableize}.#{object.model_attribute}.helper_text",
       default: [:"actions.default.#{object.model_attribute}.helper_text", '']
     )
   end
 
   Translate.translations_for(:property, :label) do |object|
     I18n.t(
-      "properties.#{object.model_name&.to_s&.tableize}.#{object.model_attribute}.label",
+      "properties.#{object.model_class&.to_s&.tableize}.#{object.model_attribute}.label",
       default: [:"actions.default.#{object.model_attribute}.label", object.model_attribute.to_s.humanize]
     )
   end
