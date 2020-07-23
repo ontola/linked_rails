@@ -13,6 +13,8 @@ module LinkedRails
     end
 
     def property_shapes
+      resource_sequence
+
       @property_shapes || {}
     end
 
