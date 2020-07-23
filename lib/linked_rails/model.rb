@@ -20,12 +20,12 @@ module LinkedRails
     include Sorting
 
     def build_child(klass, _opts = {})
-      klass.new
+      klass.build_new
     end
 
     module ClassMethods
       def build_new(opts = {})
-        new(attribute_for_new(opts))
+        new(attributes_for_new(opts))
       end
 
       def form_class
@@ -34,7 +34,7 @@ module LinkedRails
 
       private
 
-      def attribute_for_new(_opts)
+      def attributes_for_new(_opts)
         {}
       end
     end
