@@ -10,7 +10,7 @@ module LinkedRails
       end
 
       def anonymous_iri?
-        self.class < ActiveRecord::Base && !persisted?
+        self.class < ActiveRecord::Base && new_record?
       end
 
       # @return [RDF::URI].
