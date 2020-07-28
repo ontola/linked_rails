@@ -60,11 +60,11 @@ module LinkedRails
 
       def association_has_destructed(association_key)
         @destructed_association_members ||= []
-        @destructed_association_members << association_key
+        @destructed_association_members << association_key.to_sym
       end
 
       def association_has_destructed?(association_key)
-        @destructed_association_members&.include?(association_key)
+        @destructed_association_members&.include?(association_key.to_sym)
       end
 
       def will_destruct_association?(association_name, attributes)
