@@ -8,7 +8,9 @@ module LinkedRails
 
         def datatype; end
 
-        def path; end
+        def path
+          @path
+        end
 
         def permission_required?
           false
