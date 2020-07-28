@@ -2,7 +2,7 @@
 
 module LinkedRails
   module SHACL
-    class PropertyShape < Shape
+    class PropertyShape < LinkedRails::SHACL::Shape
       # SHACL attributes
       attr_accessor(
         :datatype,
