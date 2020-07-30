@@ -34,9 +34,12 @@ module LinkedRails
         end
 
         def invalid_resource(**opts)
-          message = error_message(opts[:resource])
-          response_headers(opts.merge(notice: message))
-          controller.head :unprocessable_entity, content_type: content_type
+          response_headers(opts)
+          controller.respond_with_resource(
+            resource: nil,
+            meta: error_meta(opts[:resource]),
+            status: :unprocessable_entity
+          )
         end
 
         def new_resource(**opts)
@@ -55,10 +58,11 @@ module LinkedRails
           controller.head 200, content_type: content_type
         end
 
-        def resource(**opts)
+        def resource(**opts) # rubocop:disable Metrics/AbcSize
           response_headers(opts)
+
           if (opts[:resource].blank? && opts[:meta].blank?) || head_request?
-            controller.head 200, location: opts[:location], content_type: content_type
+            controller.head(opts[:status] || 200, location: opts[:location], content_type: content_type)
           else
             opts[format] = opts.delete(:resource) || []
             controller.render opts
@@ -76,9 +80,28 @@ module LinkedRails
 
         private
 
-        def error_message(resource)
-          errors = resource.is_a?(ActiveModel::Errors) ? resource : resource.errors
-          (errors.is_a?(Array) ? errors.map(&:full_messages).flatten : errors.full_messages).join("\n")
+        def error_mapping(form_iri, error_object)
+          [
+            ::RDF::URI(form_iri),
+            Vocab::LL[:errorResponse],
+            error_object,
+            NS::ONTOLA[:replace]
+          ]
+        end
+
+        def error_statements(iri, resource)
+          resource.errors.messages.map do |key, values|
+            predicate = resource.class.predicate_for_key(key)
+            values.map { |value| [iri, predicate, value.sub(/\S/, &:upcase)] } if predicate
+          end.compact.flatten(1)
+        end
+
+        def error_meta(resource)
+          form_iri = controller.request.headers['Request-Referrer']
+          return [] unless form_iri && resource.respond_to?(:errors)
+
+          error_object = ::RDF::Node.new
+          [error_mapping(form_iri, error_object)] + error_statements(error_object, resource)
         end
 
         def head_request?

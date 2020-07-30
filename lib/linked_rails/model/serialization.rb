@@ -18,7 +18,10 @@ module LinkedRails
         end
 
         def predicate_for_key(key)
-          predicate_mapping.detect { |_key, value| value.key.to_sym == key.to_sym }&.first
+          return if key.blank?
+
+          predicate_mapping.detect { |_key, value| value.key.to_sym == key.to_sym }&.first ||
+            predicate_for_key(try(:attribute_aliases)&.key(key.to_s))
         end
 
         def predicate_mapping
