@@ -78,6 +78,7 @@ module LinkedRails
 
         def has_action(action, opts = {}) # rubocop:disable Naming/PredicateName
           opts[:collection] ||= false
+          opts[:http_method] ||= 'POST'
           defined_actions[action] = opts
         end
       end
