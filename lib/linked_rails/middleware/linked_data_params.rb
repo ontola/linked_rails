@@ -105,10 +105,7 @@ module LinkedRails
         return unless graph
 
         target_class = target_class_from_path(request)
-        if target_class.blank?
-          logger.info("No class found for #{request.env['REQUEST_URI']}") if graph
-          return
-        end
+        return if target_class.blank?
 
         update_actor_param(request, graph)
         update_target_params(request, graph, target_class)
@@ -179,7 +176,11 @@ module LinkedRails
       def target_class_from_path(request)
         opts = LinkedRails.opts_from_iri(request.base_url + request.env['REQUEST_URI'], method: request.request_method)
 
-        target_class_from_controller(opts.try(:[], :controller))
+        klass = target_class_from_controller(opts.try(:[], :controller))
+
+        logger.info("No class found for #{request.base_url + request.env['REQUEST_URI']}") unless klass
+
+        klass
       end
 
       def update_actor_param(request, graph)
