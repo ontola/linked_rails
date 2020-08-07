@@ -10,7 +10,7 @@ module LinkedRails
       def authorize_action; end
 
       def show_includes
-        action_form_includes
+        action_form_includes(current_resource)
       end
 
       def redirect_action?

@@ -95,12 +95,18 @@ module LinkedRails
       end
     end
 
-    def sanitize_nested_attribute(key)
-      klass = record.class.reflect_on_association(key)&.klass
-      return if klass.blank?
+    def sanitize_nested_attribute(key) # rubocop:disable Metrics/AbcSize
+      association = record.class.reflect_on_association(key)
 
-      child = record.build_child(klass, user_context: user_context)
-      nested_attributes = Pundit.policy(user_context, child).permitted_attributes
+      return nil if association.blank? || (!association.polymorphic? && !association.klass)
+
+      nested_attributes =
+        if association.polymorphic?
+          Pundit.policy(user_context, record).try("#{association.name}_attributes") || []
+        else
+          child = record.build_child(association.klass, user_context: user_context)
+          Pundit.policy(user_context, child).permitted_attributes
+        end
 
       {"#{key}_attributes" => nested_attributes + %i[id _destroy]}
     end

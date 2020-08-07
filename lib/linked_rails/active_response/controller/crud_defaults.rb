@@ -14,6 +14,10 @@ module LinkedRails
           resource_added_delta(current_resource)
         end
 
+        def current_resource_for_params
+          current_resource
+        end
+
         def default_form_options(action)
           return super unless active_responder.is_a?(RDFResponder)
 
@@ -57,7 +61,7 @@ module LinkedRails
         end
 
         def permit_param_keys
-          policy(current_resource).try(:permitted_attributes)
+          policy(current_resource_for_params).try(:permitted_attributes)
         end
 
         def preview_includes

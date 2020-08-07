@@ -31,6 +31,17 @@ module LinkedRails
         hash
       end
 
+      def associated_class_from_params(reflection, graph, subject)
+        return reflection.klass unless reflection.polymorphic?
+
+        query = graph.query(subject: subject, predicate: NS::RDFV[:type])
+        if query.empty?
+          raise("No type given for '#{subject}' referenced by polymorphic association '#{reflection.name}'")
+        end
+
+        iri_to_class(query.first.object)
+      end
+
       def blob_attribute(base_params, value)
         base_params["<#{value}>"] if value.starts_with?(Vocab::LL['blobs/'])
       end
@@ -66,6 +77,11 @@ module LinkedRails
           canonicalize: true,
           intern: false
         )
+      end
+
+      def iri_to_class(iri)
+        iri.to_s.split(LinkedRails.app_ns.to_s).pop&.classify&.safe_constantize ||
+          ApplicationRecord.descendants.detect { |klass| klass.iri == iri }
       end
 
       def logger
@@ -145,8 +161,8 @@ module LinkedRails
       def parsed_association(base_params, graph, object, klass, association)
         reflection = klass.reflect_on_association(association) || raise("#{association} not found for #{klass}")
 
-        association_klass = reflection.klass
         if graph.has_subject?(object)
+          association_klass = associated_class_from_params(reflection, graph, object)
           nested_attributes(base_params, graph, object, association_klass, association, reflection.collection?)
         elsif object.iri?
           attributes_from_iri(object, association, reflection)
@@ -173,7 +189,7 @@ module LinkedRails
 
       def serializer_field(klass, predicate)
         field = klass.try(:predicate_mapping).try(:[], predicate)
-        logger.info("#{predicate} not found for #{klass}") if field.blank?
+        logger.info("#{predicate} not found for #{klass || 'nil'}") if field.blank?
         field
       end
 
