@@ -49,7 +49,11 @@ module LinkedRails
           @permit_params ||=
             params
               .require(controller_name.singularize)
-              .permit(*policy(current_resource).try(:permitted_attributes))
+              .permit(*permit_param_keys)
+        end
+
+        def permit_param_keys
+          policy(current_resource).try(:permitted_attributes)
         end
 
         def show_success_options_rdf
