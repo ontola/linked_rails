@@ -19,10 +19,11 @@ module LinkedRails
           [:target, included_object: form_resource_includes(action)]
         end
 
-        def form_resource_includes(action)
+        def form_resource_includes(action) # rubocop:disable Metrics/CyclomaticComplexity
           included_object = action&.included_object
 
-          return {} if included_object.nil? || included_object.iri.anonymous?
+          return {} if included_object.nil?
+          return action.include_paths || {} if included_object.iri.anonymous?
 
           includes = included_object.class.try(:show_includes)&.presence || []
           includes = [includes] if includes.is_a?(Hash)

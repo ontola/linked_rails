@@ -13,7 +13,7 @@ module LinkedRails
                   :translation_key
       delegate :user_context, to: :list, allow_nil: true
 
-      %i[description result type policy label image url include_object collection condition form completed
+      %i[description result type policy label image url include_object include_paths collection condition form completed
          tag http_method favorite path policy_resource predicate resource].each do |method|
         attr_writer method
         define_method method do
