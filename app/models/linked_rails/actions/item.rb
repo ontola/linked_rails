@@ -18,7 +18,7 @@ module LinkedRails
         define_method method do
           var = instance_variable_get(:"@#{method}")
           value = var.respond_to?(:call) ? list.instance_exec(&var) : var
-          return instance_variable_set(:"@#{method}", value) if value
+          return instance_variable_set(:"@#{method}", value).presence if value
 
           send("#{method}_fallback") if respond_to?("#{method}_fallback", true)
         end
