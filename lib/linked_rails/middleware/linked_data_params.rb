@@ -113,7 +113,7 @@ module LinkedRails
 
       def params_from_query(request)
         target_class = target_class_from_path(request)
-        return unless target_class.try(:predicate_mapping)
+        return unless request.params.present? && target_class.try(:predicate_mapping)
 
         convert_query_params(request, target_class)
       end
