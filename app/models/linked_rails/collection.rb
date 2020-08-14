@@ -23,7 +23,7 @@ module LinkedRails
     enhance LinkedRails::Enhancements::Actionable
 
     attr_accessor :association, :association_class, :association_scope, :include_map, :joins, :name,
-                  :parent, :part_of, :user_context, :page_size, :policy
+                  :parent, :part_of, :user_context, :page_size, :policy, :view
     attr_writer :association_base, :default_display, :default_type, :display, :title, :type, :views
 
     alias id iri

@@ -22,6 +22,7 @@ module LinkedRails
       Vocab::ONTOLA["collectionType/#{object.type || :paginated}"]
     end
     attribute :sort_options, predicate: NS::ONTOLA[:sortOptions]
+    attribute :view, predicate: NS::LL[:view]
 
     has_one :unfiltered_collection, predicate: Vocab::ONTOLA[:baseCollection], polymorphic: true
     has_one :part_of, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
