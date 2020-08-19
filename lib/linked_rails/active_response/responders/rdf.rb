@@ -55,7 +55,7 @@ module LinkedRails
             controller.response.headers,
             ontola_redirect_action(opts[:location], reload: opts[:reload])
           )
-          controller.head 200, content_type: content_type
+          controller.head 200, content_type: content_type, location: opts[:location]
         end
 
         def resource(**opts) # rubocop:disable Metrics/AbcSize
