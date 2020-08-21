@@ -24,6 +24,20 @@ module LinkedRails
       self.class.iri
     end
 
+    def sequence
+      return [] unless members
+
+      members.map.with_index do |item, index|
+        [iri, RDF["_#{index}"], item_iri(item), Vocab::LL[:supplant]]
+      end
+    end
+
+    private
+
+    def item_iri(item)
+      item.is_a?(RDF::Resource) ? item : item.iri
+    end
+
     class << self
       def iri
         RDF[:Seq]

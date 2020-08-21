@@ -8,15 +8,7 @@ module LinkedRails
     has_many :members, polymorphic: true
 
     def self.sequence(object, _params)
-      return [] unless object.members
-
-      object.members.map.with_index do |item, index|
-        [object.iri, RDF["_#{index}"], item_iri(item), Vocab::LL[:supplant]]
-      end
-    end
-
-    def self.item_iri(item)
-      item.is_a?(RDF::Resource) ? item : item.iri
+      object.sequence
     end
   end
 end
