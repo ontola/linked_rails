@@ -17,9 +17,7 @@ module LinkedRails
         end
 
         def url
-          @url = @url.call if @url.respond_to?(:call)
-
-          @url
+          @url.respond_to?(:call) ? @url.call : @url
         end
       end
     end
