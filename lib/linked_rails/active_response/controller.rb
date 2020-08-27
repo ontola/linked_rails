@@ -2,7 +2,7 @@
 
 require 'pundit'
 
-require_relative 'controller/actions/items'
+require_relative 'controller/actions'
 require_relative 'controller/collections'
 require_relative 'controller/crud_defaults'
 
