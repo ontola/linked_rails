@@ -77,7 +77,7 @@ module LinkedRails
           private
 
           def action_superclass
-            superclass.try(:action_list) || 'ApplicationActionList'.safe_constantize || LinkedRails::Actions::List
+            superclass.try(:action_list) || LinkedRails.action_list_parent_class
           end
 
           def defined_action_list
