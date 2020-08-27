@@ -148,12 +148,23 @@ module LinkedRails
         association_klass = reflection.klass
         if graph.has_subject?(object)
           nested_attributes(base_params, graph, object, association_klass, association, reflection.collection?)
-        elsif object.iri? && reflection.belongs_to?
-          [
-            reflection.options[:through] ? "#{association}_id" : reflection.foreign_key,
-            LinkedRails.resource_from_iri(object).send(reflection.association_primary_key)
-          ]
+        elsif object.iri?
+          attributes_from_iri(object, association, reflection)
         end
+      end
+
+      def attributes_from_iri(object, association, reflection)
+        if reflection.options[:through]
+          key = "#{association}_id"
+        elsif reflection.belongs_to?
+          key = reflection.foreign_key
+        end
+        return unless key
+
+        resource = LinkedRails.resource_from_iri(object)
+        value = resource&.send(reflection.association_primary_key)
+
+        [key, value] if value
       end
 
       def parsed_attribute(base_params, klass, key, value)
