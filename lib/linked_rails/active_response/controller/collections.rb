@@ -117,14 +117,6 @@ module LinkedRails
             {key: RDF::URI(CGI.unescape(key)), direction: value}
           end
         end
-
-        def preview_includes
-          controller_class.try(:preview_includes)
-        end
-
-        def show_includes
-          controller_class.try(:show_includes)
-        end
       end
     end
   end

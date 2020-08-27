@@ -56,6 +56,14 @@ module LinkedRails
           policy(current_resource).try(:permitted_attributes)
         end
 
+        def preview_includes
+          controller_class.try(:preview_includes)
+        end
+
+        def show_includes
+          controller_class.try(:show_includes)
+        end
+
         def show_success_options_rdf
           opts = show_success_options.except(:locals)
           opts[:meta] = request.head? ? [] : show_meta
