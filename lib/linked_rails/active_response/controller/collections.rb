@@ -10,21 +10,6 @@ module LinkedRails
           [:target, included_object: form_resource_includes(action)]
         end
 
-        def collection_from_parent
-          return if collection_from_parent_name.blank?
-
-          parent_resource!.send(
-            collection_from_parent_name,
-            collection_options
-          )
-        end
-
-        def collection_from_parent_name
-          return unless parent_resource.respond_to?("#{controller_name.singularize}_collection", true)
-
-          "#{controller_name.singularize}_collection"
-        end
-
         def collection_includes(member_includes = {})
           {
             default_view: collection_view_includes(member_includes),
@@ -89,9 +74,7 @@ module LinkedRails
           includes
         end
 
-        def index_collection
-          @index_collection ||= collection_from_parent || root_collection
-        end
+        def index_collection; end
 
         def index_collection_or_view
           collection_or_view(index_collection)
@@ -154,10 +137,6 @@ module LinkedRails
 
         def preview_includes
           controller_class.try(:preview_includes)
-        end
-
-        def root_collection
-          controller_class.try(:root_collection, collection_options)
         end
 
         def show_includes

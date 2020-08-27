@@ -107,20 +107,6 @@ module LinkedRails
             collection_for(name, opts.merge(collection_class: collection_class))
           end
         end
-
-        def root_collection(opts = {})
-          return unless root_collection?
-
-          LinkedRails.collection_class.new(root_collection_opts.merge(opts))
-        end
-
-        def root_collection?
-          self < ActiveRecord::Base
-        end
-
-        def root_collection_opts
-          {association_class: self}
-        end
       end
     end
   end
