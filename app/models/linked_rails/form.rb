@@ -3,10 +3,10 @@
 require 'pundit'
 
 module LinkedRails
-  class Form
+  class Form # rubocop:disable Metrics/ClassLength
     include LinkedRails::Model
 
-    class_attribute :pages
+    class_attribute :pages, :model_class
 
     def iri
       self.class.form_iri

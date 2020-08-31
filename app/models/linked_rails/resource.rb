@@ -3,6 +3,7 @@
 module LinkedRails
   class Resource
     include ActiveModel::Model
+    include ActiveModel::Attributes
 
     include LinkedRails::Model
 

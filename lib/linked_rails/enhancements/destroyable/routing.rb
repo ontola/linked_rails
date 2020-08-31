@@ -9,8 +9,8 @@ module LinkedRails
         def route_concerns(mapper)
           mapper.concern :destroyable do
             mapper.member do
-              mapper.get :delete, action: :delete, as: :delete
-              mapper.delete '', action: :destroy, as: :destroy
+              mapper.get :delete, action: :delete
+              mapper.delete '', action: :destroy
             end
           end
         end

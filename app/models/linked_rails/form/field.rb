@@ -52,7 +52,8 @@ module LinkedRails
       end
 
       def pattern
-        @pattern || validators[:pattern]
+        p = @pattern || validators[:pattern]
+        p.respond_to?(:call) ? p.call(nil) : p
       end
 
       def path

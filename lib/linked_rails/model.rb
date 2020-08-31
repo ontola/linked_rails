@@ -19,8 +19,8 @@ module LinkedRails
     include Serialization
     include Sorting
 
-    def build_child(klass, _opts = {})
-      klass.build_new
+    def build_child(klass, opts = {})
+      klass.build_new(opts)
     end
 
     module ClassMethods

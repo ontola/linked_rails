@@ -8,9 +8,7 @@ module LinkedRails
 
         def datatype; end
 
-        def path
-          @path
-        end
+        attr_reader :path
 
         def permission_required?
           false

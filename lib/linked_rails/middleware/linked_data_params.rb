@@ -204,7 +204,7 @@ module LinkedRails
 
       def update_target_params(request, graph, target_class)
         request.update_param(
-          target_class.to_s.underscore,
+          target_class.to_s.demodulize.underscore,
           parse_resource(request.params, graph, Vocab::LL[:targetResource], target_class)
         )
       end

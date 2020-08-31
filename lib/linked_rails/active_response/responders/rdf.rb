@@ -47,7 +47,7 @@ module LinkedRails
           controller.respond_with_resource(opts)
         end
 
-        def redirect(**opts)
+        def redirect(**opts) # rubocop:disable Metrics/AbcSize
           return super if controller.request.head?
 
           response_headers(opts)
@@ -91,7 +91,7 @@ module LinkedRails
 
         def error_statements(iri, resource)
           resource.errors.messages.map do |key, values|
-            predicate = resource.class.predicate_for_key(key)
+            predicate = resource.class.predicate_for_key(key.to_s.split('.').first)
             values.map { |value| [iri, predicate, value.sub(/\S/, &:upcase)] } if predicate
           end.compact.flatten(1)
         end

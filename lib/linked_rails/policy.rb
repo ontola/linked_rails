@@ -95,7 +95,7 @@ module LinkedRails
       return if klass.blank?
 
       child = record.build_child(klass, user_context: user_context)
-      nested_attributes = Pundit.policy(context, child).permitted_attributes
+      nested_attributes = Pundit.policy(user_context, child).permitted_attributes
 
       {"#{key}_attributes" => nested_attributes + %i[id _destroy]}
     end
