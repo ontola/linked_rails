@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  class VocabulariesController < ApplicationController
+  class VocabulariesController < LinkedRails.controller_parent_class
     active_response :show
 
     private

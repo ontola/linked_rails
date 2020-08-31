@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  class EnumValuesController < ApplicationController
+  class EnumValuesController < LinkedRails.controller_parent_class
     active_response :index
 
     private

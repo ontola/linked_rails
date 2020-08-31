@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  class FormsController < ApplicationController
+  class FormsController < LinkedRails.controller_parent_class
     active_response :show
 
     private
