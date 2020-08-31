@@ -1,10 +1,30 @@
 # frozen_string_literal: true
 
-module RailsLDRoutingHelper
-  def initialize(entities, api_only, shallow, options = {})
-    options[:path] ||= entities.to_s.classify.safe_constantize.try(:route_key)
-    super
+# frozen_string_literal: true
+
+module LinkedRails
+  module Routes
+    def use_linked_rails(opts = {})
+      get '/c_a', to: "#{opts.fetch(:current_user)}#show"
+      get '/ns/core', to: "#{opts.fetch(:vocabularies, 'linked_rails/vocabularies')}#show"
+      get '/manifest', to: "#{opts.fetch(:manifests, 'linked_rails/manifests')}#show"
+      get '/enums/:klass/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
+      get '/enums/*module/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
+      get '/forms/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
+      get '/forms/*module/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
+    end
   end
 end
 
-ActionDispatch::Routing::Mapper::Resources::Resource.prepend(RailsLDRoutingHelper)
+ActionDispatch::Routing::Mapper.include LinkedRails::Routes
+
+module LinkedRails
+  module RoutingHelper
+    def initialize(entities, api_only, shallow, options = {})
+      options[:path] ||= entities.to_s.classify.safe_constantize.try(:route_key)
+      super
+    end
+  end
+end
+
+ActionDispatch::Routing::Mapper::Resources::Resource.prepend(LinkedRails::RoutingHelper)
