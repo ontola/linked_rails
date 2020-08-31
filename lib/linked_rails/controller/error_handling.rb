@@ -8,6 +8,8 @@ module LinkedRails
         rescue_from StandardError, with: :handle_and_report_error
         rescue_from ActiveRecord::RecordNotFound, with: :handle_error
         rescue_from Pundit::NotAuthorizedError, with: :handle_error
+        rescue_from LinkedRails::Errors::Unauthorized, with: :handle_error
+        rescue_from LinkedRails::Errors::UnknownEmail, with: :handle_error
       end
 
       private
