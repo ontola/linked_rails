@@ -33,7 +33,7 @@ module LinkedRails
       end
 
       def association
-        @association ||= result_class.to_s.tableize
+        @association ||= result_class.to_s.demodulize.tableize
       end
 
       def call_option(option, _resource)

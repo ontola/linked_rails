@@ -28,11 +28,11 @@ module LinkedRails
       end
 
       def description
-        description_from_attribute || LinkedRails.translate(:property, :description, self)
+        description_from_attribute || LinkedRails.translate(:property, :description, self, false)
       end
 
       def helper_text
-        helper_text_from_attribute || LinkedRails.translate(:property, :helper_text, self)
+        helper_text_from_attribute || LinkedRails.translate(:property, :helper_text, self, false)
       end
 
       def max_length

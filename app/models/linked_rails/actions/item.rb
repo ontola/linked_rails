@@ -9,7 +9,8 @@ module LinkedRails
       include LinkedRails::Model
 
       attr_accessor :exclude, :list, :policy_arguments, :submit_label
-      attr_writer :parent, :resource, :root_relative_canonical_iri, :root_relative_iri, :user_context, :object
+      attr_writer :parent, :resource, :root_relative_canonical_iri, :root_relative_iri, :user_context, :object,
+                  :translation_key
       delegate :user_context, to: :list, allow_nil: true
 
       %i[description result type policy label image url include_object collection condition form completed
@@ -110,7 +111,8 @@ module LinkedRails
       end
 
       def translation_key
-        @translation_key ||= (resource.is_a?(Collection) ? resource.association_class : resource&.class)&.name&.tableize
+        @translation_key ||=
+          (resource.is_a?(Collection) ? resource.association_class : resource&.class)&.name&.demodulize&.tableize
       end
 
       def user_context
@@ -120,7 +122,7 @@ module LinkedRails
       private
 
       def description_fallback
-        LinkedRails.translate(:action, :description, self)
+        LinkedRails.translate(:action, :description, self, false)
       end
 
       def label_fallback

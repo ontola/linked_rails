@@ -21,7 +21,11 @@ module LinkedRails
               http_method: :post,
               image: 'fa-plus',
               include_object: false,
-              label: -> { I18n.t("#{association}.type_new", default: "New #{result_class.name.humanize}") },
+              label: lambda do
+                item = LinkedRails::Actions::Item.new(resource: result_class.new, tag: :create)
+                LinkedRails.translate(:action, :label, item, false).presence ||
+                  I18n.t("#{association}.type_new", default: "New #{result_class.name.demodulize.humanize}")
+              end,
               root_relative_iri: lambda {
                 uri = resource.root_relative_iri.dup
                 uri.path ||= ''
