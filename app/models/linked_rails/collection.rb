@@ -120,7 +120,7 @@ module LinkedRails
     end
 
     def total_count
-      @total_count ||= association_base.try(:total_count) || association_base.count
+      @total_count ||= association_base.try(:total_count) || association_base.unscope(:select).count
     end
 
     def total_page_count
