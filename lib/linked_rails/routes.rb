@@ -12,7 +12,7 @@ module LinkedRails
       get '/ns/core', to: "#{opts.fetch(:vocabularies, 'linked_rails/vocabularies')}#show"
       get '/manifest', to: "#{opts.fetch(:manifests, 'linked_rails/manifests')}#show"
       get '/enums/:klass/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
-      get '/enums/*module/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
+      get '/enums/*module/:klass/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
       get '/forms/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
       get '/forms/*module/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
     end

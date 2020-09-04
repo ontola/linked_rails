@@ -22,7 +22,9 @@ module LinkedRails
     end
 
     def model_class
-      @model_class ||= self.class.linked_models.detect { |klass| klass.to_s == params[:klass].classify }
+      @model_class ||= self.class.linked_models.detect do |klass|
+        klass.to_s == ((params[:module] || []) + [params[:klass]&.singularize]).join('/').classify
+      end
     end
 
     def model_class!
