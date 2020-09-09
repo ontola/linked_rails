@@ -8,7 +8,7 @@ module LinkedRails
       end
 
       def app_menu?
-        request.path.start_with?('/menus/')
+        request.path.start_with?('/menus')
       end
 
       def menu_includes
