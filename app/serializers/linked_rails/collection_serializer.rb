@@ -21,6 +21,7 @@ module LinkedRails
     attribute :collection_type, predicate: Vocab::ONTOLA[:collectionType] do |object|
       Vocab::ONTOLA["collectionType/#{object.type || :paginated}"]
     end
+    attribute :grid_max_columns, predicate: NS::ONTOLA['grid/maxColumns']
     attribute :sort_options, predicate: NS::ONTOLA[:sortOptions]
     attribute :view, predicate: NS::LL[:view]
 

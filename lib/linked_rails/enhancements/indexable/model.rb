@@ -7,6 +7,8 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         module ClassMethods
+          def grid_max_columns; end
+
           def root_collection(opts = {})
             return unless root_collection?
 
@@ -18,7 +20,10 @@ module LinkedRails
           end
 
           def root_collection_opts
-            {association_class: self}
+            {
+              association_class: self,
+              grid_max_columns: grid_max_columns
+            }
           end
         end
       end
