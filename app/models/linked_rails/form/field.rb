@@ -14,13 +14,19 @@ module LinkedRails
                   :pattern,
                   :path
       attr_accessor :max_count,
+                    :max_count_prop,
+                    :max_inclusive,
+                    :max_inclusive_prop,
+                    :max_length_prop,
+                    :min_count_prop,
+                    :min_inclusive,
+                    :min_inclusive_prop,
+                    :min_length_prop,
                     :model_attribute,
                     :model_class,
                     :form,
                     :group,
                     :input_field,
-                    :max_inclusive,
-                    :min_inclusive,
                     :validators,
                     :key
       def datatype

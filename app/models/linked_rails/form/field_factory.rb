@@ -153,7 +153,7 @@ module LinkedRails
       end
 
       def max_inclusive
-        field_attributes[:max_inclusive] || validators[:max_inclusive]
+        field_attributes[:max_inclusive] || validators[:max_inclusive] || field_attributes[:max_inclusive_prop]
       end
 
       def max_length
@@ -161,7 +161,7 @@ module LinkedRails
       end
 
       def min_inclusive
-        field_attributes[:min_inclusive] || validators[:min_inclusive]
+        field_attributes[:min_inclusive] || validators[:min_inclusive] || field_attributes[:min_inclusive_prop]
       end
 
       def model_attribute
