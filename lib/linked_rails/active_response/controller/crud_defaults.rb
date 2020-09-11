@@ -48,8 +48,12 @@ module LinkedRails
         def permit_params
           @permit_params ||=
             params
-              .require(controller_name.singularize)
+              .require(permit_param_key)
               .permit(*permit_param_keys)
+        end
+
+        def permit_param_key
+          controller_name.singularize
         end
 
         def permit_param_keys
