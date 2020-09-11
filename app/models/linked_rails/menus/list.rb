@@ -8,7 +8,6 @@ module LinkedRails
 
       attr_accessor :resource, :user_context
       class_attribute :_defined_menus, instance_reader: false, instance_writer: false
-      delegate :iri_opts, to: :resource
 
       def available_menus
         return {} if defined_menus.blank?
@@ -18,6 +17,10 @@ module LinkedRails
 
       def defined_menus
         self.class.defined_menus
+      end
+
+      def iri_opts
+        resource&.iri_opts || {}
       end
 
       def menus

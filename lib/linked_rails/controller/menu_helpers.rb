@@ -4,7 +4,7 @@ module LinkedRails
   module Controller
     module MenuHelpers
       def app_menu_list
-        @app_menu_list ||= AppMenuList.new(resource: current_user, user_context: user_context)
+        @app_menu_list ||= AppMenuList.new(resource: nil, user_context: user_context)
       end
 
       def app_menu?
