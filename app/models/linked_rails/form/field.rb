@@ -34,11 +34,11 @@ module LinkedRails
       end
 
       def description
-        description_from_attribute || LinkedRails.translate(:property, :description, self, false)
+        description_from_attribute || description_fallback
       end
 
       def helper_text
-        helper_text_from_attribute || LinkedRails.translate(:property, :helper_text, self, false)
+        helper_text_from_attribute || helper_text_fallback
       end
 
       def max_length
@@ -54,7 +54,7 @@ module LinkedRails
       end
 
       def name
-        label_from_attribute || LinkedRails.translate(:property, :label, self)
+        label_from_attribute || label_fallback
       end
 
       def pattern
@@ -82,12 +82,24 @@ module LinkedRails
         @description.respond_to?(:call) ? @description.call : @description
       end
 
+      def description_fallback
+        LinkedRails.translate(:property, :description, self, false)
+      end
+
       def helper_text_from_attribute
         @helper_text.respond_to?(:call) ? @helper_text.call : @helper_text
       end
 
+      def helper_text_fallback
+        LinkedRails.translate(:property, :helper_text, self, false)
+      end
+
       def label_from_attribute
         @label.respond_to?(:call) ? @label.call : @label
+      end
+
+      def label_fallback
+        LinkedRails.translate(:property, :label, self)
       end
 
       class << self
