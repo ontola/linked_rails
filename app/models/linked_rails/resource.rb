@@ -7,16 +7,15 @@ module LinkedRails
 
     include LinkedRails::Model
 
-    attr_accessor :iri
+    attr_writer :iri
     alias_attribute :id, :iri
+
+    def anonymous_iri?
+      true
+    end
 
     def canonical_iri
       iri unless iri.anonymous?
-    end
-
-    def initialize(attrs = {})
-      super(attrs)
-      @iri ||= RDF::Node.new
     end
   end
 end

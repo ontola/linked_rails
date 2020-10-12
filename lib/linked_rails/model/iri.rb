@@ -26,8 +26,8 @@ module LinkedRails
 
       # @return [RDF::URI].
       def iri(opts = {})
-        return iri_with_root(root_relative_iri(opts)) if opts.present?
         return anonymous_iri if anonymous_iri?
+        return iri_with_root(root_relative_iri(opts)) if opts.present?
 
         @iri ||= iri_with_root(root_relative_iri)
       end

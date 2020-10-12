@@ -22,7 +22,7 @@ module LinkedRails
         def form_resource_includes(action)
           included_object = action&.included_object
 
-          return {} if included_object.nil? || included_object.anonymous_iri?
+          return {} if included_object.nil? || included_object.iri.anonymous?
 
           includes = included_object.class.try(:show_includes)&.presence || []
           includes = [includes] if includes.is_a?(Hash)
