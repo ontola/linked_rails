@@ -120,7 +120,7 @@ module LinkedRails
     end
 
     def total_count
-      @total_count ||= association_base.try(:total_count) || association_base.unscope(:select).count
+      @total_count ||= association_base.try(:total_count) || unscoped_association.count
     end
 
     def total_page_count
@@ -129,6 +129,10 @@ module LinkedRails
 
     def type
       @type&.to_sym || default_type
+    end
+
+    def unscoped_association
+      association_base.respond_to?(:unscope) ? association_base.unscope(:select) : association_base
     end
 
     def views
