@@ -11,11 +11,11 @@ module LinkedRails
         end
 
         class_methods do
-          def action_triples(object, params)
+          def action_triples(object, _params)
             if object.iri.anonymous?
               []
             else
-              object.action_triples(params[:scope])
+              object.action_triples
             end
           end
         end

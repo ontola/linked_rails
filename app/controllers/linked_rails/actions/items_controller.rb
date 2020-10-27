@@ -3,27 +3,11 @@
 module LinkedRails
   module Actions
     class ItemsController < LinkedRails.controller_parent_class
-      active_response :show, :index
+      active_response :show
 
       private
 
-      def actions
-        @actions ||= parent_resource!.actions(user_context) + parent_resource!.collection_actions(user_context)
-      end
-
       def authorize_action; end
-
-      def index_association
-        actions.reject(&:exclude)
-      end
-
-      def index_includes
-        action_form_includes
-      end
-
-      def index_meta
-        parent_resource!.potential_and_favorite_triples(user_context)
-      end
 
       def show_includes
         action_form_includes

@@ -19,15 +19,14 @@ module LinkedRails
           @action_list[user_context] ||= self.class.action_list.new(resource: self, user_context: user_context)
         end
 
-        def action_triples(user_context) # rubocop:disable Metrics/AbcSize
-          (actions(user_context) + collection_actions(user_context)).map do |action|
-            [iri, action.predicate, action.iri]
-          end + [
-            [iri, RDF::Vocab::SCHEMA.potentialAction, actions_iri(:potentialAction)],
-            [iri, LinkedRails::Vocab::ONTOLA[:favoriteAction], actions_iri(:favoriteAction)],
-            [actions_iri(:potentialAction), Vocab::SP[:Variable], Vocab::SP[:Variable], Vocab::ONTOLA[:invalidate]],
-            [actions_iri(:favoriteAction), Vocab::SP[:Variable], Vocab::SP[:Variable], Vocab::ONTOLA[:invalidate]]
-          ]
+        def action_triples # rubocop:disable Metrics/AbcSize
+          (actions + collection_actions).map do |action|
+            [
+              [iri, action.predicate, action.iri],
+              [iri, RDF::Vocab::SCHEMA.potentialAction, action.iri],
+              action.favorite ? [iri, LinkedRails::Vocab::ONTOLA[:favoriteAction], action.iri] : nil
+            ]
+          end.flatten(1).compact
         end
 
         def actions_iri(tag)
@@ -36,35 +35,10 @@ module LinkedRails
           actions_iri
         end
 
-        def collection_actions(user_context)
+        def collection_actions
           (try(:collections) || []).map do |opts|
-            collection_for(opts[:name], user_context: user_context).actions(user_context)
+            collection_for(opts[:name]).actions
           end.flatten
-        end
-
-        def potential_and_favorite_triples(user_context)
-          remove_actions_iri_triples +
-            (actions(user_context) + collection_actions(user_context))
-              .map(&method(:potential_and_favorite_for_action))
-              .flatten(1)
-        end
-
-        private
-
-        def potential_and_favorite_for_action(action)
-          [
-            action.available? ? RDF::Vocab::SCHEMA.potentialAction : nil,
-            action.favorite ? Vocab::ONTOLA[:favoriteAction] : nil
-          ].compact.map { |predicate| [iri, predicate, action.iri, Vocab::ONTOLA[:replace]] }
-        end
-
-        def remove_actions_iri_triples
-          [
-            [iri, RDF::Vocab::SCHEMA.potentialAction, actions_iri(:potentialAction), Vocab::ONTOLA[:remove]],
-            [actions_iri(:potentialAction), RDF[:type], NS::LL[:LoadingResource]],
-            [iri, Vocab::ONTOLA[:favoriteAction], actions_iri(:favoriteAction), Vocab::ONTOLA[:remove]],
-            [actions_iri(:favoriteAction), RDF[:type], NS::LL[:LoadingResource]]
-          ]
         end
 
         module ClassMethods
