@@ -9,7 +9,7 @@ module LinkedRails
         def route_concerns(mapper)
           mapper.concern :actionable do
             namespace :actions do
-              mapper.resources :items, path: '', only: %i[index show]
+              mapper.resources :items, path: '', only: %i[show]
             end
           end
         end
