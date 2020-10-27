@@ -21,7 +21,11 @@ module LinkedRails
       end
 
       def defined_actions
-        self.class.defined_actions.select(&method(:collection_filter))
+        if resource.is_a?(LinkedRails.collection_class)
+          self.class.collection_actions
+        else
+          self.class.model_actions
+        end
       end
 
       private
@@ -40,10 +44,6 @@ module LinkedRails
         option.respond_to?(:call) ? instance_exec(&option) : option
       end
 
-      def collection_filter(_tag, options)
-        call_option(options[:collection], resource) == resource.is_a?(LinkedRails.collection_class)
-      end
-
       def result_class
         @result_class ||= self.class.actionable_class
       end
@@ -55,9 +55,17 @@ module LinkedRails
             name.demodulize.gsub('ActionList', '').safe_constantize
         end
 
+        def collection_actions
+          @collection_actions ||= defined_actions.select { |_tag, opts| opts[:collection] }
+        end
+
         def defined_actions
           initialize_actions
           _defined_actions || {}
+        end
+
+        def model_actions
+          @model_actions ||= defined_actions.reject { |_tag, opts| opts[:collection] }
         end
 
         private
