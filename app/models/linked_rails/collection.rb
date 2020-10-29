@@ -24,7 +24,7 @@ module LinkedRails
 
     attr_accessor :association, :association_class, :association_scope, :grid_max_columns, :include_map, :joins,
                   :name, :page_size, :parent, :part_of, :policy, :user_context, :view
-    attr_writer :association_base, :default_display, :default_type, :display, :title, :type, :views
+    attr_writer :association_base, :table_type, :default_display, :default_type, :display, :title, :type, :views
 
     alias id iri
 
@@ -62,12 +62,8 @@ module LinkedRails
     end
 
     def columns
-      case display&.to_sym
-      when :table
-        columns_list = association_class.try(:defined_columns).try(:[], :default)
-      when :settingsTable
-        columns_list = association_class.try(:defined_columns).try(:[], :settings)
-      end
+      columns_list = association_class.try(:defined_columns).try(:[], table_type)
+
       RDF::List[*columns_list] if columns_list.present?
     end
 
@@ -113,7 +109,7 @@ module LinkedRails
 
     def title_from_translation
       plural = association_class.name.tableize
-      I18n.t("#{plural}.collection.#{@filter&.values&.join('.').presence || name}",
+      I18n.t("#{plural}.collection.#{@filter&.values&.join('.').presence || name || :default}",
              count: ->(_opts) { total_count },
              default: I18n.t("#{plural}.plural",
                              default: plural.humanize))
@@ -169,6 +165,17 @@ module LinkedRails
 
     def paginated?
       type == :paginated
+    end
+
+    def table_type
+      return @table_type if @table_type
+
+      case display&.to_sym
+      when :table
+        :default
+      when :settingsTable
+        :settings
+      end
     end
 
     def new_child_values
