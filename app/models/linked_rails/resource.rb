@@ -11,7 +11,7 @@ module LinkedRails
     alias_attribute :id, :iri
 
     def anonymous_iri?
-      true
+      @iri.blank?
     end
 
     def canonical_iri
