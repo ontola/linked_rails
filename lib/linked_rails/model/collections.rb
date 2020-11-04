@@ -35,12 +35,8 @@ module LinkedRails
         collection_opts = collections.detect { |c| c[:name] == name }.try(:[], :options)
         return if collection_opts.blank?
 
-        cached_collection(name, opts[:filter]) ||
-          cache_collection(
-            name,
-            opts.delete(:collection_class) || LinkedRails.collection_class,
-            opts.merge(**collection_opts)
-          )
+        cached_collection(name, opts) ||
+          cache_collection(name, opts, collection_opts)
       end
 
       def parent_collections(user_context)
@@ -51,20 +47,28 @@ module LinkedRails
 
       private
 
-      def cache_collection(name, collection_class, opts)
-        opts = opts.with_indifferent_access
+      def cache_collection(name, instance_opts, collection_opts)
+        opts = instance_opts.merge(**collection_opts).with_indifferent_access
         opts[:name] = name
         opts[:parent] = self
-        opts[:filter] ||= {}
         opts[:part_of] = opts.key?(:part_of) ? send(opts[:part_of]) : self
-        collection = collection_class.new(opts)
-        @collection_instances[name] = collection if opts[:filter].blank? && opts[:user_context].present?
+        collection = LinkedRails.collection_class.new(opts)
+
+        @collection_instances[collection_cache_key(name, opts)] = collection
+
         collection
       end
 
-      def cached_collection(name, filter)
+      def cached_collection(name, opts)
         @collection_instances ||= {}
-        @collection_instances[name] if filter.blank?
+        @collection_instances[collection_cache_key(name, opts)]
+      end
+
+      def collection_cache_key(name, opts)
+        key = opts.dup
+        key[:name] = name
+        key[:user_context] = key.key?(:user_context)
+        key.hash
       end
 
       def parent_collections_for(parent, user_context)
@@ -97,14 +101,13 @@ module LinkedRails
         # @option options [Sym] joins the associations to join
         # @return [Collection]
         def with_collection(name, options = {})
-          collection_class = options.delete(:collection_class) || LinkedRails.collection_class
           options[:association] ||= name.to_sym
           options[:association_class] ||= name.to_s.classify.constantize
 
           collections_add(name: name, options: options)
 
           define_method "#{name.to_s.singularize}_collection" do |opts = {}|
-            collection_for(name, opts.merge(collection_class: collection_class))
+            collection_for(name, opts)
           end
         end
       end
