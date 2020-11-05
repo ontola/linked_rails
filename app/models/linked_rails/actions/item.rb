@@ -49,7 +49,8 @@ module LinkedRails
       end
 
       def error
-        I18n.t("actions.status.#{action_status.to_s.split('#').last}", default: nil)
+        policy_message ||
+          I18n.t("actions.status.#{action_status.to_s.split('#').last}", default: nil)
       end
 
       def included_object
@@ -70,6 +71,10 @@ module LinkedRails
         else
           resource
         end
+      end
+
+      def policy_message
+        resource_policy.try(:message) if action_status == NS::ONTOLA[:DisabledActionStatus]
       end
 
       def root_relative_canonical_iri(_opts = {})
@@ -153,7 +158,7 @@ module LinkedRails
       end
 
       def resource_policy
-        @resource_policy ||= Pundit.policy!(user_context, policy_resource)
+        @resource_policy ||= Pundit.policy!(user_context, policy_resource) if policy_resource
       end
 
       def root_relative_canonical_iri_from_var
