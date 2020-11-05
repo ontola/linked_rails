@@ -15,7 +15,7 @@ module LinkedRails
       enhanceable :policy_class, :Policy
       class_attribute :_permitted_attributes
 
-      attr_reader :user_context, :record
+      attr_reader :message, :user_context, :record
 
       def initialize(user_context, record)
         @user_context = user_context
@@ -66,6 +66,11 @@ module LinkedRails
 
     def child_policy(klass, opts = {})
       Pundit.policy(user_context, record.build_child(klass.constantize, opts.merge(user_context: user_context)))
+    end
+
+    def forbid_with_message(message)
+      @message = message
+      false
     end
 
     def policy_class
