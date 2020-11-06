@@ -60,7 +60,9 @@ module LinkedRails
       end
 
       def invalidate_resource_delta(resource)
-        [resource.iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
+        iri = resource.is_a?(RDF::Resource) ? resource : resource.iri
+
+        [iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
       end
 
       def resource_added_delta(resource)
