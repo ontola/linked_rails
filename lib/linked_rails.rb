@@ -13,6 +13,7 @@ module LinkedRails
   @model_classes = {}
 
   mattr_accessor :app_ns, default: RDF::Vocabulary.new('http://example.com/my_vocab#')
+  mattr_accessor :whitelisted_spi_ips
   mattr_writer :host, :scheme
 
   def self.configurable_class(parent, klass, default: nil) # rubocop:disable Metrics/AbcSize
