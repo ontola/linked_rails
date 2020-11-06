@@ -4,7 +4,10 @@
 
 module LinkedRails
   module Routes
-    def use_linked_rails(opts = {})
+    def use_linked_rails(opts = {}) # rubocop:disable Metrics/AbcSize
+      constraints(LinkedRails::Constraints::Whitelist) do
+        post 'spi/bulk', to: "#{opts.fetch(:bulk, 'linked_rails/bulk')}#show"
+      end
       get '/c_a', to: "#{opts.fetch(:current_user)}#show"
       get '/ns/core', to: "#{opts.fetch(:vocabularies, 'linked_rails/vocabularies')}#show"
       get '/manifest', to: "#{opts.fetch(:manifests, 'linked_rails/manifests')}#show"
