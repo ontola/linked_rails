@@ -57,6 +57,7 @@ module LinkedRails
 end
 
 require 'linked_rails/vocab'
+require 'linked_rails/cache'
 require 'linked_rails/enhancements'
 require 'linked_rails/model'
 require 'linked_rails/enhanceable'
