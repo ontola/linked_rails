@@ -39,9 +39,8 @@ module LinkedRails
 
       def resource_from_opts(opts)
         opts[:class] ||= class_from_type(opts[:type])
-        return if opts[:class].blank? || opts[:id].blank?
 
-        opts[:class]&.find_by(id: opts[:id])
+        opts[:class]&.find_by(iri_opts: opts)
       end
 
       private

@@ -111,6 +111,10 @@ module LinkedRails
       end
 
       module ClassMethods
+        def find_by_iri_opts(opts)
+          find_by(id: opts[:id]) if opts.key?(:id)
+        end
+
         def iri
           @iri ||= iri_namespace[iri_value]
         end
