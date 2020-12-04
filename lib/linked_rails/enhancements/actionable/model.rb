@@ -19,14 +19,8 @@ module LinkedRails
           @action_list[user_context] ||= self.class.action_list.new(resource: self, user_context: user_context)
         end
 
-        def action_triples # rubocop:disable Metrics/AbcSize
-          (actions + collection_actions).map do |action|
-            [
-              [iri, action.predicate, action.iri],
-              [iri, RDF::Vocab::SCHEMA.potentialAction, action.iri],
-              action.favorite ? [iri, LinkedRails::Vocab::ONTOLA[:favoriteAction], action.iri] : nil
-            ]
-          end.flatten(1).compact
+        def action_triples
+          @action_triples ||= triples_for_actions(actions) + triples_for_actions(collection_actions)
         end
 
         def actions_iri(tag)
@@ -39,6 +33,19 @@ module LinkedRails
           (try(:collections) || []).map do |opts|
             collection_for(opts[:name]).actions
           end.flatten
+        end
+
+        private
+
+        def triples_for_actions(actions)
+          actions.flat_map do |action|
+            triples = [
+              [iri, action.predicate, action.iri],
+              [iri, RDF::Vocab::SCHEMA.potentialAction, action.iri]
+            ]
+            triples << [iri, LinkedRails::Vocab::ONTOLA[:favoriteAction], action.iri] if action.favorite
+            triples
+          end
         end
 
         module ClassMethods
