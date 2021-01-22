@@ -19,7 +19,7 @@ module LinkedRails
       end
 
       def add_error_snackbar?(_error)
-        request.method != 'GET'
+        !%w[GET HEAD].include?(request.method)
       end
 
       def handle_error(error)
@@ -47,8 +47,8 @@ module LinkedRails
         @_uc = nil
       end
 
-      def error_resource(status, error)
-        LinkedRails.rdf_error_class.new(status, request.original_url, error)
+      def error_resource(status, error, url = request.original_url)
+        LinkedRails.rdf_error_class.new(status, url, error)
       end
 
       def error_response_serializer(error, type, status: nil)

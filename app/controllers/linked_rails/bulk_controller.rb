@@ -55,6 +55,14 @@ module LinkedRails
       false
     end
 
+    def resource_response_body(iri, rack_body, status)
+      return rack_body.body if rack_body.is_a?(ActionDispatch::Response::RackBody)
+
+      error = error_resource(status, StandardError.new(I18n.t("status.#{status}")), iri)
+
+      resource_body(error)
+    end
+
     def resource_request(iri)
       env = resource_request_env(iri)
       req = ActionDispatch::Request.new(env)
@@ -99,7 +107,7 @@ module LinkedRails
 
       resource_response(
         iri.to_s,
-        body: include ? rack_body.body : nil,
+        body: include ? resource_response_body(iri, rack_body, status) : nil,
         cache: headers['Cache-Control']&.squish&.presence || :private,
         language: response_language(headers),
         status: status
