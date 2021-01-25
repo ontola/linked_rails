@@ -30,7 +30,7 @@ Metrics/ClassLength:
   Exclude:
     - test/**/*.rb
 
-Layout/LineLength:
+Metrics/LineLength:
   Max: 120
 
 Metrics/MethodLength:

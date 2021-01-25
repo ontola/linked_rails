@@ -5,7 +5,7 @@ require 'active_response/responders/html'
 module LinkedRails
   module ActiveResponse
     module Responders
-      class RDF < ::ActiveResponse::Responders::HTML
+      class RDF < ::ActiveResponse::Responders::HTML # rubocop:disable Metrics/ClassLength
         respond_to(*RDF_CONTENT_TYPES)
 
         include LinkedRails::Helpers::OntolaActionsHelper
@@ -85,15 +85,25 @@ module LinkedRails
             ::RDF::URI(form_iri),
             Vocab::LL[:errorResponse],
             error_object,
-            NS::ONTOLA[:replace]
+            Vocab::ONTOLA[:replace]
           ]
         end
 
         def error_statements(iri, resource)
+          index = 0
           resource.errors.messages.map do |key, values|
             predicate = resource.class.predicate_for_key(key.to_s.split('.').first)
-            values.map { |value| [iri, predicate, value.sub(/\S/, &:upcase)] } if predicate
+            if predicate
+              error_statements_for(iri, predicate, values)
+            else
+              index += 1
+              error_statements_for(iri, ::RDF["_#{index - 1}"], values)
+            end
           end.compact.flatten(1)
+        end
+
+        def error_statements_for(iri, predicate, values)
+          values.map { |value| [iri, predicate, value.sub(/\S/, &:upcase)] }
         end
 
         def error_meta(resource)
@@ -101,7 +111,29 @@ module LinkedRails
           return [] unless form_iri && resource.respond_to?(:errors)
 
           error_object = ::RDF::Node.new
-          [error_mapping(form_iri, error_object)] + error_statements(error_object, resource)
+          [
+            error_mapping(form_iri, error_object),
+            error_type(error_object),
+            error_status(error_object)
+          ] + error_statements(error_object, resource)
+        end
+
+        def error_type(error_object)
+          [
+            error_object,
+            ::RDF.type,
+            Vocab::LL[:ErrorResponse],
+            Vocab::ONTOLA[:replace]
+          ]
+        end
+
+        def error_status(error_object)
+          [
+            error_object,
+            ::RDF::URI('http://www.w3.org/2011/http#statusCode'),
+            200,
+            Vocab::LL[:meta]
+          ]
         end
 
         def head_request?
