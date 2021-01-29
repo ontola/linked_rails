@@ -180,7 +180,7 @@ module LinkedRails
 
     def new_child_values
       instance_values
-        .slice('association', 'association_class', 'association_scope', 'parent')
+        .slice('association', 'association_class', 'association_scope', 'iri_template', 'parent')
         .merge(
           unfiltered_collection: filtered? ? @unfiltered_collection : self,
           user_context: user_context
