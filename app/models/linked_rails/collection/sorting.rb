@@ -7,8 +7,8 @@ module LinkedRails
       include LinkedRails::Model
       DATE_MIN = Date.new(1970, 1, 1)
       DATE_TIME_MIN = Time.new(1970, 1, 1).utc
-      STRING_MIN = 0.chr
-      STRING_MAX = 255.chr
+      STRING_MIN = ('0'.ord - 1).chr
+      STRING_MAX = ('z'.ord + 1).chr
 
       attr_accessor :association_class, :direction, :key, :collection
 
