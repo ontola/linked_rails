@@ -105,7 +105,7 @@ module LinkedRails
             values = f.split('=')
             key = RDF::URI(CGI.unescape(values.first))
             hash[key] ||= []
-            hash[key] << values.second
+            hash[key] << CGI.unescape(values.second)
           end
         end
 
