@@ -97,7 +97,7 @@ module LinkedRails
               error_statements_for(iri, predicate, values)
             else
               index += 1
-              error_statements_for(iri, ::RDF["_#{index - 1}"], values)
+              unassigned_error_statements(resource, iri, index - 1, key, values)
             end
           end.compact.flatten(1)
         end
@@ -143,6 +143,14 @@ module LinkedRails
         def response_headers(opts)
           headers = controller.response.headers
           add_exec_action_header(headers, ontola_snackbar_action(opts[:notice])) if opts[:notice].present?
+        end
+
+        def unassigned_error_statements(resource, iri, index, key, values)
+          error_statements_for(
+            iri,
+            ::RDF["_#{index}"],
+            values.map { |value| resource.errors.full_message(key, value) }
+          )
         end
       end
     end
