@@ -57,38 +57,50 @@ module LinkedRails
   end
 
   Translate.translations_for(:property, :description) do |object, fallback|
-    I18n.t(
-      "#{object.model_class&.to_s&.tableize}.properties.#{object.model_attribute}.description",
-      default: [
-        :"properties.#{object.model_class&.to_s&.tableize}.#{object.model_attribute}.description",
-        :"actions.default.#{object.model_attribute}.description",
-        :"properties.#{object.model_attribute}.description",
-        fallback ? object.model_attribute.to_s.humanize : ''
-      ]
-    )
+    if object.model_attribute.present?
+      model_key = object.model_class&.to_s&.demodulize&.tableize
+
+      I18n.t(
+        "#{model_key}.properties.#{object.model_attribute}.description",
+        default: [
+          :"properties.#{model_key}.#{object.model_attribute}.description",
+          :"actions.default.#{object.model_attribute}.description",
+          :"properties.#{object.model_attribute}.description",
+          fallback ? object.model_attribute.to_s.humanize : ''
+        ]
+      )
+    end
   end
 
   Translate.translations_for(:property, :helper_text) do |object, fallback|
-    I18n.t(
-      "#{object.model_class&.to_s&.tableize}.properties.#{object.model_attribute}.helper_text",
-      default: [
-        :"properties.#{object.model_class&.to_s&.tableize}.#{object.model_attribute}.helper_text",
-        :"actions.default.#{object.model_attribute}.helper_text",
-        :"properties.#{object.model_attribute}.helper_text",
-        fallback ? object.model_attribute.to_s.humanize : ''
-      ]
-    )
+    if object.model_attribute.present?
+      model_key = object.model_class&.to_s&.demodulize&.tableize
+
+      I18n.t(
+        "#{model_key}.properties.#{object.model_attribute}.helper_text",
+        default: [
+          :"properties.#{model_key}.#{object.model_attribute}.helper_text",
+          :"actions.default.#{object.model_attribute}.helper_text",
+          :"properties.#{object.model_attribute}.helper_text",
+          fallback ? object.model_attribute.to_s.humanize : ''
+        ]
+      )
+    end
   end
 
   Translate.translations_for(:property, :label) do |object, fallback|
-    I18n.t(
-      "#{object.model_class&.to_s&.tableize}.properties.#{object.model_attribute}.label",
-      default: [
-        :"properties.#{object.model_class&.to_s&.tableize}.#{object.model_attribute}.label",
-        :"actions.default.#{object.model_attribute}.label",
-        :"properties.#{object.model_attribute}.label",
-        fallback ? object.model_attribute.to_s.humanize : ''
-      ]
-    )
+    if object.model_attribute.present?
+      model_key = object.model_class&.to_s&.demodulize&.tableize
+
+      I18n.t(
+        "#{model_key}.properties.#{object.model_attribute}.label",
+        default: [
+          :"properties.#{model_key}.#{object.model_attribute}.label",
+          :"actions.default.#{object.model_attribute}.label",
+          :"properties.#{object.model_attribute}.label",
+          fallback ? object.model_attribute.to_s.humanize : ''
+        ]
+      )
+    end
   end
 end
