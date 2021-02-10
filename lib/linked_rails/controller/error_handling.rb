@@ -10,6 +10,7 @@ module LinkedRails
         rescue_from Pundit::NotAuthorizedError, with: :handle_error
         rescue_from LinkedRails::Errors::Unauthorized, with: :handle_error
         rescue_from LinkedRails::Errors::UnknownEmail, with: :handle_error
+        rescue_from LinkedRails::Errors::Expired, with: :handle_error
       end
 
       private
