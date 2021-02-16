@@ -7,5 +7,6 @@ module LinkedRails
     attribute :label, predicate: RDF::Vocab::SCHEMA.name
     attribute :close_match, predicate: RDF::Vocab::SKOS.closeMatch
     attribute :exact_match, predicate: RDF::Vocab::SKOS.exactMatch
+    attribute :group_by, predicate: Vocab::ONTOLA[:groupBy]
   end
 end

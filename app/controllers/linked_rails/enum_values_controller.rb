@@ -6,9 +6,13 @@ module LinkedRails
 
     private
 
+    def enum_options!
+      serializer_class!.enum_options(params[:attribute]) || raise(ActiveRecord::RecordNotFound)
+    end
+
     def index_association
       @index_association ||= policy_scope(
-        serializer_class!.enum_options(params[:attribute]).values,
+        enum_options!.values,
         policy_scope_class: LinkedRails::EnumValuePolicy::Scope
       )
     end

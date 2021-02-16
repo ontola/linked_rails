@@ -5,8 +5,8 @@ module LinkedRails
     include ActiveModel::Model
     include LinkedRails::Model
 
-    attr_accessor :attr, :close_match, :exact_match, :key, :klass, :type
-    attr_writer :label
+    attr_accessor :attr, :close_match, :exact_match, :group_by, :key, :klass, :type
+    attr_writer :iri, :label
 
     def label
       label_from_variable ||
@@ -17,7 +17,7 @@ module LinkedRails
     end
 
     def iri
-      iri_with_root(RDF::URI("/enums/#{klass.name.tableize}/#{attr}##{key}"))
+      @iri || iri_with_root(RDF::URI("/enums/#{klass.name.tableize}/#{attr}##{key}"))
     end
 
     def rdf_type
