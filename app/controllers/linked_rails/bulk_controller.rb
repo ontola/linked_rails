@@ -104,11 +104,12 @@ module LinkedRails
 
     def response_from_request(include, iri)
       status, headers, rack_body = Rails.application.routes.router.serve(resource_request(iri))
+      cache_from_header = headers['Cache-Control']&.squish&.presence
 
       resource_response(
         iri.to_s,
         body: include ? resource_response_body(iri, rack_body, status) : nil,
-        cache: headers['Cache-Control']&.squish&.presence || :private,
+        cache: %w[no-cache private public].include?(cache_from_header.to_s.downcase) ? cache_from_header : :private,
         language: response_language(headers),
         status: status
       )
