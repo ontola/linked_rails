@@ -46,7 +46,7 @@ module LinkedRails
 
         def collection_params(opts = params, _klass = controller_class) # rubocop:disable Metrics/AbcSize
           method = opts.is_a?(Hash) ? :slice : :permit
-          params = opts.send(method, :display, :page_size, :type).to_h.with_indifferent_access
+          params = opts.send(method, :display, :page_size, :title, :type).to_h.with_indifferent_access
 
           filter = parse_filter(opts.is_a?(Hash) ? opts[:filter] : opts.permit(filter: [])[:filter])
           params[:filter] = filter if filter

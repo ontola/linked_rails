@@ -3,7 +3,7 @@
 module LinkedRails
   class Collection
     module Iri
-      COLLECTION_PARAMS = %w[display filter%5B%5D* page page_size type before%5B%5D* sort%5B%5D*].freeze
+      COLLECTION_PARAMS = %w[display filter%5B%5D* page page_size title type before%5B%5D* sort%5B%5D*].freeze
       attr_writer :canonical_iri_template, :iri_template
 
       def canonical_iri_template
@@ -17,6 +17,7 @@ module LinkedRails
       def iri_opts
         opts = {}
         iri_opts_add(opts, :display, display) if @display
+        iri_opts_add(opts, :title, title) if @title
         iri_opts_add(opts, :type, type) if @type
         iri_opts_add(opts, :page_size, page_size) if @page_size
         iri_opts_add(opts, :'filter%5B%5D', filter_iri_opts)
@@ -36,7 +37,7 @@ module LinkedRails
       end
 
       def iri_template_keys
-        %i[display filter%5B%5D sort%5B%5D page_size type]
+        %i[display filter%5B%5D sort%5B%5D page_size title type]
       end
 
       def iri_template_opts
