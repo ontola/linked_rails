@@ -64,7 +64,7 @@ module LinkedRails
         opts = RDF::Serializers.serializer_for(klass).try(:enum_options, key)
         return if opts.blank?
 
-        opts.detect { |_k, options| options.iri == value }&.first
+        opts.detect { |_k, options| options.iri == value }&.first&.to_s
       end
 
       def graph_from_request(request)
