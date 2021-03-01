@@ -17,7 +17,7 @@ module LinkedRails
     end
 
     def requested_resource
-      @requested_resource ||= form_class!.new
+      @requested_resource ||= form_class&.new
     end
 
     def show_includes

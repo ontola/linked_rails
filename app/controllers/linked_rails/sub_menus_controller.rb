@@ -11,7 +11,7 @@ module LinkedRails
     def authorize_action; end
 
     def index_association
-      menu_list.menu(menu_id).menu_sequence
+      menu_list!.menu(menu_id).menu_sequence
     end
 
     def index_includes

@@ -34,7 +34,7 @@ module LinkedRails
           if redirect_action?
             redirect_action
           else
-            parent_resource!.action(params[:id]&.to_sym, user_context)
+            parent_resource&.action(params[:id]&.to_sym, user_context)
           end
       end
     end

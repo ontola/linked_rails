@@ -11,7 +11,7 @@ module LinkedRails
     def authorize_action; end
 
     def index_association
-      menu_list.menus
+      menu_list!.menus
     end
 
     def index_includes
@@ -23,7 +23,7 @@ module LinkedRails
     end
 
     def requested_resource
-      @requested_resource ||= menu_list.menu(params[:id]&.to_sym)
+      @requested_resource ||= menu_list&.menu(params[:id]&.to_sym)
     end
   end
 end
