@@ -24,7 +24,8 @@ module LinkedRails
 
     attr_accessor :association, :association_class, :association_scope, :grid_max_columns, :include_map, :joins,
                   :name, :page_size, :parent, :part_of, :policy, :user_context, :view
-    attr_writer :association_base, :table_type, :default_display, :default_type, :display, :title, :type, :views
+    attr_writer :association_base, :table_type, :default_display, :default_title, :default_type,
+                :display, :title, :type, :views
 
     alias id iri
 
@@ -102,9 +103,10 @@ module LinkedRails
     end
 
     def title
-      return @title.call(parent) if @title.respond_to?(:call)
+      var = @title || @default_title
+      return var.call(parent) if var.respond_to?(:call)
 
-      @title || title_from_translation
+      var || title_from_translation
     end
 
     def title_from_translation
