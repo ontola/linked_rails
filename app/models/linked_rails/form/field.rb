@@ -28,6 +28,7 @@ module LinkedRails
                     :group,
                     :input_field,
                     :validators,
+                    :sh_in_prop,
                     :key
       def datatype
         @datatype || raise("No datatype found for #{key} in #{form.name}")

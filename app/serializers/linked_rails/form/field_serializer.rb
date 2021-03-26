@@ -31,6 +31,7 @@ module LinkedRails
           options
         end
       end
+      attribute :sh_in_prop, predicate: Vocab::ONTOLA[:shIn]
       attribute :path, predicate: RDF::Vocab::SH.path
     end
   end
