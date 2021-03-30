@@ -66,7 +66,7 @@ module LinkedRails
       end
 
       def resource_added_delta(resource)
-        invalidate_parent_collections_delta(resource) + [invalidate_resource_delta(resource)]
+        invalidate_parent_collections_delta(resource)
       end
 
       def resource_removed_delta(resource)
