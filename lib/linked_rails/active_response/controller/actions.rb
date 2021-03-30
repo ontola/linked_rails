@@ -19,6 +19,10 @@ module LinkedRails
           [:target, included_object: form_resource_includes(action)]
         end
 
+        def collection_action?
+          %w[new create].include?(action_name) && index_collection
+        end
+
         def form_resource_includes(action) # rubocop:disable Metrics/CyclomaticComplexity
           included_object = action&.included_object
 
@@ -34,8 +38,11 @@ module LinkedRails
         end
 
         def ld_action(resource:, view:)
-          action_resource = resource.try(:new_record?) && index_collection || resource
-          action_resource.action(ld_action_name(view), user_context)
+          ld_action_resource(resource).action(ld_action_name(view), user_context)
+        end
+
+        def ld_action_resource(resource)
+          collection_action? ? index_collection : resource
         end
 
         def ld_action_name(view)
