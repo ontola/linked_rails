@@ -23,12 +23,6 @@ module LinkedRails
           @action_triples ||= triples_for_actions(actions) + triples_for_actions(collection_actions)
         end
 
-        def actions_iri(tag)
-          actions_iri = iri_with_root(RDF::URI(iri_template_expand_path(iri_template, '/actions').expand(iri_opts)))
-          actions_iri.fragment = tag if tag.present?
-          actions_iri
-        end
-
         def collection_actions
           (try(:collections) || []).map do |opts|
             collection_for(opts[:name]).actions

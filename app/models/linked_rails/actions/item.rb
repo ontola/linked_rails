@@ -93,10 +93,6 @@ module LinkedRails
         super
       end
 
-      def same_as
-        parent.actions_iri(tag)
-      end
-
       def iri_opts
         resource&.iri_opts || {}
       end
