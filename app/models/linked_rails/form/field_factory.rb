@@ -168,6 +168,13 @@ module LinkedRails
         @model_attribute ||= (model_class.try(:attribute_alias, key) || key).to_sym
       end
 
+      def normalized_key(key)
+        return key.to_s[0...-3].to_sym if key.to_s.ends_with?('_id')
+        return key.to_s[0...-4].pluralize.to_sym if key.to_s.ends_with?('_ids')
+
+        key
+      end
+
       def serializer_attribute
         return serializer_attributes[key] if serializer_attributes[key]
 
@@ -179,9 +186,7 @@ module LinkedRails
       end
 
       def serializer_reflection
-        normalized_key = key.to_s.ends_with?('_id') ? key.to_s[0...-3].to_sym : key
-
-        k_v = serializer_reflections.find { |_k, v| (v.association || v.key) == normalized_key }
+        k_v = serializer_reflections.find { |_k, v| (v.association || v.key) == normalized_key(key) }
         k_v[1] if k_v
       end
 

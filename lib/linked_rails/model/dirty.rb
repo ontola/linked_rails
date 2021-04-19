@@ -47,8 +47,9 @@ module LinkedRails
 
       private
 
-      def association_changed?(association)
-        return true if previous_changes.include?("#{association}_id")
+      def association_changed?(association) # rubocop:disable Metrics/AbcSize
+        ids_method = "#{association.to_s.singularize}_ids"
+        return true if previous_changes.include?("#{association}_id") || previous_changes.include?(ids_method)
         return false unless try(:association_cached?, association)
 
         if self.class.reflect_on_association(association).collection?

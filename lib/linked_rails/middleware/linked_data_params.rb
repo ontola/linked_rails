@@ -171,7 +171,7 @@ module LinkedRails
 
       def attributes_from_iri(object, association, reflection)
         if reflection.options[:through]
-          key = "#{association}_id"
+          key = reflection.has_one? ? "#{association}_id" : "#{association.to_s.singularize}_ids"
         elsif reflection.belongs_to?
           key = reflection.foreign_key
         end

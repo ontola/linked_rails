@@ -3,22 +3,31 @@
 module LinkedRails
   module Helpers
     module DeltaHelper
-      def changed_relations_triples # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def changed_relation_triples(predicate, destructed, resources)
+        related_resource_invalidations = resources.map(&:invalidate_resource_delta)
+
+        return related_resource_invalidations unless predicate
+
+        if destructed
+          return related_resource_invalidations + [
+            [current_resource.iri, predicate, Vocab::SP[:Variable], delta_iri(:remove)]
+          ]
+        end
+
+        related_resource_invalidations + resources.map do |resource|
+          [current_resource.iri, predicate, resource.iri, delta_iri(:replace)]
+        end
+      end
+
+      def changed_relations_triples # rubocop:disable Metrics/AbcSize
         current_resource.previously_changed_relations.flat_map do |key, value|
-          relation_iri = current_resource.send(key).iri
-          predicate = value.predicate
           if key.to_s.ends_with?('_collection')
-            [[Vocab::SP[:Variable], Vocab::ONTOLA[:baseCollection], relation_iri, delta_iri(:invalidate)]]
-          elsif current_resource.send(:association_has_destructed?, key)
-            [
-              predicate ? [current_resource.iri, predicate, relation_iri, delta_iri(:remove)] : nil,
-              [relation_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
-            ].compact
+            [invalidate_collection_delta(current_resource.send(key))]
           else
-            [
-              predicate ? [current_resource.iri, predicate, relation_iri, delta_iri(:replace)] : nil,
-              [relation_iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
-            ].compact
+            destructed = current_resource.send(:association_has_destructed?, key)
+            many = value.relationship_type == :has_many
+            relation = current_resource.send(key)
+            changed_relation_triples(value.predicate, destructed, many ? relation : [relation])
           end
         end
       end
