@@ -4,7 +4,7 @@ module LinkedRails
   module Helpers
     module DeltaHelper
       def changed_relation_triples(predicate, destructed, resources)
-        related_resource_invalidations = resources.map(&:invalidate_resource_delta)
+        related_resource_invalidations = resources.map(&method(:invalidate_resource_delta))
 
         return related_resource_invalidations unless predicate
 
