@@ -4,9 +4,9 @@ require 'benchmark'
 
 module LinkedRails
   class BulkController < ApplicationController # rubocop:disable Metrics/ClassLength
-    REQUEST_HEADERS = %w[HTTP_ACCEPT_LANGUAGE HTTP_AUTHORIZATION HTTP_FORWARDED HTTP_HOST HTTP_X_DEVICE_ID
-                         HTTP_X_FORWARDED_FOR HTTP_X_FORWARDED_HOST HTTP_X_FORWARDED_PROTO HTTP_X_FORWARDED_SSL
-                         HTTP_X_REAL_IP HTTP_WEBSITE_IRI].freeze
+    REQUEST_HEADERS = %w[HTTP_ACCEPT_LANGUAGE HTTP_AUTHORIZATION HTTP_FORWARDED HTTP_HOST HTTP_REFERER HTTP_USER_AGENT
+                         HTTP_WEBSITE_IRI HTTP_X_DEVICE_ID HTTP_X_FORWARDED_FOR HTTP_X_FORWARDED_HOST
+                         HTTP_X_FORWARDED_PROTO HTTP_X_FORWARDED_SSL HTTP_X_REAL_IP].freeze
 
     def show
       render json: authorized_resources
