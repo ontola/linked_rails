@@ -60,7 +60,7 @@ module LinkedRails
         def index_collection; end
 
         def index_collection_or_view
-          collection_or_view(index_collection)
+          @index_collection_or_view ||= collection_or_view(index_collection)
         end
 
         def index_includes_collection
