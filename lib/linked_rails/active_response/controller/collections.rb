@@ -57,6 +57,8 @@ module LinkedRails
           params
         end
 
+        def index_association; end
+
         def index_collection; end
 
         def index_collection_or_view
@@ -71,10 +73,14 @@ module LinkedRails
           end
         end
 
+        def index_includes_sequence
+          [members: preview_includes]
+        end
+
         def index_meta
           if index_collection.is_a?(LinkedRails.collection_class) ||
-              index_collection.is_a?(LinkedRails::Sequence) ||
-              index_collection.nil?
+            index_collection.is_a?(LinkedRails::Sequence) ||
+            index_collection.nil?
             return []
           end
 
@@ -87,6 +93,16 @@ module LinkedRails
 
         def index_iri
           RDF::URI(request.original_url)
+        end
+
+        def index_sequence
+          return if index_association.nil?
+
+          @index_sequence ||=
+            LinkedRails::Sequence.new(
+              index_association,
+              id: index_iri
+            )
         end
 
         def parse_before(array)

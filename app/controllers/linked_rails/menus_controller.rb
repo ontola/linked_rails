@@ -14,8 +14,8 @@ module LinkedRails
       menu_list!.menus
     end
 
-    def index_includes
-      [menu_sequence: [members: [menu_sequence: :members]]]
+    def index_includes_sequence
+      menu_includes
     end
 
     def show_includes
