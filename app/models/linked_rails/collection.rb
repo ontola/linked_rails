@@ -22,7 +22,7 @@ module LinkedRails
 
     enhance LinkedRails::Enhancements::Actionable
 
-    attr_accessor :association, :association_class, :association_scope, :grid_max_columns, :include_map, :joins,
+    attr_accessor :association, :association_class, :association_scope, :grid_max_columns, :joins,
                   :name, :page_size, :parent, :part_of, :policy, :user_context, :view
     attr_writer :association_base, :table_type, :default_display, :default_title, :default_type,
                 :display, :title, :type, :views
@@ -87,6 +87,10 @@ module LinkedRails
       when :infinite
         iri_with_root(root_relative_iri(before: default_before_value))
       end
+    end
+
+    def include_map
+      association_class.try(:collection_include_map)
     end
 
     def inspect
@@ -156,7 +160,6 @@ module LinkedRails
 
     def default_view_opts
       opts = {
-        include_map: (include_map || {}),
         type: type,
         filter: filter
       }

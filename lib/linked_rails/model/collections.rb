@@ -85,6 +85,12 @@ module LinkedRails
           collections.append(opts)
         end
 
+        def collection_include_map
+          JSONAPI::IncludeDirective::Parser.parse_include_args(
+            [:root] + [includes_for_serializer]
+          )
+        end
+
         def initialize_collections
           return if collections && method(:collections).owner == singleton_class
 

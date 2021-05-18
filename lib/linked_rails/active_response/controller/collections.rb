@@ -15,12 +15,6 @@ module LinkedRails
           }
         end
 
-        def collection_include_map
-          JSONAPI::IncludeDirective::Parser.parse_include_args(
-            [:root] + [controller_class.try(:includes_for_serializer)]
-          )
-        end
-
         def collection_view_includes(member_includes = {})
           {member_sequence: {members: member_includes}}
         end
@@ -35,7 +29,6 @@ module LinkedRails
 
         def collection_options
           {
-            include_map: collection_include_map,
             user_context: user_context
           }.merge(collection_params)
         end

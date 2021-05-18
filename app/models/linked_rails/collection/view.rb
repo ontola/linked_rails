@@ -10,9 +10,9 @@ module LinkedRails
       include LinkedRails::Model
       include LinkedRails::Collection::Preloading
 
-      attr_accessor :collection, :filter, :include_map
-      delegate :association_base, :association_class, :default_page_size, :parent, :policy, :user_context, :apply_scope,
-               :display, :unfiltered_collection, :total_page_count, to: :collection
+      attr_accessor :collection, :filter
+      delegate :apply_scope, :association_base, :association_class, :default_page_size, :display, :include_map,
+               :parent, :policy, :total_page_count, :unfiltered_collection, :user_context, to: :collection
       delegate :count, to: :members
 
       alias id iri

@@ -16,8 +16,7 @@ module LinkedRails
 
         current_opts = {
           collection: collection,
-          filter: filter,
-          include_map: include_map
+          filter: filter
         }
         next_view = collection.view_with_opts(current_opts.merge(before: next_before_values))
 
