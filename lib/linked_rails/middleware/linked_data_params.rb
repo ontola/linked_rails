@@ -136,7 +136,7 @@ module LinkedRails
 
       def parse_nested_resource(base_params, graph, subject, klass)
         resource = parse_resource(base_params, graph, subject, klass)
-        resource[:id] ||= LinkedRails.opts_from_iri(subject)[:id] if subject.iri?
+        resource[:id] ||= LinkedRails.iri_mapper.opts_from_iri(subject)[:id] if subject.iri?
         resource
       end
 
@@ -177,7 +177,7 @@ module LinkedRails
         end
         return unless key
 
-        resource = LinkedRails.resource_from_iri(object)
+        resource = LinkedRails.iri_mapper.resource_from_iri(object)
         value = resource&.send(reflection.association_primary_key)
 
         [key, value] if value
@@ -201,7 +201,10 @@ module LinkedRails
       end
 
       def target_class_from_path(request)
-        opts = LinkedRails.opts_from_iri(request.base_url + request.env['REQUEST_URI'], method: request.request_method)
+        opts = LinkedRails.iri_mapper.opts_from_iri(
+          request.base_url + request.env['REQUEST_URI'],
+          method: request.request_method
+        )
 
         klass = target_class_from_controller(opts.try(:[], :controller))
 

@@ -19,7 +19,7 @@ module LinkedRails
       # @param iri [String, RDF::URI] The iri to resolve.
       # @return [ApplicationRecord, nil] The parent resource corresponding to the uri if found
       def parent_from_iri(iri)
-        route_opts = LinkedRails.opts_from_iri(iri)
+        route_opts = LinkedRails.iri_mapper.opts_from_iri(iri)
         parent_from_params(route_opts)
       rescue ActionController::RoutingError
         nil
@@ -72,7 +72,7 @@ module LinkedRails
       end
 
       def parent_resource_or_collection(opts)
-        resource = LinkedRails.resource_from_opts(opts.merge(type: controller_name))
+        resource = LinkedRails.iri_mapper.resource_from_opts(opts.merge(type: controller_name))
         return resource if opts[:collection].blank?
 
         parent_collection(resource, opts)

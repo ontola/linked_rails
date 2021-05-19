@@ -16,18 +16,18 @@ module LinkedRails
   mattr_accessor :whitelisted_spi_ips
   mattr_writer :host, :scheme
 
-  def self.configurable_class(parent, klass, default: nil) # rubocop:disable Metrics/AbcSize
+  def self.configurable_class(parent, klass, default: nil, reader: nil) # rubocop:disable Metrics/AbcSize
     method = :"#{[parent, klass.to_s.downcase].compact.join('_')}_class"
     default ||= "LinkedRails::#{[parent&.to_s&.camelize, klass.to_s.classify].compact.join('::')}"
 
     mattr_writer method, default: default
-    define_singleton_method method do
+    define_singleton_method reader || method do
       @model_classes[method] ||= class_variable_get("@@#{method}").constantize
     end
   end
 
   class << self
-    delegate :opts_from_iri, :resource_from_iri, :resource_from_iri!, :resource_from_opts, to: :iri_mapper_class
+    delegate :opts_from_iri, :resource_from_iri, :resource_from_iri!, :resource_from_opts, to: :iri_mapper
     def host
       # rubocop:disable Style/ClassVars
       @@host ||= Rails.application.routes.default_url_options[:host]&.split('//')&.last || 'example.com'
@@ -53,7 +53,7 @@ module LinkedRails
   configurable_class(nil, :form_parent, default: 'ApplicationForm')
   configurable_class(nil, :policy_parent, default: 'ApplicationPolicy')
   configurable_class(nil, :serializer_parent, default: 'ApplicationSerializer')
-  configurable_class(nil, :iri_mapper, default: 'LinkedRails::IRIMapper')
+  configurable_class(nil, :iri_mapper, default: 'LinkedRails::IRIMapper', reader: :iri_mapper)
 end
 
 require 'linked_rails/vocab'
