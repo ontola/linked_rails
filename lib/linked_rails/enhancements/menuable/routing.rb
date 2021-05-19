@@ -8,8 +8,10 @@ module LinkedRails
       class << self
         def route_concerns(mapper)
           mapper.concern :menuable do
-            mapper.resources :menus, only: %i[index show] do
-              mapper.resources :sub_menus, only: :index, path: 'menus'
+            scope module: :menus do
+              mapper.resources :lists, only: %i[index show], path: 'menus' do
+                mapper.resources :items, only: %i[index], path: 'menus'
+              end
             end
           end
         end
