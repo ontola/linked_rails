@@ -14,7 +14,7 @@ module LinkedRails
       end
 
       def redirect_action?
-        parent_resource.nil? && resource_id == 'redirect'
+        parent_from_params.nil? && resource_id == 'redirect'
       end
 
       def redirect_action # rubocop:disable Metrics/AbcSize
@@ -34,7 +34,7 @@ module LinkedRails
           if redirect_action?
             redirect_action
           else
-            parent_resource&.action(params[:id]&.to_sym, user_context)
+            parent_from_params&.action(params[:id]&.to_sym, user_context)
           end
       end
     end
