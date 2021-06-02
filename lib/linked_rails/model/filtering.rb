@@ -28,15 +28,7 @@ module LinkedRails
 
         def boolean_filter(true_filter, false_filter, options = {})
           {
-            filter: lambda { |scope, values|
-              if values.include?(true) && values.include?(false)
-                scope
-              else
-                values.reduce(scope) do |sub_scope, val|
-                  val ? true_filter.call(scope) : false_filter.call(scope)
-                end
-              end
-            },
+            filter: resolve_boolean_filter(true_filter, false_filter),
             values: [true, false]
           }.merge(options)
         end
@@ -78,6 +70,18 @@ module LinkedRails
           define_method "#{key}=" do |value|
             send("#{filter[:attr]}=", filter[:values].key(value))
           end
+        end
+
+        def resolve_boolean_filter(true_filter, false_filter)
+          lambda { |scope, values|
+            if values.include?(true) && values.include?(false)
+              scope
+            else
+              values.reduce(scope) do |_sub_scope, val|
+                val ? true_filter.call(scope) : false_filter.call(scope)
+              end
+            end
+          }
         end
       end
     end

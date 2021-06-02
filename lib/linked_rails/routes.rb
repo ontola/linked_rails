@@ -4,7 +4,7 @@ require 'linked_rails/constraints/whitelist'
 
 module LinkedRails
   module Routes
-    def use_linked_rails(opts = {}) # rubocop:disable Metrics/AbcSize
+    def use_linked_rails(opts = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       constraints(LinkedRails::Constraints::Whitelist) do
         post 'spi/bulk', to: "#{opts.fetch(:bulk, 'linked_rails/bulk')}#show"
       end
@@ -15,6 +15,77 @@ module LinkedRails
       get '/enums/*module/:klass/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
       get '/forms/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
       get '/forms/*module/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
+
+      get '(*parent_iri)/menus', to: 'menus/lists#index'
+      get '(*parent_iri)/menus/:id', to: 'menus/lists#show'
+      get '(*parent_iri)/menu_items', to: 'menus/items#index'
+
+      get '(*parent_iri)/actions', to: 'actions/items#index'
+      get '(*parent_iri)/actions/:id', to: 'actions/items#show'
+      get '(*parent_iri)/new', to: 'actions/items#show', id: :create
+      get '(*parent_iri)/edit', to: 'actions/items#show', id: :update
+      get '(*parent_iri)/delete', to: 'actions/items#show', id: :destroy
+      get '(*parent_iri)/trash', to: 'actions/items#show', id: :trash
+      get '(*parent_iri)/untrash', to: 'actions/items#show', id: :untrash
+    end
+
+    def linked_resource(klass, controller: nil, nested: false, &block)
+      options = route_options(klass, controller, nested, klass.route_key)
+
+      resources(
+        options[:route_name],
+        active_controller_opts(options),
+        &route_block(klass, &block)
+      )
+
+      post(options[:parentable_path], to: "#{options[:controller]}#create") if options[:creatable]
+      get(options[:parentable_path], to: "#{options[:controller]}#index")
+    end
+
+    def singular_linked_resource(klass, controller: nil, nested: true, &block)
+      options = route_options(klass, controller, nested, klass.singular_route_key)
+
+      resource(
+        options[:route_name],
+        active_controller_opts(options).merge(singular_route: true),
+        &route_block(klass, &block)
+      )
+
+      post(options[:parentable_path], to: "#{options[:controller]}#create", singular_route: true) if options[:creatable]
+    end
+
+    private
+
+    def active_controller_opts(route_options)
+      {
+        controller: route_options[:controller],
+        only: %i[show],
+        path: route_options[:nested] ? route_options[:parentable_path] : route_options[:path]
+      }
+    end
+
+    def creatable(klass)
+      klass.enhanced_with?(LinkedRails::Enhancements::Creatable, :Routing)
+    end
+
+    def route_block(klass)
+      lambda do
+        include_route_concerns(klass: klass)
+
+        yield if block_given?
+      end
+    end
+
+    def route_options(klass, controller, nested, path)
+      {
+        controller: controller || klass.name.tableize,
+        creatable: creatable(klass),
+        nested: nested,
+        only: %i[show],
+        parentable_path: "(*parent_iri)/#{path}",
+        path: path,
+        route_name: klass.name.demodulize.tableize
+      }.with_indifferent_access
     end
   end
 end

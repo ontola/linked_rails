@@ -4,6 +4,8 @@ module LinkedRails
   module ActiveResponse
     module Controller
       module CrudDefaults
+        private
+
         def create_success_options_rdf
           opts = create_success_options
           opts[:meta] = create_meta
@@ -18,16 +20,6 @@ module LinkedRails
           current_resource
         end
 
-        def default_form_options(action)
-          return super unless active_responder.is_a?(RDFResponder)
-
-          action = ld_action(**super.slice(:resource, :view))
-          {
-            action: action || raise("No action found for #{action_name}"),
-            include: action_form_includes(action)
-          }
-        end
-
         def destroy_success_options_rdf
           opts = destroy_success_options
           opts[:meta] = destroy_meta
@@ -38,31 +30,20 @@ module LinkedRails
           resource_removed_delta(current_resource)
         end
 
-        def index_success_options_rdf
-          {
-            collection: index_sequence ? index_sequence : index_collection_or_view,
-            include: index_sequence ? index_includes_sequence : index_includes_collection,
-            meta: index_meta
-          }
-        end
-
-        def permit_params
-          @permit_params ||=
-            params
-              .require(permit_param_key)
-              .permit(*permit_param_keys)
-        end
-
-        def permit_param_key
-          controller_name.singularize
-        end
-
-        def permit_param_keys
-          policy(current_resource_for_params).try(:permitted_attributes)
-        end
-
         def preview_includes
           controller_class.try(:preview_includes)
+        end
+
+        def requested_resource
+          @requested_resource ||= controller_class.try(
+            :requested_resource,
+            LinkedRails.iri_mapper.route_params_to_opts(params.dup),
+            user_context
+          )
+        end
+
+        def requested_resource!
+          requested_resource || raise(ActiveRecord::RecordNotFound)
         end
 
         def show_includes

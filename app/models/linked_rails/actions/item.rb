@@ -7,10 +7,11 @@ module LinkedRails
     class Item # rubocop:disable Metrics/ClassLength
       include ActiveModel::Model
       include LinkedRails::Model
+      enhance Singularable
 
-      attr_accessor :exclude, :list, :policy_arguments, :submit_label
+      attr_accessor :list, :policy_arguments, :submit_label
       attr_writer :parent, :resource, :root_relative_canonical_iri, :root_relative_iri, :user_context, :object,
-                  :translation_key
+                  :target, :translation_key
       delegate :user_context, to: :list, allow_nil: true
 
       %i[description result type policy label image url include_object include_paths collection condition form completed
@@ -48,13 +49,30 @@ module LinkedRails
         @condition.nil? || condition
       end
 
+      def built_associations
+        included_object
+          .class
+          .try(:reflect_on_all_associations)
+          &.select { |association| association.has_one? && included_object.association(association.name).loaded? }
+          &.map(&:name)
+      end
+
       def error
         policy_message ||
           I18n.t("actions.status.#{action_status.to_s.split('#').last}", default: nil)
       end
 
+      def form_resource_includes # rubocop:disable Metrics/CyclomaticComplexity
+        return {} if included_object.nil?
+        return include_paths || {} if iri.anonymous?
+
+        includes = included_object.class.try(:show_includes)&.presence || []
+
+        (includes.is_a?(Hash) ? [includes] : includes) + (built_associations || [])
+      end
+
       def included_object
-        object if include_object || object.iri.anonymous?
+        object if include_object || object&.iri&.anonymous?
       end
 
       def object
@@ -92,6 +110,17 @@ module LinkedRails
 
         super
       end
+      alias root_relative_canonical_iri root_relative_iri
+
+      def root_relative_singular_iri
+        value = root_relative_iri.to_s.sub(resource.root_relative_iri, resource.root_relative_singular_iri)
+
+        RDF::URI(value)
+      end
+
+      def singular_resource?
+        resource.try(:singular_resource?)
+      end
 
       def iri_opts
         resource&.iri_opts || {}
@@ -99,6 +128,8 @@ module LinkedRails
 
       def iri_template
         path_suffix = path.blank? ? "/actions/#{tag}" : "/#{path}"
+
+        return @iri_template ||= URITemplate.new(path_suffix) if resource.blank?
 
         @iri_template ||= iri_template_expand_path(resource.send(:iri_template), path_suffix)
       end
@@ -139,8 +170,8 @@ module LinkedRails
       end
 
       def policy_valid?
-        return false if policy_resource.blank?
         return true if policy.blank?
+        return false if policy_resource.blank?
 
         @policy_valid ||= resource_policy.send(policy, *policy_arguments)
       end
@@ -171,6 +202,48 @@ module LinkedRails
 
       def type_fallback
         RDF::Vocab::SCHEMA.UpdateAction
+      end
+
+      class << self
+        def app_action_list_class
+          return @app_action_list_class if instance_variables.include?(:@app_action_list_class)
+
+          @app_action_list_class = 'AppActionList'.safe_constantize
+        end
+
+        def app_action_list(user_context)
+          app_action_list_class&.new(
+            resource: nil,
+            user_context: user_context
+          )
+        end
+
+        def requested_index_resource(params, user_context)
+          parent = parent_from_params(params, user_context)
+          action_list = parent ? parent.action_list(user_context) : app_action_list(user_context)
+
+          LinkedRails.collection_class.new(
+            association_base: action_list.actions,
+            association_class: ::Actions::Item,
+            default_display: :grid,
+            default_title: I18n.t('actions.plural'),
+            parent: parent,
+            title: params[:title]
+          )
+        end
+
+        def requested_single_resource(params, user_context)
+          return nil if params[:id].blank?
+
+          parent = parent_from_params(params, user_context)
+          action_list = parent ? parent.action_list(user_context) : app_action_list(user_context)
+
+          action_list&.action(params[:id].to_sym)
+        end
+
+        def route_key
+          :actions
+        end
       end
     end
   end

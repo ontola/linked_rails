@@ -73,6 +73,12 @@ module LinkedRails
       false
     end
 
+    def parent_policy
+      return if record.try(:parent).blank?
+
+      @parent_policy ||= Pundit.policy(user_context, record.parent)
+    end
+
     def policy_class
       self.class.policy_class
     end

@@ -6,7 +6,7 @@ module LinkedRails
     attr_accessor :cover_photo, :includes, :hide_header
 
     def widget_sequence
-      @widget_sequence ||= LinkedRails::Sequence.new(@widgets) if @widgets
+      @widget_sequence ||= LinkedRails::Sequence.new(@widgets, parent: self, scope: false) if @widgets
     end
 
     class << self
@@ -14,7 +14,7 @@ module LinkedRails
         RDF::Vocab::SCHEMA.WebPage
       end
 
-      def show_includes
+      def preview_includes
         super + [:includes, widget_sequence: {members: LinkedRails::Widget.show_includes}]
       end
     end

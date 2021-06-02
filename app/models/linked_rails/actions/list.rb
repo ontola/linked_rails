@@ -7,6 +7,7 @@ module LinkedRails
     class List
       include ActiveModel::Model
       include LinkedRails::Model
+      include DefaultActions
       extend LinkedRails::Enhanceable
 
       attr_accessor :resource, :user_context
@@ -17,14 +18,16 @@ module LinkedRails
       end
 
       def action(tag)
-        actions.find { |a| a.tag == tag }
+        action_item(tag, defined_actions[tag].dup) if defined_actions.key?(tag)
       end
 
       def defined_actions
         if resource.is_a?(LinkedRails.collection_class)
           self.class.collection_actions
+        elsif resource.try(:singular_resource?)
+          self.class.singular_actions
         else
-          self.class.model_actions
+          self.class.resource_actions
         end
       end
 
@@ -56,30 +59,51 @@ module LinkedRails
         end
 
         def collection_actions
-          @collection_actions ||= defined_actions.select { |_tag, opts| opts[:collection] }
+          defined_actions[:collection]
         end
 
         def defined_actions
           initialize_actions
-          _defined_actions || {}
+          _defined_actions || initial_defined_actions
         end
 
-        def model_actions
-          @model_actions ||= defined_actions.reject { |_tag, opts| opts[:collection] }
+        def resource_actions
+          defined_actions[:resource]
+        end
+
+        def singular_actions
+          defined_actions[:singular]
         end
 
         private
 
+        def has_collection_action(action, opts = {}) # rubocop:disable Naming/PredicateName
+          opts[:http_method] ||= 'POST'
+          defined_actions[:collection][action] = opts
+        end
+
+        def has_resource_action(action, opts = {}) # rubocop:disable Naming/PredicateName
+          opts[:http_method] ||= 'POST'
+          defined_actions[:resource][action] = opts
+        end
+
+        def has_singular_action(action, opts = {}) # rubocop:disable Naming/PredicateName
+          opts[:http_method] ||= 'POST'
+          defined_actions[:singular][action] = opts
+        end
+
+        def initial_defined_actions(clone_from = {})
+          {
+            collection: clone_from[:collection].dup || {},
+            resource: clone_from[:resource].dup || {},
+            singular: clone_from[:singular].dup || {}
+          }
+        end
+
         def initialize_actions
           return if _defined_actions && method(:_defined_actions).owner == singleton_class
 
-          self._defined_actions = superclass.try(:_defined_actions)&.dup || {}
-        end
-
-        def has_action(action, opts = {}) # rubocop:disable Naming/PredicateName
-          opts[:collection] ||= false
-          opts[:http_method] ||= 'POST'
-          defined_actions[action] = opts
+          self._defined_actions = initial_defined_actions(superclass.try(:_defined_actions) || {})
         end
       end
 

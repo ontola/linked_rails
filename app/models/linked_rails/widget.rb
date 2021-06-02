@@ -21,8 +21,9 @@ module LinkedRails
     def resource_sequence
       @resource_sequence ||=
         LinkedRails::Sequence.new(
-          @resources
-            .map { |iri, predicate| predicate.present? ? property_shape(iri, predicate).iri : RDF::URI(iri) }
+          @resources.map { |iri, predicate| predicate.present? ? property_shape(iri, predicate).iri : RDF::URI(iri) },
+          parent: self,
+          scope: false
         )
     end
 

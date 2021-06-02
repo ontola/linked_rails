@@ -8,6 +8,7 @@ require 'uri_template'
 require 'nill_class_renderer'
 require 'linked_rails/engine'
 require 'linked_rails/iri_mapper'
+require 'linked_rails/params_parser'
 
 module LinkedRails
   @model_classes = {}
@@ -27,7 +28,6 @@ module LinkedRails
   end
 
   class << self
-    delegate :opts_from_iri, :resource_from_iri, :resource_from_iri!, :resource_from_opts, to: :iri_mapper
     def host
       # rubocop:disable Style/ClassVars
       @@host ||= Rails.application.routes.default_url_options[:host]&.split('//')&.last || 'example.com'

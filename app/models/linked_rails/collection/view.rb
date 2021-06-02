@@ -26,7 +26,12 @@ module LinkedRails
       end
 
       def member_sequence
-        @member_sequence ||= LinkedRails::Sequence.new(members, id: members_iri)
+        @member_sequence ||= LinkedRails::Sequence.new(
+          members,
+          id: members_iri,
+          parent: self,
+          scope: false
+        )
       end
 
       def members
@@ -86,6 +91,10 @@ module LinkedRails
           else
             raise ActionController::BadRequest, "'#{type}' is not a valid collection type"
           end
+        end
+
+        def policy_class
+          LinkedRails::Collection::ViewPolicy
         end
       end
     end

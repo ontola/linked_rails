@@ -66,6 +66,19 @@ module LinkedRails
       end
 
       class << self
+        def app_menu_list_class
+          return @app_menu_list_class if instance_variables.include?(:@app_menu_list_class)
+
+          @app_menu_list_class = 'AppMenuList'.safe_constantize
+        end
+
+        def app_menu_list(user_context)
+          app_menu_list_class&.new(
+            resource: nil,
+            user_context: user_context
+          )
+        end
+
         def all
           []
         end
@@ -79,12 +92,48 @@ module LinkedRails
           defined_menus[tag] = opts
         end
 
+        def preview_includes
+          [menu_sequence: Item.show_includes]
+        end
+
+        def requested_index_resource(params, user_context)
+          menu_list = menu_list_from_params(params, user_context)
+
+          return if menu_list.blank?
+
+          LinkedRails::Sequence.new(
+            menu_list.menus,
+            id: menu_list.iri,
+            scope: false
+          )
+        end
+
+        def requested_single_resource(params, user_context)
+          return nil if params[:id].blank?
+
+          menu_list = menu_list_from_params(params, user_context)
+
+          menu_list&.menu(params[:id].to_sym)
+        end
+
         private
 
         def initialize_menus
           return if _defined_menus && method(:_defined_menus).owner == singleton_class
 
           self._defined_menus = superclass.try(:_defined_menus)&.dup || {}
+        end
+
+        def menu_list_from_params(params, user_context)
+          parent = parent_from_params(params, user_context)
+
+          if parent.is_a?(LinkedRails.menus_item_class)
+            parent
+          elsif parent
+            parent.menu_list(user_context)
+          else
+            app_menu_list(user_context)
+          end
         end
       end
     end

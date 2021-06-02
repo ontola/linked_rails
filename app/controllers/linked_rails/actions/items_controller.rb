@@ -7,35 +7,12 @@ module LinkedRails
 
       private
 
-      def authorize_action; end
+      def include_collection_items?
+        false
+      end
 
       def show_includes
-        action_form_includes(current_resource)
-      end
-
-      def redirect_action?
-        parent_from_params.nil? && resource_id == 'redirect'
-      end
-
-      def redirect_action # rubocop:disable Metrics/AbcSize
-        resource = LinkedRails.actions_item_class.new(
-          http_method: :get,
-          type: RDF::Vocab::SCHEMA.Action,
-          label: params[:label],
-          target: {id: RDF::URI(params[:location])}
-        )
-        resource.instance_variable_set(:@canonical_iri, RDF::URI(request.original_url))
-        resource.instance_variable_set(:@iri, RDF::URI(request.original_url))
-        resource
-      end
-
-      def requested_resource
-        @requested_resource ||=
-          if redirect_action?
-            redirect_action
-          else
-            parent_from_params&.action(params[:id]&.to_sym, user_context)
-          end
+        [:target, included_object: current_resource.form_resource_includes]
       end
     end
   end

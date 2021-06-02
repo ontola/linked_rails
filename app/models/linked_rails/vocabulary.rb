@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  class Vocabulary
+  class Vocabulary # rubocop:disable Metrics/ClassLength
     include ActiveModel::Model
 
     include LinkedRails::Model
@@ -13,6 +13,10 @@ module LinkedRails
     class << self
       def graph
         @graph || generate_graph
+      end
+
+      def requested_resource(_opts, _user_context)
+        LinkedRails.vocabulary_class.new
       end
 
       private

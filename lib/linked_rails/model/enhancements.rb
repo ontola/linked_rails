@@ -18,20 +18,29 @@ module LinkedRails
         # Adds an enhancement to a model and includes the Model module.
         def enhance(enhancement, opts = {})
           initialize_enhancements
-          return if enhanced_with?(enhancement)
+          already_included = enhanced_with?(enhancement)
 
           self.enhancements[enhancement] = opts
-          enhance_routing(enhancement) if enhancement.const_defined?(:Routing) && enhancement_module?(opts, :Routing)
-          include enhancement::Model if enhancement.const_defined?(:Model) && enhancement_module?(opts, :Model)
+          return if already_included
+
+          enhance_routing(enhancement) if enhancement.const_defined?(:Routing) && enhanced_with?(enhancement, :Routing)
+          include enhancement::Model if enhancement.const_defined?(:Model) && enhanced_with?(enhancement, :Model)
         end
 
-        def enhanced_with?(enhancement)
-          self.enhancements.key?(enhancement)
+        def enhanced_with?(enhancement, const = nil)
+          return false unless self.enhancements.key?(enhancement)
+          return true if const.nil?
+
+          opts = self.enhancements[enhancement]
+
+          return opts[:only].include?(const) if opts.key?(:only)
+
+          !opts.key?(:except) || !opts[:except].include?(const)
         end
 
         def enhancement_modules(const)
           enhancements
-            .select { |enhancement, opts| enhancement.const_defined?(const) && enhancement_module?(opts, const) }
+            .select { |enhancement, _opts| enhancement.const_defined?(const) && enhanced_with?(enhancement, const) }
             .map { |enhancement, _opts| enhancement.const_get(const) }
         end
 
@@ -39,12 +48,6 @@ module LinkedRails
 
         def enhance_routing(enhancement)
           LinkedRails::Enhancements::RouteConcerns.add_concern(enhancement)
-        end
-
-        def enhancement_module?(opts, const)
-          return opts[:only].include?(const) if opts.key?(:only)
-
-          !opts.key?(:except) || !opts[:except].include?(const)
         end
 
         def initialize_enhancements

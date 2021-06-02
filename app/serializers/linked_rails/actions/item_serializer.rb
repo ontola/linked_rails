@@ -17,7 +17,9 @@ module LinkedRails
       end
       attribute :error, predicate: RDF::Vocab::SCHEMA.error
 
-      has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
+      has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true do |object|
+        object.parent unless object.parent.try(:anonymous_iri?)
+      end
       has_one :object, predicate: RDF::Vocab::SCHEMA.object, polymorphic: true
       has_one :target, predicate: RDF::Vocab::SCHEMA.target, polymorphic: true
       has_one :included_object, polymorphic: true

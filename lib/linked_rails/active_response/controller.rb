@@ -2,16 +2,16 @@
 
 require 'pundit'
 
-require_relative 'controller/actions'
 require_relative 'controller/collections'
 require_relative 'controller/crud_defaults'
+require_relative 'controller/params'
 
 module LinkedRails
   module Controller
     include Pundit
-    include LinkedRails::ActiveResponse::Controller::Actions
     include LinkedRails::ActiveResponse::Controller::Collections
     include LinkedRails::ActiveResponse::Controller::CrudDefaults
+    include LinkedRails::ActiveResponse::Controller::Params
 
     def _render_with_renderer_json(record, options)
       self.content_type = Mime[:json]

@@ -31,12 +31,15 @@ module LinkedRails
       # @param [ApplicationRecord] part_of
       # @param [Hash] opts Additional options to be passed to the collection.
       # @return [Collection]
-      def collection_for(name, opts = {})
-        collection_opts = collections.detect { |c| c[:name] == name }.try(:[], :options)
+      def collection_for(name, instance_opts = {})
+        collection_opts = collections.detect { |c| c[:name] == name }.try(:[], :options).dup
         return if collection_opts.blank?
 
-        cached_collection(name, opts) ||
-          cache_collection(name, opts, collection_opts)
+        collection_opts[:name] = name
+        collection_opts[:parent] = self
+        collection_opts[:part_of] = collection_opts.key?(:part_of) ? send(collection_opts[:part_of]) : self
+        collection_class = collection_opts.delete(:collection_class) || LinkedRails.collection_class
+        collection_class.collection_or_view(collection_opts, instance_opts)
       end
 
       def parent_collections(user_context)
@@ -46,30 +49,6 @@ module LinkedRails
       end
 
       private
-
-      def cache_collection(name, instance_opts, collection_opts)
-        opts = instance_opts.merge(**collection_opts).with_indifferent_access
-        opts[:name] = name
-        opts[:parent] = self
-        opts[:part_of] = opts.key?(:part_of) ? send(opts[:part_of]) : self
-        collection = LinkedRails.collection_class.new(opts)
-
-        @collection_instances[collection_cache_key(name, opts)] = collection
-
-        collection
-      end
-
-      def cached_collection(name, opts)
-        @collection_instances ||= {}
-        @collection_instances[collection_cache_key(name, opts)]
-      end
-
-      def collection_cache_key(name, opts)
-        key = opts.dup
-        key[:name] = name
-        key[:user_context] = key.key?(:user_context)
-        key.hash
-      end
 
       def parent_collections_for(parent, user_context)
         parent

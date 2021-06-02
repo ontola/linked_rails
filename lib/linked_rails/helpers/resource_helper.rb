@@ -3,109 +3,67 @@
 module LinkedRails
   module Helpers
     module ResourceHelper
+      def current_resource
+        return @current_resource if instance_variable_defined?(:@current_resource)
+
+        @current_resource ||= resolve_current_resource
+      end
+
+      def new_resource
+        @new_resource ||=
+          if requested_resource.try(:singular_resource?)
+            requested_resource
+          elsif parent_resource
+            new_resource_from_parent
+          else
+            build_new_resource
+          end
+      end
+
       def params_for_parent
         params.dup
       end
 
+      def parent_from_params
+        @parent_from_params ||= LinkedRails.iri_mapper.parent_from_params(params, user_context)
+      end
+
+      def parent_from_params!
+        parent_from_params || raise(ActiveRecord::RecordNotFound)
+      end
+
       def parent_resource
-        @parent_resource ||= parent_from_params(params_for_parent)
+        @parent_resource ||= requested_resource_parent || parent_from_params
       end
 
       def parent_resource!
         parent_resource || raise(ActiveRecord::RecordNotFound)
       end
 
-      # Extracts a parent resource from an IRI based on the rails routes
-      # @param iri [String, RDF::URI] The iri to resolve.
-      # @return [ApplicationRecord, nil] The parent resource corresponding to the uri if found
-      def parent_from_iri(iri)
-        route_opts = LinkedRails.iri_mapper.opts_from_iri(iri)
-        parent_from_params(route_opts)
-      rescue ActionController::RoutingError
-        nil
+      def requested_resource_parent
+        requested_resource&.parent
       end
 
-      # Finds the parent resource based on the URL's :foo_id param
-      # @param opts [Hash, nil] The parameters, {ActionController::StrongParameters#params} is used when not given.
-      # @return [ApplicationRecord, nil] The parent resource corresponding to the params if found
-      def parent_from_params(opts = params_for_parent)
-        opts[:class] = parent_resource_class(opts)
-        opts[:id] = opts.delete(parent_resource_param(opts))
-        parent_resource_or_collection(opts)
+      private
+
+      def build_new_resource
+        controller_class.build_new(user_context: user_context)
       end
 
-      # Extracts the resource id from a params hash
-      # @param opts [Hash, nil] The parameters, {ActionController::StrongParameters#params} is used when not given.
-      # @return [String] The resource id
-      # @example Resource class from resource_id
-      #   params = {resource_id: 1}
-      #   parent_id_from_params # => '1'
-      def parent_id_from_params(opts = params)
-        opts[parent_resource_param(opts)]
+      def new_resource_from_parent
+        parent_resource.build_child(
+          controller_class,
+          user_context: user_context
+        )
       end
 
-      # Determines the parent resource's class from the request
-      # @param opts [Hash, nil] The parameters, {ActionController::StrongParameters#params} is used when not given.
-      # @return [ApplicationRecord] The parent resource class object
-      # @see #parent_resource_klass
-      def parent_resource_class(opts = params)
-        parent_resource_klass(opts)
-      end
-
-      # Finds a 'resource key' from a params Hash
-      # @example Resource key from motion_id
-      #   params = {resource_id: 1}
-      #   parent_resource_key # => :resource_id
-      def parent_resource_key(hash)
-        hash
-          .keys
-          .reverse
-          .find { |k| /_id/ =~ k }
-      end
-
-      # Constantizes a class string from the params hash
-      # @param opts [Hash, nil] The parameters, {ActionController::StrongParameters#params} is used when not given.
-      # @return [ApplicationRecord] The parent resource class object
-      # @note Whether the given parent is allowed for the requested resource is not validated here.
-      def parent_resource_klass(opts = params)
-        ApplicationRecord.descendants.detect { |m| m.to_s == parent_resource_type(opts)&.classify }
-      end
-
-      def parent_resource_or_collection(opts)
-        resource = LinkedRails.iri_mapper.resource_from_opts(opts.merge(type: controller_name))
-        return resource if opts[:collection].blank?
-
-        parent_collection(resource, opts)
-      end
-
-      def parent_collection(resource, opts)
-        collection_class = opts[:collection].classify.constantize
-        collection_opts = collection_params(opts, collection_class)
-
-        if resource.present?
-          resource.send("#{opts[:collection].to_s.singularize}_collection", collection_opts)
+      def resolve_current_resource
+        case action_name
+        when 'create', 'new'
+          new_resource
         else
-          collection_class.try(:root_collection, collection_opts)
+          requested_resource
         end
-      end
-
-      # Extracts the parent resource param from the url to get to its value
-      # @param opts [Hash, nil] The parameters, {ActionController::StrongParameters#params} is used when not given.
-      # @return [Symbol] The resource param
-      # @see #parent_resource_key
-      def parent_resource_param(opts = params)
-        parent_resource_key(opts)
-      end
-
-      # Extracts the resource type string from a params hash
-      # @param opts [Hash, nil] The parameters, {ActionController::StrongParameters#params} is used when not given.
-      # @return [String] The resource type string
-      # @example Resource type from resource_id
-      #   params = {resource_id: 1}
-      #   parent_resource_type # => 'resource'
-      def parent_resource_type(opts = params)
-        key = parent_resource_key(opts)
-        key[0..-4] if key
       end
     end
   end

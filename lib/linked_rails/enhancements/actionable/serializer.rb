@@ -12,7 +12,7 @@ module LinkedRails
 
         class_methods do
           def action_triples(object, _params)
-            if object.iri.anonymous?
+            if object.iri.anonymous? && !object.singular_resource?
               []
             else
               object.action_triples

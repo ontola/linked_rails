@@ -102,7 +102,7 @@ module LinkedRails
       resource_response(opts[:iri])
     end
 
-    def response_from_request(include, iri)
+    def response_from_request(include, iri) # rubocop:disable Metrics/AbcSize
       status, headers, rack_body = Rails.application.routes.router.serve(resource_request(iri))
       cache_from_header = headers['Cache-Control']&.squish&.presence
 

@@ -9,7 +9,6 @@ module LinkedRails
         def route_concerns(mapper)
           mapper.concern :updatable do
             mapper.member do
-              mapper.get :edit
               mapper.patch :update
               mapper.put   :update
             end

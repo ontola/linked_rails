@@ -10,19 +10,14 @@ module LinkedRails
       serializer_class!.enum_options(params[:attribute]) || raise(ActiveRecord::RecordNotFound)
     end
 
-    def index_association
-      @index_association ||= policy_scope(
-        enum_options!.values,
-        policy_scope_class: LinkedRails::EnumValuePolicy::Scope
-      )
-    end
+    def requested_resource
+      return super unless action_name == 'index'
 
-    def index_meta
-      @index_meta ||= RDF::List.new(
-        graph: RDF::Graph.new,
-        subject: RDF::URI(request.original_url),
-        values: index_association.map(&:iri)
-      ).triples
+      @requested_resource ||= LinkedRails::Sequence.new(
+        enum_options!.values,
+        id: index_iri,
+        scope: LinkedRails::EnumValuePolicy::Scope
+      )
     end
 
     def model_class

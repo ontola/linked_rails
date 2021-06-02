@@ -32,12 +32,14 @@ module LinkedRails
       end
 
       def menu_sequence
-        return if menus.nil?
+        return if @menus.nil?
 
         @menu_sequence ||=
           LinkedRails::Sequence.new(
             -> { menus&.compact&.each { |menu| menu.parent = self } },
-            id: menu_sequence_iri
+            id: menu_sequence_iri,
+            parent: self,
+            scope: false
           )
       end
 
@@ -46,7 +48,7 @@ module LinkedRails
 
         sequence_iri = iri.dup
         sequence_iri.path ||= ''
-        sequence_iri.path += '/menus'
+        sequence_iri.path += '/menu_items'
         sequence_iri
       end
 
@@ -65,8 +67,24 @@ module LinkedRails
       end
 
       class << self
-        def preview_includes
+        def base_includes
           [:image, action: :target]
+        end
+
+        def preview_includes
+          base_includes + [
+            menu_sequence: [
+              members: base_includes +
+                [menu_sequence: [members: base_includes]]
+            ]
+          ]
+        end
+
+        def requested_index_resource(params, user_context)
+          parent = parent_from_params(params, user_context)
+          return if parent.blank?
+
+          parent.menu_sequence
         end
       end
     end

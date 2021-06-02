@@ -7,17 +7,7 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          active_response :delete, :destroy
-        end
-
-        private
-
-        def delete_success
-          respond_with_form(delete_success_options)
-        end
-
-        def delete_success_options
-          default_form_options(:delete)
+          active_response :destroy
         end
       end
     end

@@ -3,7 +3,6 @@
 require_relative 'active_response/controller'
 require_relative 'controller/authorization'
 require_relative 'controller/error_handling'
-require_relative 'controller/menu_helpers'
 
 module LinkedRails
   module Controller

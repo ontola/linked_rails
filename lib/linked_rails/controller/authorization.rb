@@ -6,15 +6,9 @@ module LinkedRails
       extend ActiveSupport::Concern
 
       def authorize_action
-        if action_name == 'index'
-          raise ActiveRecord::RecordNotFound, 'No collection present to authorize' if index_collection.blank?
+        query = action_name == 'index' ? :show? : "#{params[:action].chomp('!')}?"
 
-          authorize index_collection, :show?
-        else
-          raise ActiveRecord::RecordNotFound, 'No resource present to authorize' if current_resource.blank?
-
-          authorize current_resource, "#{params[:action].chomp('!')}?"
-        end
+        authorize(current_resource!, query)
       end
     end
   end

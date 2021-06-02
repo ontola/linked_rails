@@ -26,7 +26,9 @@ module LinkedRails
     attribute :view, predicate: NS::LL[:view]
 
     has_one :unfiltered_collection, predicate: Vocab::ONTOLA[:baseCollection], polymorphic: true
-    has_one :part_of, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
+    has_one :part_of, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true do |object|
+      object.part_of unless object.part_of.try(:anonymous_iri?)
+    end
     has_one :default_view, predicate: Vocab::ONTOLA[:pages], polymorphic: true
 
     has_many :filter_fields, predicate: Vocab::ONTOLA[:filterFields], polymorphic: true, sequence: true

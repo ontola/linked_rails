@@ -9,7 +9,7 @@ module LinkedRails
         RDF::Vocab::SCHEMA.WebSite
       end
 
-      def show_includes
+      def preview_includes
         super + [homepage: LinkedRails::WebPage.show_includes]
       end
     end

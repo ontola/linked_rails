@@ -136,7 +136,7 @@ module LinkedRails
 
       def parse_nested_resource(base_params, graph, subject, klass)
         resource = parse_resource(base_params, graph, subject, klass)
-        resource[:id] ||= LinkedRails.iri_mapper.opts_from_iri(subject)[:id] if subject.iri?
+        resource[:id] ||= LinkedRails.iri_mapper.opts_from_iri(subject)[:params][:id] if subject.iri?
         resource
       end
 
@@ -177,7 +177,7 @@ module LinkedRails
         end
         return unless key
 
-        resource = LinkedRails.iri_mapper.resource_from_iri(object)
+        resource = LinkedRails.iri_mapper.resource_from_iri(object, nil)
         value = resource&.send(reflection.association_primary_key)
 
         [key, value] if value
@@ -193,24 +193,15 @@ module LinkedRails
         field
       end
 
-      def target_class_from_controller(controller_name)
-        return if controller_name.blank?
-
-        controller = "#{controller_name}_controller".classify.constantize
-        controller.try(:controller_class) || controller.controller_name.classify.safe_constantize
-      end
-
-      def target_class_from_path(request)
+      def target_class_from_path(request) # rubocop:disable Metrics/AbcSize
         opts = LinkedRails.iri_mapper.opts_from_iri(
           request.base_url + request.env['REQUEST_URI'],
           method: request.request_method
         )
 
-        klass = target_class_from_controller(opts.try(:[], :controller))
+        logger.info("No class found for #{request.base_url + request.env['REQUEST_URI']}") unless opts[:class]
 
-        logger.info("No class found for #{request.base_url + request.env['REQUEST_URI']}") unless klass
-
-        klass
+        opts[:class]
       end
 
       def update_actor_param(request, graph)

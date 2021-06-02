@@ -7,7 +7,7 @@ module LinkedRails
 
     attr_accessor :parent
     attr_writer :url
-    delegate :form, :description, :iri_opts, :http_method, :image, :user_context,
+    delegate :form, :description, :http_method, :image, :user_context,
              :resource, :tag, :translation_key, to: :parent
 
     def action_body
@@ -39,7 +39,7 @@ module LinkedRails
     end
 
     def route_fragment
-      :entrypoint
+      :EntryPoint
     end
 
     class << self

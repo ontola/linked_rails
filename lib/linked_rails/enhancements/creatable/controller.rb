@@ -7,7 +7,7 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          active_response :new, :create
+          active_response :create
         end
       end
     end

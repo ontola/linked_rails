@@ -5,6 +5,7 @@ require 'pundit'
 require_relative 'collection/filter'
 require_relative 'collection/filterable'
 require_relative 'collection/iri'
+require_relative 'collection/iri_mapping'
 require_relative 'collection/sortable'
 require_relative 'collection/sorting'
 require_relative 'collection/view'
@@ -18,6 +19,7 @@ module LinkedRails
     include LinkedRails::Model::Iri
     include LinkedRails::Collection::Filterable
     include LinkedRails::Collection::Iri
+    include LinkedRails::Collection::IriMapping
     include LinkedRails::Collection::Sortable
 
     enhance LinkedRails::Enhancements::Actionable
@@ -25,7 +27,7 @@ module LinkedRails
     attr_accessor :association, :association_class, :association_scope, :grid_max_columns, :joins,
                   :name, :page_size, :parent, :part_of, :policy, :user_context, :view
     attr_writer :association_base, :table_type, :default_display, :default_title, :default_type,
-                :display, :title, :type, :views
+                :display, :policy_scope, :title, :type, :views
 
     alias id iri
 
@@ -43,9 +45,10 @@ module LinkedRails
       super
     end
 
-    def apply_scope(association, scope: nil)
-      policy_scope = scope || Pundit::PolicyFinder.new(association).scope
-      policy_scope ? policy_scope.new(user_context, association).resolve : association
+    def apply_scope(association)
+      return association if policy_scope == false
+
+      policy_scope.new(user_context, association).resolve
     end
 
     # prevents a `stack level too deep`
@@ -54,12 +57,20 @@ module LinkedRails
     end
 
     def association_base
-      @association_base ||= apply_scope(sorted_association(filtered_association), scope: policy && policy::Scope)
+      @association_base ||= apply_scope(sorted_association(filtered_association))
     end
 
-    def build_child
-      parent&.build_child(association_class, collection: self, user_context: user_context) ||
-        association_class.build_new(collection: self, user_context: user_context)
+    def build_child # rubocop:disable Metrics/AbcSize
+      child =
+        parent&.build_child(association_class, user_context: user_context) ||
+        association_class.build_new(parent: parent, user_context: user_context)
+
+      attributes_from_filters = ActionController::Parameters.new(association_class.attributes_from_filters(@filter))
+      permitted_child_keys = Pundit.policy(user_context, child)&.permitted_attributes || []
+      permitted_attributes_from_filters = attributes_from_filters.permit(permitted_child_keys)
+
+      child.assign_attributes(permitted_attributes_from_filters)
+      child
     end
 
     def columns
@@ -168,6 +179,12 @@ module LinkedRails
       opts
     end
 
+    def policy_scope
+      return @policy_scope if @policy_scope == false
+
+      @policy_scope = policy ? policy::Scope : Pundit::PolicyFinder.new(filtered_association).scope!
+    end
+
     def paginated?
       type == :paginated
     end
@@ -190,6 +207,12 @@ module LinkedRails
           unfiltered_collection: filtered? ? @unfiltered_collection : self,
           user_context: user_context
         )
+    end
+
+    class << self
+      def preview_includes
+        [:filters, :sortings, filter_fields: :options]
+      end
     end
   end
 end
