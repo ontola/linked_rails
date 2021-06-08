@@ -13,7 +13,8 @@ module LinkedRails
                   :sh_in,
                   :pattern,
                   :path
-      attr_accessor :max_count,
+      attr_accessor :default_value,
+                    :max_count,
                     :max_count_prop,
                     :max_inclusive,
                     :max_inclusive_prop,

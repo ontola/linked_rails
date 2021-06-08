@@ -6,6 +6,7 @@ module LinkedRails
       attribute :name, predicate: RDF::Vocab::SCHEMA.name
       attribute :description, predicate: RDF::Vocab::SCHEMA.text
       attribute :helper_text, predicate: Vocab::ONTOLA[:helperText]
+      attribute :default_value, predicate: Vocab::FORM[:defaultValue]
 
       attribute :datatype, predicate: RDF::Vocab::SH.datatype
       attribute :max_count, predicate: RDF::Vocab::SH.maxCount
