@@ -9,7 +9,7 @@ module LinkedRails
 
       attr_accessor :collection, :count, :value, :key
 
-      def iri
+      def iri(_opts = {})
         self
       end
 

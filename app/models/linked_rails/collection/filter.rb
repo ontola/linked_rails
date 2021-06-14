@@ -8,7 +8,7 @@ module LinkedRails
 
       attr_accessor :default_filter, :key, :value, :collection
 
-      def iri
+      def iri(_opts = {})
         self
       end
     end

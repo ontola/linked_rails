@@ -8,7 +8,7 @@ module LinkedRails
 
     class_attribute :pages, :model_class
 
-    def iri
+    def iri(_opts = {})
       self.class.form_iri
     end
 

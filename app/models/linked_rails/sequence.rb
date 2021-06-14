@@ -11,7 +11,7 @@ module LinkedRails
       self.members = members
     end
 
-    def iri
+    def iri(_opts = {})
       node
     end
     alias id iri
