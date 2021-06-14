@@ -56,16 +56,11 @@ module LinkedRails
       end
 
       def apply_filter(scope, key, values)
-        options = filter_options.fetch(key)
-        values.reduce(scope) do |s, value|
-          apply_filter_value(s, key, value, options)
-        end
-      end
+        filter = filter_options.fetch(key).try(:[], :filter)
 
-      def apply_filter_value(scope, key, value, options)
-        return options[:filter].call(scope, value) if options.key?(:filter)
+        return filter.call(scope, values) if filter
 
-        scope.where(association_class.predicate_mapping[key].key => value)
+        scope.where(association_class.predicate_mapping[key].key => values)
       end
 
       def filtered_association # rubocop:disable Metrics/AbcSize
@@ -81,15 +76,15 @@ module LinkedRails
           collection: self,
           klass: association_class,
           key: key,
-          options: options[:values].map do |option|
-            attrs = option.is_a?(Hash) ? option : {value: option}
-            Collection::FilterOption.new(attrs.merge(collection: self, key: key))
-          end
+          options_in: options[:values_in],
+          options_array: options[:values]
         )
       end
 
       def sanitized_filter_value(key, value)
-        val = xsd_to_rdf(association_class.predicate_mapping[key].datatype, value)
+        mapping = association_class.predicate_mapping[key]
+        datatype = mapping.is_a?(FastJsonapi::Relationship) ? RDF::XSD[:anyURI] : mapping.datatype
+        val = xsd_to_rdf(datatype, value)
         val.literal? ? val.object : val
       end
     end

@@ -26,6 +26,21 @@ module LinkedRails
 
         private
 
+        def boolean_filter(true_filter, false_filter, options = {})
+          {
+            filter: lambda { |scope, values|
+              if values.include?(true) && values.include?(false)
+                scope
+              else
+                values.reduce(scope) do |sub_scope, val|
+                  val ? true_filter.call(scope) : false_filter.call(scope)
+                end
+              end
+            },
+            values: [true, false]
+          }.merge(options)
+        end
+
         def initialize_filter_options
           return if filter_options && method(:filter_options).owner == singleton_class
 
