@@ -92,10 +92,6 @@ module LinkedRails
           defined_menus[tag] = opts
         end
 
-        def preview_includes
-          [menu_sequence: Item.show_includes]
-        end
-
         def requested_index_resource(params, user_context)
           menu_list = menu_list_from_params(params, user_context)
 
@@ -104,6 +100,7 @@ module LinkedRails
           LinkedRails::Sequence.new(
             menu_list.menus,
             id: menu_list.iri,
+            member_includes: Item.preview_includes,
             scope: false
           )
         end

@@ -117,6 +117,15 @@ module LinkedRails
       self.class.new(attrs)
     end
 
+    def preview_includes
+      {
+        default_view: default_view.preview_includes,
+        filter_fields: :options,
+        filters: [],
+        sortings: []
+      }
+    end
+
     def title
       var = @title || @default_title
       return var.call(parent) if var.respond_to?(:call)
@@ -207,12 +216,6 @@ module LinkedRails
           unfiltered_collection: filtered? ? @unfiltered_collection : self,
           user_context: user_context
         )
-    end
-
-    class << self
-      def preview_includes
-        [:filters, :sortings, filter_fields: :options]
-      end
     end
   end
 end

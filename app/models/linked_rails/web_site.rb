@@ -10,7 +10,7 @@ module LinkedRails
       end
 
       def preview_includes
-        super + [homepage: LinkedRails::WebPage.show_includes]
+        super + [homepage: LinkedRails::WebPage.preview_includes]
       end
     end
   end

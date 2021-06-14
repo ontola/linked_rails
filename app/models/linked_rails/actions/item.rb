@@ -66,7 +66,7 @@ module LinkedRails
         return {} if included_object.nil?
         return include_paths || {} if iri.anonymous?
 
-        includes = included_object.class.try(:show_includes)&.presence || []
+        includes = included_object.class.try(:preview_includes)&.presence || []
 
         (includes.is_a?(Hash) ? [includes] : includes) + (built_associations || [])
       end
@@ -116,6 +116,10 @@ module LinkedRails
         value = root_relative_iri.to_s.sub(resource.root_relative_iri, resource.root_relative_singular_iri)
 
         RDF::URI(value)
+      end
+
+      def preview_includes
+        [:target, included_object: form_resource_includes]
       end
 
       def singular_resource?

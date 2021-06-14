@@ -6,40 +6,10 @@ module LinkedRails
       module Collections
         private
 
-        def include_collection_items?
-          true
-        end
-
         def index_association; end
 
-        def index_collection_includes(member_includes = {})
-          {
-            default_view: index_collection_view_includes(member_includes),
-            filter_fields: :options,
-            filters: [],
-            sortings: []
-          }
-        end
-
-        def index_collection_view_includes(member_includes = {})
-          return {member_sequence: {}} unless include_collection_items?
-
-          {member_sequence: {members: member_includes}}
-        end
-
         def index_includes
-          case requested_resource
-          when LinkedRails::Sequence
-            index_includes_sequence(preview_includes)
-          when LinkedRails::Collection::View
-            index_collection_view_includes(preview_includes)
-          when LinkedRails::Collection
-            index_collection_includes(preview_includes)
-          end
-        end
-
-        def index_includes_sequence(member_includes = {})
-          [members: member_includes]
+          requested_resource.preview_includes
         end
 
         def index_iri

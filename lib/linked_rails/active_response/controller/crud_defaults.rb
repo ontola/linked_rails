@@ -31,7 +31,7 @@ module LinkedRails
         end
 
         def preview_includes
-          controller_class.try(:preview_includes)
+          current_resource.try(:preview_includes)
         end
 
         def requested_resource
@@ -47,7 +47,7 @@ module LinkedRails
         end
 
         def show_includes
-          controller_class.try(:show_includes)
+          current_resource.try(:show_includes)
         end
 
         def show_success_options_rdf

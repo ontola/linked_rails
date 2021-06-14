@@ -15,7 +15,7 @@ module LinkedRails
       end
 
       def preview_includes
-        super + [:includes, widget_sequence: {members: LinkedRails::Widget.show_includes}]
+        super + [:includes, widget_sequence: {members: LinkedRails::Widget.preview_includes}]
       end
     end
   end
