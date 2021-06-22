@@ -35,12 +35,30 @@ module LinkedRails
     end
 
     def handle_resource_error(opts, error)
-      unless Rails.env.production?
-        Rails.logger.error(error)
-        Rails.logger.error(error.backtrace.join("\n"))
-      end
+      log_resource_error(error)
+      status = error_status(error)
+      body = error_body(status, error, opts[:iri]) if opts[:include].to_s == 'true'
 
-      resource_response(opts[:iri], status: 500)
+      resource_response(
+        opts[:iri],
+        body: body,
+        status: status
+      )
+    end
+
+    def error_body(status, error, iri)
+      resource_body(error_resource(status, error, iri))
+    end
+
+    def log_resource_error(error)
+      return unless log_resource_error?(error)
+
+      Rails.logger.error(error)
+      Rails.logger.error(error.backtrace.join("\n"))
+    end
+
+    def log_resource_error?(error)
+      !Rails.env.production? && error_status(error) >= 500
     end
 
     def print_timings
@@ -55,12 +73,20 @@ module LinkedRails
       false
     end
 
+    def resource_body(resource)
+      return if resource.nil?
+
+      serializer_options = RDF::Serializers::Renderers.transform_opts(
+        {include: resource&.try(:preview_includes)},
+        serializer_params
+      )
+      RDF::Serializers.serializer_for(resource).new(resource, serializer_options).send(:render_hndjson)
+    end
+
     def resource_response_body(iri, rack_body, status)
       return rack_body.body if rack_body.is_a?(ActionDispatch::Response::RackBody)
 
-      error = error_resource(status, StandardError.new(I18n.t("status.#{status}")), iri)
-
-      resource_body(error)
+      error_body(status, StandardError.new(I18n.t("status.#{status}")), iri)
     end
 
     def resource_request(iri)
