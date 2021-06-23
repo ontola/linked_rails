@@ -29,7 +29,7 @@ module LinkedRails
     has_one :part_of, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
     has_one :default_view, predicate: Vocab::ONTOLA[:pages], polymorphic: true
 
-    has_many :filter_fields, predicate: Vocab::ONTOLA[:filterFields], polymorphic: true
+    has_many :filter_fields, predicate: Vocab::ONTOLA[:filterFields], polymorphic: true, sequence: true
     has_many :filters, predicate: Vocab::ONTOLA[:collectionFilter], polymorphic: true do |object|
       object.filters.reject(&:default_filter)
     end
