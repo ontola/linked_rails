@@ -19,7 +19,7 @@ module LinkedRails
         def filterable(options = {})
           initialize_filter_options
 
-          filter_options.merge!(HashWithIndifferentAccess.new(options))
+          self.filter_options = HashWithIndifferentAccess.new(options).merge(filter_options)
 
           options.map { |k, filter| define_filter_method(k, filter) }
         end
