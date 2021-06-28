@@ -6,15 +6,7 @@ module LinkedRails
       extend ActiveSupport::Concern
 
       included do
-        attr_writer :canonical_iri_template, :iri_template
-      end
-
-      def canonical_iri_template
-        @canonical_iri_template ||=
-          URITemplate.new(
-            "#{[parent&.root_relative_canonical_iri&.to_s&.split('?')&.first, association_class.route_key].join('/')}"\
-            "{?#{self.class.iri_template_parsed_keys}}"
-          )
+        attr_writer :iri_template
       end
 
       def iri_opts

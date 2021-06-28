@@ -10,7 +10,7 @@ module LinkedRails
       enhance Singularable
 
       attr_accessor :list, :policy_arguments, :submit_label
-      attr_writer :parent, :resource, :root_relative_canonical_iri, :root_relative_iri, :user_context, :object,
+      attr_writer :parent, :resource, :root_relative_iri, :user_context, :object,
                   :target, :translation_key
       delegate :user_context, to: :list, allow_nil: true
 
@@ -95,14 +95,6 @@ module LinkedRails
         resource_policy.try(:message) if action_status == Vocab.ontola[:DisabledActionStatus]
       end
 
-      def root_relative_canonical_iri(_opts = {})
-        value = root_relative_canonical_iri_from_var
-        value = RDF::URI(value) unless value.blank? || value.is_a?(RDF::URI)
-        return @root_relative_canonical_iri = value if value
-
-        super
-      end
-
       def root_relative_iri(_opts = {})
         value = root_relative_iri_from_var
         value = RDF::URI(value) unless value.blank? || value.is_a?(RDF::URI)
@@ -110,7 +102,6 @@ module LinkedRails
 
         super
       end
-      alias root_relative_canonical_iri root_relative_iri
 
       def root_relative_singular_iri
         value = root_relative_iri.to_s.sub(resource.root_relative_iri, resource.root_relative_singular_iri)
@@ -190,12 +181,6 @@ module LinkedRails
 
       def resource_policy
         @resource_policy ||= Pundit.policy!(user_context, policy_resource) if policy_resource
-      end
-
-      def root_relative_canonical_iri_from_var
-        return list.instance_exec(&@root_relative_canonical_iri) if @root_relative_canonical_iri.respond_to?(:call)
-
-        @root_relative_canonical_iri
       end
 
       def root_relative_iri_from_var

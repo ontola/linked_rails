@@ -12,10 +12,6 @@ module LinkedRails
       self.class.form_iri
     end
 
-    def canonical_iri
-      iri
-    end
-
     class << self
       def inherited(target)
         target.pages = []

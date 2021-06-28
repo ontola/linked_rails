@@ -14,17 +14,6 @@ module LinkedRails
       end
 
       # @return [RDF::URI].
-      def canonical_iri(opts = {})
-        return iri_with_root(root_relative_canonical_iri(opts)) if opts.present?
-
-        @canonical_iri ||= iri_with_root(root_relative_canonical_iri(opts))
-      end
-
-      def canonical_iri_opts
-        iri_opts
-      end
-
-      # @return [RDF::URI].
       def iri(opts = {})
         return anonymous_iri if anonymous_iri?
         return iri_with_root(root_relative_iri(opts)) if opts.present?
@@ -50,11 +39,6 @@ module LinkedRails
       end
 
       # @return [RDF::URI]
-      def root_relative_canonical_iri(opts = {})
-        RDF::URI(expand_canonical_iri_template(canonical_iri_opts.merge(opts)))
-      end
-
-      # @return [RDF::URI]
       def root_relative_iri(opts = {})
         RDF::URI(expand_iri_template(iri_opts.merge(opts)))
       end
@@ -63,11 +47,6 @@ module LinkedRails
       def route_fragment; end
 
       private
-
-      # @return [String]
-      def expand_canonical_iri_template(args = {})
-        canonical_iri_template.expand(args)
-      end
 
       # @return [String]
       def expand_iri_template(args = {})
@@ -85,11 +64,6 @@ module LinkedRails
       # @return [URITemplate]
       def iri_template
         self.class.iri_template
-      end
-
-      # @return [URITemplate]
-      def canonical_iri_template
-        self.class.canonical_iri_template || iri_template
       end
 
       # @return [URITemplate]
@@ -133,8 +107,6 @@ module LinkedRails
         def iri_template
           @iri_template ||= URITemplate.new("/#{route_key}{/id}{#fragment}")
         end
-
-        def canonical_iri_template; end
 
         def linked_rails_module?
           (Rails.version < '6' ? parents : module_parents).include?(LinkedRails)

@@ -17,8 +17,6 @@ module LinkedRails
         self
       end
 
-      def canonical_iri; end
-
       def options
         @options ||= options_array&.map(&method(:filter_option)) || []
       end

@@ -45,7 +45,7 @@ module LinkedRails
         end
 
         def new_record_shapes(boolean)
-          has_properties_shapes(canonical_iri: !boolean)
+          has_properties_shapes(created_at: !boolean)
         end
       end
     end

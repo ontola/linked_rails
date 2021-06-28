@@ -12,8 +12,6 @@ module LinkedRails
       def iri(_opts = {})
         self
       end
-
-      def canonical_iri; end
     end
   end
 end

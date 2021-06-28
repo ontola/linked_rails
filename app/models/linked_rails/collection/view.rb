@@ -17,10 +17,6 @@ module LinkedRails
 
       alias id iri
 
-      def root_relative_canonical_iri(opts = {})
-        collection.unfiltered.root_relative_canonical_iri(iri_opts.merge(opts))
-      end
-
       def root_relative_iri(opts = {})
         collection.unfiltered.root_relative_iri(iri_opts.merge(opts))
       end

@@ -13,9 +13,5 @@ module LinkedRails
     def anonymous_iri?
       @iri.blank?
     end
-
-    def canonical_iri
-      iri unless iri.anonymous?
-    end
   end
 end
