@@ -10,7 +10,7 @@ module LinkedRails
 
         if destructed
           return related_resource_invalidations + [
-            [current_resource.iri, predicate, Vocab::SP[:Variable], delta_iri(:remove)]
+            [current_resource.iri, predicate, Vocab.sp[:Variable], delta_iri(:remove)]
           ]
         end
 
@@ -34,7 +34,7 @@ module LinkedRails
 
       def change_triple(predicate, value)
         if value.nil?
-          RDF::Statement.new(current_resource.iri, predicate, Vocab::SP[:Variable], graph_name: delta_iri(:remove))
+          RDF::Statement.new(current_resource.iri, predicate, Vocab.sp[:Variable], graph_name: delta_iri(:remove))
         else
           RDF::Statement.new(current_resource.iri, predicate, value, graph_name: delta_iri(:replace))
         end
@@ -57,11 +57,11 @@ module LinkedRails
       end
 
       def delta_iri(delta)
-        %i[remove replace invalidate].include?(delta) ? Vocab::ONTOLA[delta] : Vocab::LL[delta]
+        %i[remove replace invalidate].include?(delta) ? Vocab.ontola[delta] : Vocab.ll[delta]
       end
 
       def invalidate_collection_delta(collection)
-        [Vocab::SP[:Variable], Vocab::ONTOLA[:baseCollection], collection.iri, delta_iri(:invalidate)]
+        [Vocab.sp[:Variable], Vocab.ontola[:baseCollection], collection.iri, delta_iri(:invalidate)]
       end
 
       def invalidate_parent_collections_delta(resource)
@@ -71,7 +71,7 @@ module LinkedRails
       def invalidate_resource_delta(resource)
         iri = resource.is_a?(RDF::Resource) ? resource : resource.iri
 
-        [iri, Vocab::SP[:Variable], Vocab::SP[:Variable], delta_iri(:invalidate)]
+        [iri, Vocab.sp[:Variable], Vocab.sp[:Variable], delta_iri(:invalidate)]
       end
 
       def resource_added_delta(resource)

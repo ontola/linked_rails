@@ -16,11 +16,11 @@ module LinkedRails
     def rdf_type
       case type&.to_sym
       when :image
-        RDF::Vocab::SCHEMA.ImageObject
+        Vocab.schema.ImageObject
       when :video
-        RDF::Vocab::SCHEMA.VideoObject
+        Vocab.schema.VideoObject
       else
-        RDF::Vocab::SCHEMA.MediaObject
+        Vocab.schema.MediaObject
       end
     end
 

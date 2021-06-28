@@ -6,7 +6,7 @@ module LinkedRails
 
     class << self
       def iri
-        RDF::Vocab::SCHEMA.WebSite
+        Vocab.schema.WebSite
       end
 
       def preview_includes

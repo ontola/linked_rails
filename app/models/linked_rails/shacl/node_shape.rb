@@ -13,7 +13,7 @@ module LinkedRails
 
       class << self
         def iri
-          RDF::Vocab::SH.NodeShape
+          Vocab.sh.NodeShape
         end
       end
     end

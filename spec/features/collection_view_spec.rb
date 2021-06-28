@@ -60,10 +60,10 @@ describe LinkedRails::Collection::View do
     let(:type) { :infinite }
     let(:before_time) { collection_view.before.first[:value] }
     let(:create_before) do
-      "#{CGI.escape(RDF::Vocab::SCHEMA[:dateCreated])}=#{before_time}"
+      "#{CGI.escape(Vocab.schema[:dateCreated])}=#{before_time}"
     end
     let(:primary_before) do
-      "#{CGI.escape(LinkedRails::Vocab::ONTOLA[:primaryKey])}=#{min_int}"
+      "#{CGI.escape(LinkedRails::Vocab.ontola[:primaryKey])}=#{min_int}"
     end
     let(:min_int) { ActiveModel::Type::Integer.new.send(:min_value) }
     let(:before_params) { [{'before[]': create_before}.to_param, {'before[]': primary_before}.to_param].join('&') }

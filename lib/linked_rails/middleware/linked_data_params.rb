@@ -34,7 +34,7 @@ module LinkedRails
       def associated_class_from_params(reflection, graph, subject)
         return reflection.klass unless reflection.polymorphic?
 
-        query = graph.query(subject: subject, predicate: NS::RDFV[:type])
+        query = graph.query(subject: subject, predicate: Vocab.rdfv[:type])
         if query.empty?
           raise("No type given for '#{subject}' referenced by polymorphic association '#{reflection.name}'")
         end
@@ -43,7 +43,7 @@ module LinkedRails
       end
 
       def blob_attribute(base_params, value)
-        base_params["<#{value}>"] if value.starts_with?(Vocab::LL['blobs/'])
+        base_params["<#{value}>"] if value.starts_with?(Vocab.ll['blobs/'])
       end
 
       def convert_query_params(request, target_class)
@@ -68,7 +68,7 @@ module LinkedRails
       end
 
       def graph_from_request(request)
-        request_graph = request.delete_param("<#{Vocab::LL[:graph].value}>")
+        request_graph = request.delete_param("<#{Vocab.ll[:graph].value}>")
         return if request_graph.blank?
 
         RDF::Graph.load(
@@ -205,7 +205,7 @@ module LinkedRails
       end
 
       def update_actor_param(request, graph)
-        actor = graph.query([Vocab::LL[:targetResource], RDF::Vocab::SCHEMA.creator]).first
+        actor = graph.query([Vocab.ll[:targetResource], Vocab.schema.creator]).first
         return if actor.blank?
 
         request.update_param(:actor_iri, actor.object)
@@ -215,7 +215,7 @@ module LinkedRails
       def update_target_params(request, graph, target_class)
         request.update_param(
           target_class.to_s.demodulize.underscore,
-          parse_resource(request.params, graph, Vocab::LL[:targetResource], target_class)
+          parse_resource(request.params, graph, Vocab.ll[:targetResource], target_class)
         )
       end
     end

@@ -10,7 +10,7 @@ module LinkedRails
       end
 
       def invalidate_all
-        invalidate(Vocab::SP.Variable)
+        invalidate(Vocab.sp.Variable)
       end
 
       def write(delta)
@@ -24,10 +24,10 @@ module LinkedRails
 
       def invalidate_resource(iri)
         [
-          Vocab::SP.Variable,
-          Vocab::SP.Variable,
-          Vocab::SP.Variable,
-          LinkedRails::Vocab::ONTOLA["invalidate?graph=#{CGI.escape(iri)}"]
+          Vocab.sp.Variable,
+          Vocab.sp.Variable,
+          Vocab.sp.Variable,
+          LinkedRails::Vocab.ontola["invalidate?graph=#{CGI.escape(iri)}"]
         ]
       end
     end

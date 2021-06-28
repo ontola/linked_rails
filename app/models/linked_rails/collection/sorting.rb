@@ -48,7 +48,7 @@ module LinkedRails
       private
 
       def key_from_mapping
-        if key == Vocab::ONTOLA[:primaryKey]
+        if key == Vocab.ontola[:primaryKey]
           association_class.try(:primary_key)
         else
           association_class.try(:predicate_mapping).try(:[], key)&.key

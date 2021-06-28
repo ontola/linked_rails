@@ -25,7 +25,7 @@ module LinkedRails
 
       class << self
         def iri
-          RDF::Vocab::SH.Shape
+          Vocab.sh.Shape
         end
       end
     end

@@ -49,7 +49,7 @@ module LinkedRails
             },
             result: -> { result_class },
             type: lambda {
-              [Vocab::ONTOLA["Create::#{result_class}"], RDF::Vocab::SCHEMA.CreateAction]
+              [Vocab.ontola["Create::#{result_class}"], Vocab.schema.CreateAction]
             },
             url: -> { resource.iri }
           }.merge(overwrite)

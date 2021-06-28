@@ -4,8 +4,8 @@ class RecordSerializer
   include RDF::Serializers::ObjectSerializer
   include LinkedRails::Serializer
 
-  attribute :title, predicate: RDF::Vocab::SCHEMA.name
-  attribute :body, predicate: RDF::Vocab::SCHEMA.text
+  attribute :title, predicate: Vocab.schema.name
+  attribute :body, predicate: Vocab.schema.text
   attribute :key, predicate: LinkedRails.app_ns[:key]
   attribute :key1, predicate: LinkedRails.app_ns[:key1]
   attribute :key2, predicate: LinkedRails.app_ns[:key2]

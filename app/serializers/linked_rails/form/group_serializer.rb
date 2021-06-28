@@ -3,12 +3,12 @@
 module LinkedRails
   class Form
     class GroupSerializer < LinkedRails.serializer_parent_class
-      attribute :label, predicate: RDF::Vocab::SCHEMA.name
-      attribute :description, predicate: RDF::Vocab::SCHEMA.text
-      attribute :collapsible, predicate: Vocab::FORM[:collapsible]
-      attribute :hidden, predicate: Vocab::FORM[:hidden]
+      attribute :label, predicate: Vocab.schema.name
+      attribute :description, predicate: Vocab.schema.text
+      attribute :collapsible, predicate: Vocab.form[:collapsible]
+      attribute :hidden, predicate: Vocab.form[:hidden]
 
-      has_many :fields, predicate: Vocab::FORM[:fields], sequence: true
+      has_many :fields, predicate: Vocab.form[:fields], sequence: true
     end
   end
 end

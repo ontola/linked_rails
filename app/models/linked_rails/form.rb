@@ -30,7 +30,7 @@ module LinkedRails
       end
 
       def iri
-        Vocab::FORM[:Form]
+        Vocab.form[:Form]
       end
 
       def model_class

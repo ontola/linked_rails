@@ -60,7 +60,7 @@ module LinkedRails
         when :decimal
           decimal_data_type(name)
         when :file
-          Vocab::LL[:blob]
+          Vocab.ll[:blob]
         else
           RDF::XSD[:string] if model_class.try(:defined_enums)&.key?(name)
         end
@@ -134,13 +134,13 @@ module LinkedRails
           return Form::Field::DateTimeInput
         when RDF::XSD.integer, RDF::XSD.long, RDF::XSD.int, RDF::XSD.short, RDF::XSD.byte, RDF::XSD.decimal
           return Form::Field::NumberInput
-        when Vocab::LL.blob
+        when Vocab.ll.blob
           return Form::Field::FileInput
-        when Vocab::FHIR.markdown
+        when Vocab.fhir.markdown
           return Form::Field::MarkdownInput
-        when Vocab::ONTOLA['datatype/password']
+        when Vocab.ontola['datatype/password']
           return Form::Field::PasswordInput
-        when Vocab::ONTOLA['datatype/postalRange']
+        when Vocab.ontola['datatype/postalRange']
           return Form::Field::PostalRangeInput
         else
           max_length && max_length > MAX_STR_LEN ? Form::Field::TextAreaInput : Form::Field::TextInput

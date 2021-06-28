@@ -5,7 +5,7 @@ module LinkedRails
     class Field
       class ColorInput < LinkedRails::Form::Field
         def datatype
-          NS::ONTOLA[:CssHexColor]
+          Vocab.ontola[:CssHexColor]
         end
 
         def pattern

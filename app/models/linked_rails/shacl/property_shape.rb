@@ -45,7 +45,7 @@ module LinkedRails
 
       class << self
         def iri
-          RDF::Vocab::SH.PropertyShape
+          Vocab.sh.PropertyShape
         end
       end
     end

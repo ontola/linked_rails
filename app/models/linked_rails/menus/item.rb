@@ -53,7 +53,7 @@ module LinkedRails
       end
 
       def rdf_type
-        type || Vocab::ONTOLA[:MenuItem]
+        type || Vocab.ontola[:MenuItem]
       end
 
       def route_fragment

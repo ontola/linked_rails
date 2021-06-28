@@ -51,7 +51,7 @@ module LinkedRails
 
       def add_input_select_property(iri, klass)
         add_statement(
-          RDF::Statement.new(iri, Vocab::ONTOLA['forms/inputs/select/displayProp'], klass.input_select_property)
+          RDF::Statement.new(iri, Vocab.ontola['forms/inputs/select/displayProp'], klass.input_select_property)
         )
       end
 

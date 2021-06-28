@@ -25,7 +25,7 @@ module LinkedRails
 
           [
             current_resource.singular_iri,
-            NS::OWL.sameAs,
+            Vocab.owl.sameAs,
             current_resource.iri
           ]
         end

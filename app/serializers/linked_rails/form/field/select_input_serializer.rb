@@ -4,7 +4,7 @@ module LinkedRails
   class Form
     class Field
       class SelectInputSerializer < FieldSerializer
-        attribute :grouped, predicate: Vocab::FORM[:groupedOptions]
+        attribute :grouped, predicate: Vocab.form[:groupedOptions]
       end
     end
   end

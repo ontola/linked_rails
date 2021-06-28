@@ -37,7 +37,7 @@ module LinkedRails
       return [] unless members
 
       members.map.with_index do |item, index|
-        [iri, RDF["_#{index}"], item_iri(item), Vocab::LL[:supplant]]
+        [iri, RDF["_#{index}"], item_iri(item), Vocab.ll[:supplant]]
       end
     end
 

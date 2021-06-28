@@ -15,9 +15,9 @@ module LinkedRails
             [
               RDF::Statement.new(
                 object.singular_iri,
-                NS::OWL.sameAs,
+                Vocab.owl.sameAs,
                 object.iri,
-                graph_name: NS::LL[:supplant]
+                graph_name: Vocab.ll[:supplant]
               )
             ]
           end

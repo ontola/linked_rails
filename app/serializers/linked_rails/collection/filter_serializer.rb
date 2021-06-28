@@ -5,9 +5,9 @@ module LinkedRails
     class FilterSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      attribute :key, predicate: Vocab::ONTOLA[:filterKey]
-      attribute :value, predicate: Vocab::ONTOLA[:filterValue]
-      has_one :collection, predicate: RDF::Vocab::SCHEMA.isPartOf
+      attribute :key, predicate: Vocab.ontola[:filterKey]
+      attribute :value, predicate: Vocab.ontola[:filterValue]
+      has_one :collection, predicate: Vocab.schema.isPartOf
     end
   end
 end

@@ -9,19 +9,19 @@ module LinkedRails
       end
 
       def ontola_copy_action(value)
-        Vocab::LIBRO["actions/copyToClipboard?#{{value: value}.to_param}"]
+        Vocab.libro["actions/copyToClipboard?#{{value: value}.to_param}"]
       end
 
       def ontola_dialog_action(resource, opener: nil)
-        Vocab::LIBRO["actions/dialog/alert?#{{resource: resource, opener: opener}.compact.to_param}"]
+        Vocab.libro["actions/dialog/alert?#{{resource: resource, opener: opener}.compact.to_param}"]
       end
 
       def ontola_redirect_action(location, reload: nil)
-        Vocab::LIBRO["actions/redirect?#{{location: location, reload: reload}.compact.to_param}"]
+        Vocab.libro["actions/redirect?#{{location: location, reload: reload}.compact.to_param}"]
       end
 
       def ontola_snackbar_action(text)
-        Vocab::LIBRO["actions/snackbar?#{{text: text}.to_param}"]
+        Vocab.libro["actions/snackbar?#{{text: text}.to_param}"]
       end
     end
   end

@@ -19,8 +19,8 @@ describe 'Delta meta' do
     end
 
     context 'with default params' do
-      it { is_expected.to have_statement(created_record.iri, RDF::Vocab::SCHEMA.name, 'New record') }
-      it { is_expected.to have_statement(created_record.iri, RDF::Vocab::SCHEMA.text, 'New body') }
+      it { is_expected.to have_statement(created_record.iri, Vocab.schema.name, 'New record') }
+      it { is_expected.to have_statement(created_record.iri, Vocab.schema.text, 'New body') }
     end
   end
 
@@ -36,9 +36,9 @@ describe 'Delta meta' do
         is_expected.to(
           have_statement(
             created_record.iri,
-            RDF::Vocab::SCHEMA.name,
+            Vocab.schema.name,
             'New record',
-            graph_name: LinkedRails::Vocab::ONTOLA[:replace]
+            graph_name: LinkedRails::Vocab.ontola[:replace]
           )
         )
       end
@@ -46,9 +46,9 @@ describe 'Delta meta' do
         is_expected.to(
           have_statement(
             created_record.iri,
-            RDF::Vocab::SCHEMA.text,
+            Vocab.schema.text,
             'New body',
-            graph_name: LinkedRails::Vocab::ONTOLA[:replace]
+            graph_name: LinkedRails::Vocab.ontola[:replace]
           )
         )
       end
@@ -66,9 +66,9 @@ describe 'Delta meta' do
         is_expected.to(
           have_statement(
             created_record.iri,
-            RDF::Vocab::SCHEMA.text,
-            LinkedRails::Vocab::SP[:Variable],
-            graph_name: LinkedRails::Vocab::ONTOLA[:remove]
+            Vocab.schema.text,
+            LinkedRails::Vocab.sp[:Variable],
+            graph_name: LinkedRails::Vocab.ontola[:remove]
           )
         )
       end

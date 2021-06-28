@@ -14,8 +14,8 @@ module LinkedRails
       set_id :iri
 
       attribute :rdf_type, predicate: RDF[:type], datatype: RDF::XSD[:anyURI]
-      attribute :canonical_iri, predicate: RDF::Vocab::DC[:identifier] do |object|
-        object.try(:canonical_iri)
+      attribute :created_at, predicate: NS.schema[:dateCreated] do |object|
+        object.try(:created_at)
       end
     end
 
@@ -26,7 +26,7 @@ module LinkedRails
 
       def enum(attr, opts = nil)
         self._enums ||= HashWithIndifferentAccess.new
-        opts[:type] ||= Vocab::ONTOLA[:FormOption]
+        opts[:type] ||= Vocab.ontola[:FormOption]
         opts[:options] ||= default_enum_opts(attr)
         self._enums[attr] = enum_values(attr, opts)
 

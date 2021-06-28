@@ -7,7 +7,7 @@ module LinkedRails
 
       included do
         class_attribute :default_sortings, instance_accessor: false, instance_predicate: false
-        self.default_sortings = [{key: RDF::Vocab::SCHEMA.dateCreated, direction: :desc}]
+        self.default_sortings = [{key: Vocab.schema.dateCreated, direction: :desc}]
       end
 
       module ClassMethods

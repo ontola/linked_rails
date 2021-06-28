@@ -30,7 +30,7 @@ module LinkedRails
         end
 
         def input_select_property
-          RDF::Vocab::SCHEMA.name
+          Vocab.schema.name
         end
 
         # The associations to preload when serializing multiple records

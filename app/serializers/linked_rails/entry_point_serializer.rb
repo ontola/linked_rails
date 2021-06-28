@@ -4,16 +4,16 @@ module LinkedRails
   class EntryPointSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
 
-    attribute :label, predicate: RDF::Vocab::SCHEMA.name
-    attribute :description, predicate: RDF::Vocab::SCHEMA.text
-    attribute :url, predicate: RDF::Vocab::SCHEMA.url
-    attribute :http_method, key: :method, predicate: RDF::Vocab::SCHEMA.httpMethod do |object|
+    attribute :label, predicate: Vocab.schema.name
+    attribute :description, predicate: Vocab.schema.text
+    attribute :url, predicate: Vocab.schema.url
+    attribute :http_method, key: :method, predicate: Vocab.schema.httpMethod do |object|
       object.http_method.upcase
     end
 
-    has_one :parent, predicate: RDF::Vocab::SCHEMA.isPartOf, polymorphic: true
-    attribute :action_body, predicate: Vocab::LL[:actionBody], polymorphic: true
-    attribute :image, predicate: RDF::Vocab::SCHEMA.image do |object|
+    has_one :parent, predicate: Vocab.schema.isPartOf, polymorphic: true
+    attribute :action_body, predicate: Vocab.ll[:actionBody], polymorphic: true
+    attribute :image, predicate: Vocab.schema.image do |object|
       serialize_image(object.image)
     end
   end

@@ -83,9 +83,9 @@ module LinkedRails
         def error_mapping(form_iri, error_object)
           [
             ::RDF::URI(form_iri),
-            Vocab::LL[:errorResponse],
+            Vocab.ll[:errorResponse],
             error_object,
-            Vocab::ONTOLA[:replace]
+            Vocab.ontola[:replace]
           ]
         end
 
@@ -122,8 +122,8 @@ module LinkedRails
           [
             error_object,
             ::RDF.type,
-            Vocab::LL[:ErrorResponse],
-            Vocab::ONTOLA[:replace]
+            Vocab.ll[:ErrorResponse],
+            Vocab.ontola[:replace]
           ]
         end
 
@@ -132,7 +132,7 @@ module LinkedRails
             error_object,
             ::RDF::URI('http://www.w3.org/2011/http#statusCode'),
             200,
-            Vocab::LL[:meta]
+            Vocab.ll[:meta]
           ]
         end
 

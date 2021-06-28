@@ -4,7 +4,7 @@ module LinkedRails
   class Form
     class Field
       class ResourceFieldSerializer < FieldSerializer
-        attribute :url, predicate: RDF::Vocab::SCHEMA.url
+        attribute :url, predicate: Vocab.schema.url
       end
     end
   end

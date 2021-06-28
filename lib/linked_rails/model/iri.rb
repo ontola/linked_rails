@@ -123,7 +123,7 @@ module LinkedRails
 
         def iri_namespace
           superclass.try(:iri_namespace) ||
-            (linked_rails_module? ? Vocab::ONTOLA : LinkedRails.app_ns)
+            (linked_rails_module? ? Vocab.ontola : LinkedRails.app_ns)
         end
 
         def iri_value

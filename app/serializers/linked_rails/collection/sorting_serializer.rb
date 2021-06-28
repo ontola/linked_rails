@@ -5,9 +5,9 @@ module LinkedRails
     class SortingSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      attribute :key, predicate: Vocab::ONTOLA[:sortKey]
-      attribute :direction, predicate: Vocab::ONTOLA[:sortDirection]
-      has_one :collection, predicate: RDF::Vocab::SCHEMA.isPartOf
+      attribute :key, predicate: Vocab.ontola[:sortKey]
+      attribute :direction, predicate: Vocab.ontola[:sortDirection]
+      has_one :collection, predicate: Vocab.schema.isPartOf
     end
   end
 end

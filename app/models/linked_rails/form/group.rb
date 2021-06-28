@@ -22,16 +22,16 @@ module LinkedRails
       end
 
       def rdf_type
-        return Vocab::FORM[:CollapsibleGroup] if collapsible
-        return Vocab::FORM[:FooterGroup] if footer
-        return Vocab::FORM[:HiddenGroup] if hidden
+        return Vocab.form[:CollapsibleGroup] if collapsible
+        return Vocab.form[:FooterGroup] if footer
+        return Vocab.form[:HiddenGroup] if hidden
 
         self.class.iri
       end
 
       class << self
         def iri
-          Vocab::FORM[:Group]
+          Vocab.form[:Group]
         end
       end
     end

@@ -3,10 +3,10 @@
 module LinkedRails
   module SHACL
     class NodeShapeSerializer < ShapeSerializer
-      attribute :closed, predicate: RDF::Vocab::SH.closed
-      attribute :ignored_properties, predicate: RDF::Vocab::SH.ignoredProperties
-      attribute :sparql, predicate: RDF::Vocab::SH.sparql
-      has_many :property, predicate: RDF::Vocab::SH.property, polymorphic: true
+      attribute :closed, predicate: Vocab.sh.closed
+      attribute :ignored_properties, predicate: Vocab.sh.ignoredProperties
+      attribute :sparql, predicate: Vocab.sh.sparql
+      has_many :property, predicate: Vocab.sh.property, polymorphic: true
     end
   end
 end

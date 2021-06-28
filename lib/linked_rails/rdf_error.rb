@@ -13,10 +13,10 @@ module LinkedRails
       self.iri = ::RDF::URI(requested_url)
     end
 
-    def graph
+    def graph # rubocop:disable Metrics/AbcSize
       g = ::RDF::Graph.new
-      g << [iri, RDF::Vocab::SCHEMA.name, title] if title
-      g << [iri, RDF::Vocab::SCHEMA.text, message]
+      g << [iri, Vocab.schema.name, title] if title
+      g << [iri, Vocab.schema.text, message]
       g << [iri, ::RDF[:type], rdf_type]
       g
     end
@@ -26,7 +26,7 @@ module LinkedRails
     end
 
     def rdf_type
-      @rdf_type ||= Vocab::ONTOLA["errors/#{error.class.name.demodulize}Error"]
+      @rdf_type ||= Vocab.ontola["errors/#{error.class.name.demodulize}Error"]
     end
 
     def self.serializer_class

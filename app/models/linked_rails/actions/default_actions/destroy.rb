@@ -35,7 +35,7 @@ module LinkedRails
               uri.path += '/delete'
               uri.to_s
             },
-            type: [RDF::Vocab::SCHEMA.Action, Vocab::ONTOLA[:DestroyAction]],
+            type: [Vocab.schema.Action, Vocab.ontola[:DestroyAction]],
             url: -> { resource.iri(destroy: true) }
           }.merge(overwrite)
         end

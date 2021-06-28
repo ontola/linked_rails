@@ -4,7 +4,7 @@ module LinkedRails
   class PropertyQuery < SHACL::PropertyShape
     class << self
       def iri
-        Vocab::ONTOLA[:PropertyQuery]
+        Vocab.ontola[:PropertyQuery]
       end
     end
   end

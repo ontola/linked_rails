@@ -23,7 +23,7 @@ module LinkedRails
 
       class << self
         def iri
-          Vocab::FORM[:Page]
+          Vocab.form[:Page]
         end
       end
     end

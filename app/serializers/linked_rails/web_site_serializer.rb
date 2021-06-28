@@ -2,10 +2,10 @@
 
 module LinkedRails
   class WebSiteSerializer < CreativeWorkSerializer
-    has_one :homepage, predicate: RDF::Vocab::FOAF[:homepage], polymorphic: true
-    attribute :image, predicate: RDF::Vocab::SCHEMA.image do |object|
+    has_one :homepage, predicate: Vocab.foaf[:homepage], polymorphic: true
+    attribute :image, predicate: Vocab.schema.image do |object|
       serialize_image(object.image)
     end
-    attribute :navigations_menu, predicate: Vocab::ONTOLA[:navigationsMenu]
+    attribute :navigations_menu, predicate: Vocab.ontola[:navigationsMenu]
   end
 end

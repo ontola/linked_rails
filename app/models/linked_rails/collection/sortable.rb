@@ -19,7 +19,7 @@ module LinkedRails
         opts =
           @default_sortings ||
           association_class.try(:default_sortings) ||
-          [{key: RDF::Vocab::SCHEMA.dateCreated, direction: :desc}]
+          [{key: Vocab.schema.dateCreated, direction: :desc}]
         opts.respond_to?(:call) ? opts.call(parent) : opts
       end
 
@@ -30,7 +30,7 @@ module LinkedRails
       def primary_key_sorting
         [
           {
-            key: Vocab::ONTOLA[:primaryKey],
+            key: Vocab.ontola[:primaryKey],
             direction: :asc
           }
         ]

@@ -44,7 +44,7 @@ module LinkedRails
 
     class << self
       def iri
-        RDF::Vocab::SCHEMA.EntryPoint
+        Vocab.schema.EntryPoint
       end
     end
   end

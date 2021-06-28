@@ -7,7 +7,7 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          attribute :updated_at, predicate: RDF::Vocab::SCHEMA.dateModified do |object|
+          attribute :updated_at, predicate: Vocab.schema.dateModified do |object|
             object.try(:updated_at)
           end
         end

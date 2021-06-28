@@ -33,9 +33,9 @@ module LinkedRails
           elsif policy_valid?
             RDF::Vocab::SCHEMA.PotentialActionStatus
           elsif policy_expired?
-            Vocab::ONTOLA[:ExpiredActionStatus]
+            Vocab.ontola[:ExpiredActionStatus]
           else
-            Vocab::ONTOLA[:DisabledActionStatus]
+            Vocab.ontola[:DisabledActionStatus]
           end
       end
 
@@ -92,7 +92,7 @@ module LinkedRails
       end
 
       def policy_message
-        resource_policy.try(:message) if action_status == NS::ONTOLA[:DisabledActionStatus]
+        resource_policy.try(:message) if action_status == Vocab.ontola[:DisabledActionStatus]
       end
 
       def root_relative_canonical_iri(_opts = {})
@@ -181,7 +181,7 @@ module LinkedRails
       end
 
       def predicate_fallback
-        Vocab::ONTOLA["#{tag}_action".camelize(:lower)]
+        Vocab.ontola["#{tag}_action".camelize(:lower)]
       end
 
       def resource_fallback

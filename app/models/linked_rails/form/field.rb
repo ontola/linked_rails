@@ -106,7 +106,7 @@ module LinkedRails
 
       class << self
         def iri
-          Vocab::FORM[name.demodulize]
+          Vocab.form[name.demodulize]
         end
       end
     end

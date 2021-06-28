@@ -40,7 +40,7 @@ module LinkedRails
               uri.path += '/edit'
               uri.to_s
             },
-            type: RDF::Vocab::SCHEMA.UpdateAction,
+            type: Vocab.schema.UpdateAction,
             url: -> { resource.iri }
           }.merge(overwrite)
         end

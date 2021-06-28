@@ -5,18 +5,18 @@ module LinkedRails
     class ShapeSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      attribute :deactivated, predicate: RDF::Vocab::SH.deactivated
-      attribute :message, predicate: RDF::Vocab::SH.message
-      attribute :node_kind, predicate: RDF::Vocab::SH.nodeKind
-      attribute :severity, predicate: RDF::Vocab::SH.severity
-      attribute :target_class, predicate: RDF::Vocab::SH.targetClass
-      attribute :target_node, predicate: RDF::Vocab::SH.targetNode
-      attribute :target_objects_of, predicate: RDF::Vocab::SH.targetObjectsOf
-      attribute :target_subjects_of, predicate: RDF::Vocab::SH.targetSubjectsOf
-      has_one :sh_not, predicate: RDF::Vocab::SH.not
-      has_many :and, predicate: RDF::Vocab::SH.and
-      has_many :or, predicate: RDF::Vocab::SH.or
-      has_many :xone, predicate: RDF::Vocab::SH.xone
+      attribute :deactivated, predicate: Vocab.sh.deactivated
+      attribute :message, predicate: Vocab.sh.message
+      attribute :node_kind, predicate: Vocab.sh.nodeKind
+      attribute :severity, predicate: Vocab.sh.severity
+      attribute :target_class, predicate: Vocab.sh.targetClass
+      attribute :target_node, predicate: Vocab.sh.targetNode
+      attribute :target_objects_of, predicate: Vocab.sh.targetObjectsOf
+      attribute :target_subjects_of, predicate: Vocab.sh.targetSubjectsOf
+      has_one :sh_not, predicate: Vocab.sh.not
+      has_many :and, predicate: Vocab.sh.and
+      has_many :or, predicate: Vocab.sh.or
+      has_many :xone, predicate: Vocab.sh.xone
       has_many :nested_shapes do |object|
         [object.and, object.or, object.sh_not, object.xone].flatten.compact
       end

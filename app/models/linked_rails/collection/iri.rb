@@ -61,7 +61,7 @@ module LinkedRails
 
       class_methods do
         def iri
-          [super, RDF::Vocab::AS.Collection]
+          [super, Vocab.as.Collection]
         end
 
         def iri_template_keys

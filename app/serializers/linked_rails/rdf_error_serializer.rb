@@ -2,7 +2,7 @@
 
 module LinkedRails
   class RDFErrorSerializer < LinkedRails.serializer_parent_class
-    attribute :title, predicate: NS::SCHEMA.name
-    attribute :message, predicate: NS::SCHEMA.text
+    attribute :title, predicate: Vocab.schema.name
+    attribute :message, predicate: Vocab.schema.text
   end
 end
