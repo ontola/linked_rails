@@ -40,6 +40,16 @@ module LinkedRails
         @form_class ||= "#{name}Form".safe_constantize || superclass.try(:form_class)
       end
 
+      def label
+        obj = iri.is_a?(Array) ? iri.first : iri
+        LinkedRails.translate(:class, :label, obj) if obj
+      end
+
+      def plural_label
+        obj = iri.is_a?(Array) ? iri.first : iri
+        LinkedRails.translate(:class, :plural_label, obj) if obj
+      end
+
       def policy_class
         @policy_class ||= "#{name}Policy".safe_constantize || superclass.try(:policy_class)
       end

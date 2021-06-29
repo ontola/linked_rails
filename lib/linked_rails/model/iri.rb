@@ -92,10 +92,12 @@ module LinkedRails
 
       module ClassMethods
         def iri
-          @iri ||= iri_namespace[iri_value]
+          @iri ||= iri_namespace[iri_value] if iri_namespace
         end
 
         def iri_namespace
+          return if self == ApplicationRecord
+
           superclass.try(:iri_namespace) ||
             (linked_rails_module? ? Vocab.ontola : LinkedRails.app_ns)
         end

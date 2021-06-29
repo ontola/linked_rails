@@ -9,7 +9,7 @@ module LinkedRails
         post 'spi/bulk', to: "#{opts.fetch(:bulk, 'linked_rails/bulk')}#show"
       end
       get '/c_a', to: "#{opts.fetch(:current_user)}#show"
-      get '/ns/core', to: "#{opts.fetch(:vocabularies, 'linked_rails/vocabularies')}#show"
+      get '/ns/core', to: "#{opts.fetch(:ontologies, 'linked_rails/ontologies')}#show"
       get '/manifest', to: "#{opts.fetch(:manifests, 'linked_rails/manifests')}#show"
       get '/enums/:klass/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
       get '/enums/*module/:klass/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"

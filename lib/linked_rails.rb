@@ -43,8 +43,10 @@ module LinkedRails
     end
   end
 
-  %i[collection entry_point vocabulary].each { |klass| configurable_class(nil, klass) }
+  %i[collection entry_point ontology].each { |klass| configurable_class(nil, klass) }
   %i[filter sorting view infinite_view paginated_view].each { |klass| configurable_class(:collection, klass) }
+  configurable_class(:ontology, :class)
+  configurable_class(:ontology, :property)
   configurable_class(:actions, :item)
   configurable_class(:menus, :item)
   configurable_class(nil, :rdf_error, default: 'LinkedRails::RDFError')

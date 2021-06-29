@@ -125,7 +125,29 @@ module LinkedRails
     end
 
     def response_for_wrong_host(opts)
-      resource_response(opts[:iri])
+      iri = opts[:iri]
+      term = term_from_vocab(iri)
+      return resource_response(iri) unless term
+
+      ontology_term_response(iri, term, opts[:include])
+    end
+
+    def term_from_vocab(iri)
+      vocab = Vocab.for(iri)
+      tag = iri.split(vocab.to_s).last
+      vocab[tag]
+    rescue NoMethodError
+      nil
+    end
+
+    def ontology_term_response(iri, term, include)
+      resource_response(
+        iri,
+        body: include ? resource_body(LinkedRails.ontology_property_class.new(iri: term)) : nil,
+        cache: :public,
+        language: I18n.locale,
+        status: 200
+      )
     end
 
     def response_from_request(include, iri) # rubocop:disable Metrics/AbcSize

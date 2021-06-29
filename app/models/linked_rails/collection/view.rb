@@ -49,10 +49,11 @@ module LinkedRails
 
       def title
         plural = association_class.name.tableize
-        I18n.t("#{plural}.collection.#{filter&.values&.join('.').presence || name}",
-               count: ->(_opts) { total_count },
-               default: I18n.t("#{plural}.plural",
-                               default: plural.humanize))
+        I18n.t(
+          "#{plural}.collection.#{filter&.values&.join('.').presence || name}",
+          count: ->(_opts) { total_count },
+          default: association_class.plural_label
+        )
       end
 
       private

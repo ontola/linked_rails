@@ -17,24 +17,56 @@ module LinkedRails
         __name__.split('::').last.downcase.to_sym
       end
     end
-    def self.define_shortcut(key)
-      define_singleton_method(key) do
-        options = RDF::Vocabulary.vocab_map.fetch(key)
-        options[:class] || RDF::Vocabulary.from_sym(options[:class_name])
-      end
-    end
 
-    def self.register(key, uri)
-      klass = CustomVocabulary.new(uri)
-      klass.key = key.to_s.classify.upcase
-      RDF::Vocabulary.register(key, uri, class: klass)
-      define_shortcut(key)
+    class << self
+      def define_shortcut(key)
+        define_singleton_method(key) do
+          options = RDF::Vocabulary.vocab_map.fetch(key)
+          options[:class] || RDF::Vocabulary.from_sym(options[:class_name])
+        end
+      end
+
+      def for(iri)
+        key = vocab_map.keys.find { |key| iri.to_s.start_with?(key) }
+
+        vocab_map[key] if key
+      end
+
+      def register(key, uri)
+        klass = CustomVocabulary.new(uri)
+        klass.key = key.to_s.classify.upcase
+
+        RDF::Vocabulary.register(key, uri, class: klass)
+        vocab_map[uri.to_s] = klass
+
+        define_shortcut(key)
+      end
+
+      def register_strict(klass)
+        vocab_map[klass.to_s] = klass
+      end
+
+      def vocab_map
+        return LinkedRails::Vocab.vocab_map unless self == LinkedRails::Vocab
+
+        @vocab_map ||= {}
+      end
     end
 
     RDF::Vocabulary.vocab_map.each_key do |key|
       define_shortcut(key)
     end
 
+    register_strict(Vocab.as)
+    register_strict(Vocab.dbo)
+    register_strict(Vocab.foaf)
+    register_strict(Vocab.owl)
+    register_strict(Vocab.rdfs)
+    register_strict(Vocab.rdfv)
+    register_strict(Vocab.schema)
+    register_strict(Vocab.sh)
+    register_strict(Vocab.skos)
+    register_strict(Vocab.xsd)
     register(:fhir, 'http://hl7.org/fhir/')
     register(:form, 'https://ns.ontola.io/form#')
     register(:libro, 'https://ns.ontola.io/libro/')

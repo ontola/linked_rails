@@ -85,7 +85,7 @@ module LinkedRails
       end
 
       def description_fallback
-        LinkedRails.translate(:property, :description, self, false)
+        LinkedRails.translate(:field, :description, self, false)
       end
 
       def helper_text_from_attribute
@@ -93,7 +93,7 @@ module LinkedRails
       end
 
       def helper_text_fallback
-        LinkedRails.translate(:property, :helper_text, self, false)
+        LinkedRails.translate(:field, :helper_text, self, false)
       end
 
       def label_from_attribute
@@ -101,7 +101,7 @@ module LinkedRails
       end
 
       def label_fallback
-        LinkedRails.translate(:property, :label, self)
+        LinkedRails.translate(:field, :label, self) || LinkedRails.translate(:property, :label, path)
       end
 
       class << self
