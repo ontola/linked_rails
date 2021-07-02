@@ -1,17 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'preloading'
-
 module LinkedRails
   class Collection
     class View
       include ActiveModel::Model
 
       include LinkedRails::Model
-      include LinkedRails::Collection::Preloading
 
       attr_accessor :collection, :filter
-      delegate :apply_scope, :association_base, :association_class, :default_page_size, :display, :include_map,
+      delegate :apply_scope, :association_base, :association_class, :default_page_size, :display,
                :parent, :policy, :total_page_count, :unfiltered_collection, :user_context, to: :collection
       delegate :count, to: :members
 
@@ -31,7 +28,6 @@ module LinkedRails
       end
 
       def members
-        preload_included_associations if preload_included_associations?
         @members ||= raw_members
       end
 
@@ -66,7 +62,7 @@ module LinkedRails
       end
 
       def prepare_members(scope)
-        if scope.respond_to?(:preload) && include_map.present?
+        if scope.respond_to?(:preload) && association_class.try(:includes_for_serializer)
           scope = scope.preload(association_class.includes_for_serializer)
         end
         scope

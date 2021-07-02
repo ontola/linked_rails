@@ -100,10 +100,6 @@ module LinkedRails
       end
     end
 
-    def include_map
-      association_class.try(:collection_include_map)
-    end
-
     def inspect
       "#<#{association_class}Collection iri:#{iri}>"
     end

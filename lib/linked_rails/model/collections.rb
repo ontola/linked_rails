@@ -7,19 +7,6 @@ module LinkedRails
 
       included do
         class_attribute :collections
-        class_attribute :inc_nested_collection
-        self.inc_nested_collection = [
-          default_view: {member_sequence: :members},
-          filter_fields: :options,
-          filters: [],
-          sortings: []
-        ].freeze
-        class_attribute :inc_shallow_collection
-        self.inc_shallow_collection = [
-          filter_fields: :options,
-          filters: [],
-          sortings: []
-        ].freeze
       end
 
       # Initialises a {Collection} for one of the collections defined by {has_collection}
@@ -62,12 +49,6 @@ module LinkedRails
           initialize_collections
           collections.delete_if { |c| c[:name] == opts[:name] }
           collections.append(opts)
-        end
-
-        def collection_include_map
-          JSONAPI::IncludeDirective::Parser.parse_include_args(
-            [:root] + [includes_for_serializer]
-          )
         end
 
         def initialize_collections
