@@ -16,6 +16,10 @@ module LinkedRails
         Vocab.libro["actions/dialog/alert?#{{resource: resource, opener: opener}.compact.to_param}"]
       end
 
+      def ontola_dialog_close_action
+        NS.libro['actions/dialog/close']
+      end
+
       def ontola_redirect_action(location, reload: nil)
         Vocab.libro["actions/redirect?#{{location: location, reload: reload}.compact.to_param}"]
       end
