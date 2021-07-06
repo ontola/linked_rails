@@ -121,7 +121,7 @@ module LinkedRails
         def error_type(error_object)
           [
             error_object,
-            ::RDF.type,
+            Vocab.rdfv.type,
             Vocab.ll[:ErrorResponse],
             Vocab.ontola[:replace]
           ]

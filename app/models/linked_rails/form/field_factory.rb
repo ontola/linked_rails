@@ -48,21 +48,21 @@ module LinkedRails
         name = serializer_attribute&.key&.to_s || key.to_s
         case attribute_type(name)
         when :string, :text
-          RDF::XSD[:string]
+          Vocab.xsd.string
         when :integer
-          RDF::XSD[:integer]
+          Vocab.xsd.integer
         when :datetime
-          RDF::XSD[:dateTime]
+          Vocab.xsd.dateTime
         when :date
-          RDF::XSD[:date]
+          Vocab.xsd.date
         when :boolean
-          RDF::XSD[:boolean]
+          Vocab.xsd.boolean
         when :decimal
           decimal_data_type(name)
         when :file
           Vocab.ll[:blob]
         else
-          RDF::XSD[:string] if model_class.try(:defined_enums)&.key?(name)
+          Vocab.xsd.string if model_class.try(:defined_enums)&.key?(name)
         end
       end
 
@@ -79,21 +79,21 @@ module LinkedRails
       def datatype
         @datatype ||= field_options[:datatype] ||
           serializer_attribute.try(:datatype) ||
-          (serializer_enum ? RDF::XSD[:string] : attr_to_datatype)
+          (serializer_enum ? Vocab.xsd.string : attr_to_datatype)
       end
 
       def decimal_data_type(name) # rubocop:disable Metrics/MethodLength
         case attr_column(name).precision
         when 64
-          RDF::XSD[:long]
+          Vocab.xsd.long
         when 32
-          RDF::XSD[:int]
+          Vocab.xsd.int
         when 16
-          RDF::XSD[:short]
+          Vocab.xsd.short
         when 8
-          RDF::XSD[:byte]
+          Vocab.xsd.byte
         else
-          RDF::XSD[:decimal]
+          Vocab.xsd.decimal
         end
       end
 
@@ -126,13 +126,13 @@ module LinkedRails
         return Form::Field::SliderInput if max_inclusive && min_inclusive
 
         case datatype
-        when RDF::XSD.boolean
+        when Vocab.xsd.boolean
           return Form::Field::CheckboxInput
-        when RDF::XSD.date
+        when Vocab.xsd.date
           return Form::Field::DateInput
-        when RDF::XSD.dateTime
+        when Vocab.xsd.dateTime
           return Form::Field::DateTimeInput
-        when RDF::XSD.integer, RDF::XSD.long, RDF::XSD.int, RDF::XSD.short, RDF::XSD.byte, RDF::XSD.decimal
+        when Vocab.xsd.integer, Vocab.xsd.long, Vocab.xsd.int, Vocab.xsd.short, Vocab.xsd.byte, Vocab.xsd.decimal
           return Form::Field::NumberInput
         when Vocab.ll.blob
           return Form::Field::FileInput

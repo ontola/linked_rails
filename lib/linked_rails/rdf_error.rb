@@ -17,7 +17,7 @@ module LinkedRails
       g = ::RDF::Graph.new
       g << [iri, Vocab.schema.name, title] if title
       g << [iri, Vocab.schema.text, message]
-      g << [iri, ::RDF[:type], rdf_type]
+      g << [iri, Vocab.rdfv.type, rdf_type]
       g
     end
 

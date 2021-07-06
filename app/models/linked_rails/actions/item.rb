@@ -29,9 +29,9 @@ module LinkedRails
       def action_status
         @action_status ||=
           if completed
-            RDF::Vocab::SCHEMA.CompletedActionStatus
+            Vocab.schema.CompletedActionStatus
           elsif policy_valid?
-            RDF::Vocab::SCHEMA.PotentialActionStatus
+            Vocab.schema.PotentialActionStatus
           elsif policy_expired?
             Vocab.ontola[:ExpiredActionStatus]
           else
@@ -44,7 +44,7 @@ module LinkedRails
       end
 
       def available?
-        return false unless action_status == RDF::Vocab::SCHEMA.PotentialActionStatus
+        return false unless action_status == Vocab.schema.PotentialActionStatus
 
         @condition.nil? || condition
       end
@@ -190,7 +190,7 @@ module LinkedRails
       end
 
       def type_fallback
-        RDF::Vocab::SCHEMA.UpdateAction
+        Vocab.schema.UpdateAction
       end
 
       class << self

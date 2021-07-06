@@ -90,7 +90,7 @@ module LinkedRails
 
       def nested_attributes(base_params, graph, subject, klass, association, collection) # rubocop:disable Metrics/ParameterLists
         nested_resources =
-          if graph.query([subject, RDF::RDFV[:first], nil]).present?
+          if graph.query([subject, Vocab.rdfv[:first], nil]).present?
             nested_attributes_from_list(base_params, graph, subject, klass)
           else
             parsed = parse_nested_resource(base_params, graph, subject, klass)

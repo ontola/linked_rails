@@ -4,7 +4,7 @@ module LinkedRails
   class MediaObjectSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
     attribute :content_url, predicate: Vocab.schema.contentUrl
-    attribute :content_type, predicate: Vocab.schema.encodingFormat, datatype: RDF::XSD[:string]
+    attribute :content_type, predicate: Vocab.schema.encodingFormat, datatype: Vocab.xsd.string
     attribute :description, predicate: Vocab.schema.caption
     attribute :embed_url, predicate: Vocab.schema.embedUrl
     attribute :filename, predicate: Vocab.dbo.filename

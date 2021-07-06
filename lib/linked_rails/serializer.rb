@@ -13,7 +13,7 @@ module LinkedRails
 
       set_id :iri
 
-      attribute :rdf_type, predicate: RDF[:type], datatype: RDF::XSD[:anyURI]
+      attribute :rdf_type, predicate: Vocab.rdfv.type, datatype: Vocab.xsd.anyURI
       attribute :created_at, predicate: Vocab.schema[:dateCreated] do |object|
         object.try(:created_at)
       end
