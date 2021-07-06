@@ -38,7 +38,7 @@ module LinkedRails
           end
 
           def singular_route_key
-            raise(NotImplementedError)
+            name.underscore
           end
         end
       end
