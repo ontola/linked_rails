@@ -8,8 +8,8 @@ module LinkedRails
 
     class_attribute :pages, :model_class
 
-    def iri(_opts = {})
-      self.class.form_iri
+    def root_relative_iri(_opts = {})
+      self.class.form_iri_path
     end
 
     class << self
@@ -18,7 +18,11 @@ module LinkedRails
       end
 
       def form_iri
-        LinkedRails.iri(path: "/forms/#{to_s.sub('Form', '').tableize}")
+        LinkedRails.iri(path: form_iri_path)
+      end
+
+      def form_iri_path
+        RDF::URI("/forms/#{to_s.sub(/Form$/, '').tableize}")
       end
 
       def form_options_iri(attr)

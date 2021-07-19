@@ -11,6 +11,8 @@ module LinkedRails
              :resource, :tag, :translation_key, to: :parent
 
     def action_body
+      return form if form.is_a?(RDF::URI)
+
       form&.form_iri
     end
 
