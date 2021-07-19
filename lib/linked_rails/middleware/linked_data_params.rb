@@ -213,10 +213,10 @@ module LinkedRails
       end
 
       def update_target_params(request, graph, target_class)
-        request.update_param(
-          target_class.to_s.demodulize.underscore,
-          parse_resource(request.params, graph, Vocab.ll[:targetResource], target_class)
-        )
+        key = target_class.to_s.demodulize.underscore
+        from_body = parse_resource(request.params, graph, Vocab.ll[:targetResource], target_class)
+
+        request.update_param(key, from_body.merge(request.params[key] || {}))
       end
     end
   end
