@@ -120,6 +120,7 @@ module LinkedRails
 
         return unless graph
 
+        request.update_param(:body_graph, graph)
         target_class = target_class_from_path(request)
         return if target_class.blank?
 
