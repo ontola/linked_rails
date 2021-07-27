@@ -168,6 +168,8 @@ module LinkedRails
     private
 
     def default_display
+      @default_display = @default_display.call(parent) if @default_display.respond_to?(:call)
+
       @default_display || association_class.try(:default_collection_display)
     end
 
