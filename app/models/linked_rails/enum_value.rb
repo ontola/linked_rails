@@ -9,11 +9,7 @@ module LinkedRails
     attr_writer :iri, :label
 
     def label
-      label_from_variable ||
-        I18n.t(
-          "activerecord.attributes.#{class_name}.#{attr.to_s.pluralize}",
-          default: [:"#{class_name.tableize}.#{attr}.#{key}", key.to_s.humanize]
-        )
+      label_from_variable || LinkedRails.translate(:enum, :label, self)
     end
 
     def iri(_opts = {})
@@ -29,10 +25,6 @@ module LinkedRails
     end
 
     private
-
-    def class_name
-      klass.to_s.underscore
-    end
 
     def label_from_variable
       @label.respond_to?(:call) ? @label.call : @label

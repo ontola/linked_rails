@@ -69,6 +69,13 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
     )
   end
 
+  Translate.translations_for(:enum, :label) do |object|
+    I18n.t(
+      "#{object.klass.to_s.tableize}.enums.#{object.attr}.#{object.key}",
+      default: [:"enums.#{object.attr}.#{object.key}", object.key.to_s.humanize]
+    )
+  end
+
   Translate.translations_for(:field, :description) do |object, fallback|
     if object.model_attribute.present?
       model_key = object.model_class&.to_s&.demodulize&.tableize
