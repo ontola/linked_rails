@@ -1,24 +1,12 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  class ParamsParser
+  class CollectionParamsParser
     attr_reader :params, :user_context
 
     def initialize(params)
       @user_context = params[:user_context]
       @params = params.is_a?(Hash) ? ActionController::Parameters.new(params) : params
-    end
-
-    def before_params
-      return @before_params if instance_variable_defined?(:@before_params)
-
-      values = permit_params(before: [])[:before]
-      return @before_params = nil if values.blank?
-
-      @before_params = values.map do |f|
-        key, value = f.split('=')
-        {key: RDF::URI(CGI.unescape(key)), value: value}
-      end
     end
 
     def collection_params
@@ -63,18 +51,19 @@ module LinkedRails
       end
     end
 
-    def sorting_params
-      return @sorting_params if instance_variable_defined?(:@sorting_params)
+    private
 
-      values = permit_params(sort: [])[:sort]
-      return @sorting_params = nil if values.blank?
+    def before_params
+      return @before_params if instance_variable_defined?(:@before_params)
 
-      @sorting_params = values.map do |f|
-        parse_filter_value(f)
+      values = permit_params(before: [])[:before]
+      return @before_params = nil if values.blank?
+
+      @before_params = values.map do |f|
+        key, value = f.split('=')
+        {key: RDF::URI(CGI.unescape(key)), value: value}
       end
     end
-
-    private
 
     def parse_filter_value(value)
       return value if value.is_a?(Hash)
@@ -88,6 +77,17 @@ module LinkedRails
         .permit(*keys)
         .to_h
         .with_indifferent_access
+    end
+
+    def sorting_params
+      return @sorting_params if instance_variable_defined?(:@sorting_params)
+
+      values = permit_params(sort: [])[:sort]
+      return @sorting_params = nil if values.blank?
+
+      @sorting_params = values.map do |f|
+        parse_filter_value(f)
+      end
     end
   end
 end

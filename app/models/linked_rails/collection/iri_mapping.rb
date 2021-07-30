@@ -25,7 +25,7 @@ module LinkedRails
         end
 
         def params_parser_class
-          LinkedRails::ParamsParser
+          LinkedRails::CollectionParamsParser
         end
       end
     end

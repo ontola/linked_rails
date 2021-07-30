@@ -11,7 +11,7 @@ module LinkedRails
         end
 
         def params_parser
-          @params_parser ||= LinkedRails::ParamsParser.new(params)
+          @params_parser ||= LinkedRails::CollectionParamsParser.new(params)
         end
 
         def parsed_filter_params
