@@ -16,15 +16,6 @@ module LinkedRails
       end
 
       module ClassMethods
-        def attributes_from_filters(filters)
-          filters.each_with_object({}) do |(key, value), hash|
-            next unless value.count == 1
-
-            attribute = predicate_mapping[key]&.key
-            hash[attribute] = value.first if attribute
-          end
-        end
-
         def include_in_collection?
           false
         end

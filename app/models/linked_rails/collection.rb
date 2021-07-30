@@ -63,9 +63,9 @@ module LinkedRails
         parent&.build_child(association_class, user_context: user_context) ||
         association_class.build_new(parent: parent, user_context: user_context)
 
-      attributes_from_filters = ActionController::Parameters.new(association_class.attributes_from_filters(@filter))
+      parser = LinkedRails::ParamsParser.new(user_context: user_context, params: {filter: @filter})
       permitted_child_keys = Pundit.policy(user_context, child)&.permitted_attributes || []
-      permitted_attributes_from_filters = attributes_from_filters.permit(permitted_child_keys)
+      permitted_attributes_from_filters = parser.attributes_from_filters(association_class).permit(permitted_child_keys)
 
       child.assign_attributes(permitted_attributes_from_filters)
       child

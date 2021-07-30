@@ -11,13 +11,11 @@ module LinkedRails
         end
 
         def params_parser
-          @params_parser ||= LinkedRails::CollectionParamsParser.new(params)
+          @params_parser ||= LinkedRails::ParamsParser.new(params: params, user_context: user_context)
         end
 
         def parsed_filter_params
-          filters = params_parser.filter_params
-
-          ActionController::Parameters.new(controller_class.try(:attributes_from_filters, filters) || {})
+          params_parser.attributes_from_filters(controller_class)
         end
 
         def permit_filter_params
