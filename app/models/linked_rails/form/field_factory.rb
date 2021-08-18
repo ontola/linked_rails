@@ -68,7 +68,7 @@ module LinkedRails
 
       def attribute_type(name)
         model_class.try(:attribute_types).try(:[], name)&.type
-      rescue PG::ConnectionBad, ActiveRecord::StatementInvalid
+      rescue PG::ConnectionBad, ActiveRecord::StatementInvalid, ActiveRecord::ConnectionNotEstablished
         :string
       end
 
