@@ -24,7 +24,9 @@ module LinkedRails
         @iri_template ||=
           URITemplate.new(
             [
-              [parent&.root_relative_iri&.to_s&.split('?')&.first, association_class.route_key].join('/'),
+              LinkedRails.iri(
+                path: [parent&.root_relative_iri&.to_s&.split('?')&.first, association_class.route_key].join('/')
+              ),
               "{?#{self.class.iri_template_parsed_keys}}"
             ].join('')
           )
