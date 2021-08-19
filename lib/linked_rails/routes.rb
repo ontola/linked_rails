@@ -16,17 +16,17 @@ module LinkedRails
       get '/forms/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
       get '/forms/*module/:id', to: "#{opts.fetch(:forms, 'linked_rails/forms')}#show"
 
-      get '(*parent_iri)/menus', to: 'menus/lists#index'
-      get '(*parent_iri)/menus/:id', to: 'menus/lists#show'
-      get '(*parent_iri)/menu_items', to: 'menus/items#index'
+      get '(*parent_iri)/menus', to: "#{opts.fetch(:menus, 'linked_rails/menus')}/lists#index"
+      get '(*parent_iri)/menus/:id', to: "#{opts.fetch(:menus, 'linked_rails/menus')}/lists#show"
+      get '(*parent_iri)/menu_items', to: "#{opts.fetch(:menus, 'linked_rails/menus')}/items#index"
 
-      get '(*parent_iri)/actions', to: 'actions/items#index'
-      get '(*parent_iri)/actions/:id', to: 'actions/items#show'
-      get '(*parent_iri)/new', to: 'actions/items#show', id: :create
-      get '(*parent_iri)/edit', to: 'actions/items#show', id: :update
-      get '(*parent_iri)/delete', to: 'actions/items#show', id: :destroy
-      get '(*parent_iri)/trash', to: 'actions/items#show', id: :trash
-      get '(*parent_iri)/untrash', to: 'actions/items#show', id: :untrash
+      get '(*parent_iri)/actions', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#index"
+      get '(*parent_iri)/actions/:id', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show"
+      get '(*parent_iri)/new', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :create
+      get '(*parent_iri)/edit', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :update
+      get '(*parent_iri)/delete', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :destroy
+      get '(*parent_iri)/trash', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :trash
+      get '(*parent_iri)/untrash', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :untrash
     end
 
     def linked_resource(klass, controller: nil, nested: false, &block)
