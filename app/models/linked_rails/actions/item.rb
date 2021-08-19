@@ -53,7 +53,7 @@ module LinkedRails
         included_object
           .class
           .try(:reflect_on_all_associations)
-          &.select { |association| association.has_one? && included_object.association(association.name).loaded? }
+          &.select { |association| included_object.association(association.name).loaded? }
           &.map(&:name)
       end
 
