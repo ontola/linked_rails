@@ -68,7 +68,7 @@ module LinkedRails
 
       class << self
         def base_includes
-          [:image, action: :target]
+          [action: :target]
         end
 
         def preview_includes
