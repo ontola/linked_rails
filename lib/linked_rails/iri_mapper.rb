@@ -112,10 +112,9 @@ module LinkedRails
       def class_for_controller(controller)
         return if controller.blank?
 
-        controller.classify.safe_constantize ||
-          "::#{controller.camelize}Controller"
-            .safe_constantize
-            .try(:controller_class)
+        "::#{controller.camelize}Controller"
+          .safe_constantize
+          .try(:controller_class)
       end
 
       def ensure_absolute_iri!(iri)
