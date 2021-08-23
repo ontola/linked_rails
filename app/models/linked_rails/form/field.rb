@@ -101,7 +101,7 @@ module LinkedRails
       end
 
       def label_fallback
-        LinkedRails.translate(:field, :label, self) || LinkedRails.translate(:property, :label, path)
+        LinkedRails.translate(:field, :label, self, false).presence || LinkedRails.translate(:property, :label, path)
       end
 
       class << self
