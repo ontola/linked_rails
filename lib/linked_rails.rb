@@ -13,7 +13,7 @@ require 'linked_rails/params_parser'
 module LinkedRails
   @model_classes = {}
 
-  mattr_accessor :app_ns, default: RDF::Vocabulary.new('http://example.com/my_vocab#')
+  mattr_accessor :app_vocab, default: RDF::Vocabulary.new('http://example.com/my_vocab#')
   mattr_accessor :whitelisted_spi_ips
   mattr_writer :host, :scheme
 

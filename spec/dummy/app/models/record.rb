@@ -13,13 +13,13 @@ class Record < ApplicationRecord
 
   attr_accessor :key, :key1, :key2, :key3
   filterable(
-    LinkedRails.app_ns[:key] => {
+    LinkedRails.app_vocab[:key] => {
       filter: lambda { |scope, value|
         scope.where(actual_key: value)
       }
     },
-    LinkedRails.app_ns[:key2] => {},
-    LinkedRails.app_ns[:key3] => {
+    LinkedRails.app_vocab[:key2] => {},
+    LinkedRails.app_vocab[:key3] => {
       filter: lambda { |scope, value|
         value ? scope.where.not(key3: nil) : scope.where(key3: nil)
       },
