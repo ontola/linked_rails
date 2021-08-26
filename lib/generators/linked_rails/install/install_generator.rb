@@ -26,6 +26,8 @@ module LinkedRails
       application 'config.middleware.use LinkedRails::Middleware::LinkedDataParams'
       application 'config.jwt_encryption_method = :hs512'
       inject_includes
+
+      readme 'README'
     end
 
     private

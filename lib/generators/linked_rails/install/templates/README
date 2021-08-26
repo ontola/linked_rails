@@ -1,0 +1,5 @@
+Add the following to config/development.rb
+  config.hosts = []
+  config.hosts << 'localhost'
+  config.hosts << '.svc.cluster.local'
+
