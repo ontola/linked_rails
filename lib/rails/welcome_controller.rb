@@ -2,6 +2,7 @@
 
 module Rails
   class WelcomeController
+    include AbstractController::Callbacks
     include ActiveResponse::Controller
     include LinkedRails::Controller
 

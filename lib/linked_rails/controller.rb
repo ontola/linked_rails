@@ -36,7 +36,7 @@ module LinkedRails
     module ClassMethods
       def controller_class
         @controller_class ||=
-          name.sub(/Controller$/, '').classify.safe_constantize || controller_name.classify.safe_constantize
+          name.sub(/Controller$/, '').classify.safe_constantize || try(:controller_name)&.classify&.safe_constantize
       end
     end
   end

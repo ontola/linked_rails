@@ -3,7 +3,7 @@
 module LinkedRails
   module Enhanceable
     def include_enhancements(klass_method, enhanceable)
-      send(klass_method)
+      try(klass_method)
         .try(:enhancement_modules, enhanceable)
         &.reject { |mod| include? mod }
         &.each { |mod| include mod }

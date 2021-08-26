@@ -4,6 +4,8 @@ module LinkedRails
   module Controller
     module ErrorHandling
       extend ActiveSupport::Concern
+      include ActiveSupport::Rescuable
+
       included do
         rescue_from StandardError, with: :handle_and_report_error
         rescue_from ActiveRecord::RecordNotFound, with: :handle_error
