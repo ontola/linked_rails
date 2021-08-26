@@ -1,0 +1,26 @@
+en:
+  foaf:
+    name:
+      label: "Naam"
+  ontola:
+    password:
+      label: "Wachtwoord"
+    quickActions:
+      label: "Actions"
+  rdfv:
+    type:
+      label: "Type"
+  schema:
+    Thing:
+      label: "Thing"
+      plural_label: "Things"
+    dateCreated:
+      label: "Date created"
+    dateModified:
+      label: "Date modified"
+    email:
+      label: "Email"
+    image:
+      label: "Image"
+    name:
+      label: "Name"

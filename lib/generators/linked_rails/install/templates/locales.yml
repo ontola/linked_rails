@@ -1,0 +1,12 @@
+en:
+  linked_rails:
+    status:
+      400: "Error in request"
+      401: "You have to be logged in to perform this action."
+      403: "This page is not available."
+      404: "The item was not found, try reloading the page."
+      429: "You're making too many requests, please try again later."
+      500: "Something went wrong on our side, please try again later."
+  menus:
+    home: "Home"
+    sign_out: "Sign out"
