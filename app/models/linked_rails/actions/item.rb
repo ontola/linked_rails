@@ -11,7 +11,7 @@ module LinkedRails
 
       attr_accessor :list, :policy_arguments, :submit_label
       attr_writer :parent, :resource, :root_relative_iri, :user_context, :object,
-                  :target, :translation_key
+                  :target
       delegate :user_context, to: :list, allow_nil: true
 
       %i[description result type policy label image url include_object include_paths collection condition form completed
@@ -135,11 +135,6 @@ module LinkedRails
 
       def target
         @target ||= LinkedRails.entry_point_class.new(parent: self)
-      end
-
-      def translation_key
-        @translation_key ||=
-          (resource.is_a?(Collection) ? resource.association_class : resource&.class)&.name&.demodulize&.tableize
       end
 
       def user_context

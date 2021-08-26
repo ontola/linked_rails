@@ -27,9 +27,13 @@ module LinkedRails
       end
 
       def for(iri)
-        key = vocab_map.keys.find { |key| iri.to_s.start_with?(key) }
+        key = vocab_map.keys.find { |k| iri.to_s.start_with?(k) }
 
         vocab_map[key] if key
+      end
+
+      def for!(iri)
+        self.for(iri) || raise("No vocab found for #{iri}")
       end
 
       def register(key, uri)

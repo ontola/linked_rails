@@ -8,7 +8,7 @@ module LinkedRails
     attr_accessor :parent
     attr_writer :url
     delegate :form, :description, :http_method, :image, :user_context,
-             :resource, :tag, :translation_key, to: :parent
+             :resource, :tag, to: :parent
 
     def action_body
       return form if form.is_a?(RDF::URI)

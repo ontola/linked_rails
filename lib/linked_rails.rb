@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_response'
+require 'jsonapi/serializer'
 require 'kaminari/activerecord'
 require 'rdf'
 require 'rdf/vocab'
@@ -9,6 +10,8 @@ require 'nill_class_renderer'
 require 'linked_rails/engine'
 require 'linked_rails/iri_mapper'
 require 'linked_rails/params_parser'
+require 'linked_rails/middleware/linked_data_params'
+require 'linked_rails/renderers'
 
 module LinkedRails
   @model_classes = {}
@@ -49,6 +52,8 @@ module LinkedRails
   configurable_class(:ontology, :property)
   configurable_class(:actions, :item)
   configurable_class(:menus, :item)
+  configurable_class(nil, :current_user)
+  configurable_class(nil, :manifest)
   configurable_class(nil, :rdf_error, default: 'LinkedRails::RDFError')
   configurable_class(nil, :action_list_parent, default: 'ApplicationActionList')
   configurable_class(nil, :controller_parent, default: 'ApplicationController')
@@ -56,6 +61,11 @@ module LinkedRails
   configurable_class(nil, :policy_parent, default: 'ApplicationPolicy')
   configurable_class(nil, :serializer_parent, default: 'ApplicationSerializer')
   configurable_class(nil, :iri_mapper, default: 'LinkedRails::IRIMapper', reader: :iri_mapper)
+end
+
+ActiveSupport::Inflector.inflections do |inflect|
+  inflect.acronym 'RDF'
+  inflect.acronym 'SHACL'
 end
 
 require 'linked_rails/vocab'
@@ -73,3 +83,4 @@ require 'linked_rails/rdf_error'
 require 'linked_rails/routes'
 require 'linked_rails/serializer'
 require 'linked_rails/translate'
+require_relative 'rails/welcome_controller'

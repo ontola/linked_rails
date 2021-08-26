@@ -8,7 +8,7 @@ module LinkedRails
       attribute :collapsible, predicate: Vocab.form[:collapsible]
       attribute :hidden, predicate: Vocab.form[:hidden]
 
-      has_many :fields, predicate: Vocab.form[:fields], sequence: true
+      has_many :fields, predicate: Vocab.form[:fields], sequence: true, polymorphic: true
     end
   end
 end

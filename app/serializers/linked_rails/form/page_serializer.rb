@@ -6,8 +6,8 @@ module LinkedRails
       attribute :label, predicate: Vocab.schema.name
       attribute :description, predicate: Vocab.schema.text
 
-      has_many :groups, predicate: Vocab.form[:groups], sequence: true
-      has_one :footer_group, predicate: Vocab.form[:footerGroup]
+      has_many :groups, predicate: Vocab.form[:groups], sequence: true, serializer: Form::GroupSerializer
+      has_one :footer_group, predicate: Vocab.form[:footerGroup], serializer: Form::GroupSerializer
     end
   end
 end

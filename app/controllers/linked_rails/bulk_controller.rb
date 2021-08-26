@@ -86,7 +86,7 @@ module LinkedRails
     def resource_response_body(iri, rack_body, status)
       return rack_body.body if rack_body.is_a?(ActionDispatch::Response::RackBody)
 
-      error_body(status, StandardError.new(I18n.t("status.#{status}")), iri)
+      error_body(status, StandardError.new(I18n.t("linked_rails.status.#{status}")), iri)
     end
 
     def resource_request(iri)

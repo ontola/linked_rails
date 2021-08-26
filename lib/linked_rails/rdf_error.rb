@@ -22,7 +22,7 @@ module LinkedRails
     end
 
     def title
-      @title ||= I18n.t('status')[status] || I18n.t('status')[500]
+      @title ||= I18n.t('linked_rails.status')[status] || I18n.t('linked_rails.status')[500]
     end
 
     def rdf_type

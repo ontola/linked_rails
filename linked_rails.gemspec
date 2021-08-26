@@ -17,11 +17,11 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
-  spec.add_dependency 'active_response'
+  spec.add_dependency 'active_response', '~> 0.0.2'
   spec.add_dependency 'kaminari-activerecord'
   spec.add_dependency 'pundit'
   spec.add_dependency 'rdf'
-  spec.add_dependency 'rdf-serializers'
+  spec.add_dependency 'rdf-serializers', '~> 0.0.8'
   spec.add_dependency 'rdf-vocab'
   spec.add_dependency 'uri_template'
 

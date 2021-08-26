@@ -6,7 +6,7 @@ module LinkedRails
   module ActiveResponse
     module Responders
       class RDF < ::ActiveResponse::Responders::HTML # rubocop:disable Metrics/ClassLength
-        respond_to(*RDF_CONTENT_TYPES)
+        respond_to(*LinkedRails::Renderers.rdf_content_types)
 
         include LinkedRails::Helpers::OntolaActionsHelper
 

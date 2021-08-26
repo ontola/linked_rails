@@ -101,7 +101,10 @@ module LinkedRails
       end
 
       def label_fallback
-        LinkedRails.translate(:field, :label, self, false).presence || LinkedRails.translate(:property, :label, path)
+        field_label = LinkedRails.translate(:field, :label, self, false)
+        return field_label if field_label.present?
+
+        LinkedRails.translate(:property, :label, path) if path
       end
 
       class << self

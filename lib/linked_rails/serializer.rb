@@ -5,6 +5,7 @@ module LinkedRails
     extend ActiveSupport::Concern
 
     included do
+      include RDF::Serializers::ObjectSerializer
       extend Enhanceable
 
       enhanceable :serializable_class, :Serializer
@@ -81,6 +82,10 @@ module LinkedRails
 
       def named_object?(object)
         !object.iri.anonymous?
+      end
+
+      def never(_object, _params)
+        false
       end
 
       def serializable_class

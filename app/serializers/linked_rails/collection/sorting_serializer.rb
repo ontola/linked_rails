@@ -7,7 +7,7 @@ module LinkedRails
 
       attribute :key, predicate: Vocab.ontola[:sortKey]
       attribute :direction, predicate: Vocab.ontola[:sortDirection]
-      has_one :collection, predicate: Vocab.schema.isPartOf
+      has_one :collection, predicate: Vocab.schema.isPartOf, polymorphic: true
     end
   end
 end

@@ -19,12 +19,18 @@ module LinkedRails
       include LinkedRails::Helpers::OntolaActionsHelper
       include LinkedRails::Helpers::DeltaHelper
       include LinkedRails::Helpers::ResourceHelper
+
+      before_action :set_manifest_header
     end
 
     private
 
     def controller_class
       self.class.controller_class
+    end
+
+    def set_manifest_header
+      response.headers['Manifest'] = LinkedRails.iri(path: '/manifest.json')
     end
 
     module ClassMethods

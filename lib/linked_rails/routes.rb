@@ -8,7 +8,7 @@ module LinkedRails
       constraints(LinkedRails::Constraints::Whitelist) do
         post 'spi/bulk', to: "#{opts.fetch(:bulk, 'linked_rails/bulk')}#show"
       end
-      get '/c_a', to: "#{opts.fetch(:current_user)}#show"
+      get '/c_a', to: "#{opts.fetch(:current_user, 'linked_rails/current_user')}#show"
       get '/ns/core', to: "#{opts.fetch(:ontologies, 'linked_rails/ontologies')}#show"
       get '/manifest', to: "#{opts.fetch(:manifests, 'linked_rails/manifests')}#show"
       get '/enums/:klass/:attribute', to: "#{opts.fetch(:enum_values, 'linked_rails/enum_values')}#index"
@@ -52,6 +52,10 @@ module LinkedRails
       )
 
       post(options[:parentable_path], to: "#{options[:controller]}#create", singular_route: true) if options[:creatable]
+    end
+
+    def find_tenant_route
+      get '_public/spi/find_tenant', to: 'linked_rails/manifests#tenant'
     end
 
     private

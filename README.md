@@ -35,8 +35,6 @@ $ gem install linked_rails
 
 Add the following lines to application.rb to enable params parsing
 ```
-require 'linked_rails/middleware/linked_data_params'
-
 module MyApp
   class Application < Rails::Application
     [...]

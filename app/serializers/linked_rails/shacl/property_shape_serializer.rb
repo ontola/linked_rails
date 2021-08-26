@@ -32,7 +32,7 @@ module LinkedRails
       attribute :qualified_min_count, predicate: Vocab.sh.qualifiedMinCount
       attribute :qualified_value_shape, predicate: Vocab.sh.qualifiedValueShape
 
-      has_many :path, predicate: Vocab.sh.path, sequence: true
+      has_many :path, predicate: Vocab.sh.path, sequence: true, polymorphic: true
     end
   end
 end

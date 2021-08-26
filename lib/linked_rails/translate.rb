@@ -22,6 +22,19 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
         strategy_for(type, key).call(object, fallback)
       end
 
+      def translation_key(resource)
+        klass =
+          case resource
+          when Collection
+            resource.association_class
+          when Class
+            resource
+          else
+            resource&.class
+          end
+        klass&.name&.demodulize&.tableize
+      end
+
       def translations_for(type, key)
         strategies[type] ||= {}
         strategies[type][key] = ->(object, fallback) { yield(object, fallback) }
@@ -29,7 +42,7 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
 
       def key_for_iri(iri, key)
         [
-          Vocab.for(iri).__prefix__,
+          Vocab.for!(iri).__prefix__,
           tag_for_iri(iri),
           key
         ].join('.')
@@ -50,58 +63,62 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
 
   Translate.translations_for(:action, :description) do |object, fallback|
     I18n.t(
-      "actions.#{object.translation_key}.#{object.tag}.description",
-      default: [:"actions.default.#{object.tag}.description", fallback ? object.tag.to_s.humanize : '']
+      "actions.#{Translate.translation_key(object)}.#{object.tag}.description",
+      default: [
+        :"actions.default.#{object.tag}.description",
+        fallback ? object.tag.to_s.humanize : ''
+      ]
     )
   end
 
   Translate.translations_for(:action, :label) do |object, fallback|
     I18n.t(
-      "actions.#{object.translation_key}.#{object.tag}.label",
-      default: [:"actions.default.#{object.tag}.label", fallback ? object.tag.to_s.humanize : '']
+      "actions.#{Translate.translation_key(object)}.#{object.tag}.label",
+      default: [
+        :"actions.default.#{object.tag}.label",
+        fallback ? object.tag.to_s.humanize : ''
+      ]
     )
   end
 
   Translate.translations_for(:action, :submit) do |object, fallback|
     I18n.t(
-      "actions.#{object.translation_key}.#{object.tag}.submit",
-      default: [:"actions.default.#{object.tag}.submit", fallback ? object.tag.to_s.humanize : '']
+      "actions.#{Translate.translation_key(object)}.#{object.tag}.submit",
+      default: [
+        :"actions.default.#{object.tag}.submit",
+        fallback ? object.tag.to_s.humanize : ''
+      ]
     )
   end
 
   Translate.translations_for(:enum, :label) do |object|
     I18n.t(
-      "#{object.klass.to_s.tableize}.enums.#{object.attr}.#{object.key}",
-      default: [:"enums.#{object.attr}.#{object.key}", object.key.to_s.humanize]
+      "enums.#{Translate.translation_key(object)}.#{object.attr}.#{object.key}",
+      default: [
+        :"enums.#{object.attr}.#{object.key}",
+        object.key.to_s.humanize
+      ]
     )
   end
 
   Translate.translations_for(:field, :description) do |object, fallback|
     if object.model_attribute.present?
-      model_key = object.model_class&.to_s&.demodulize&.tableize
-
       I18n.t(
-        "#{model_key}.properties.#{object.model_attribute}.description",
+        "forms.#{Translate.translation_key(object.model_class)}.#{object.model_attribute}.description",
         default: [
-          :"properties.#{model_key}.#{object.model_attribute}.description",
-          :"actions.default.#{object.model_attribute}.description",
-          :"properties.#{object.model_attribute}.description",
+          :"forms.default.#{object.model_attribute}.description",
           fallback ? object.model_attribute.to_s.humanize : ''
         ]
-      )
+      ).presence
     end
   end
 
   Translate.translations_for(:field, :helper_text) do |object, fallback|
     if object.model_attribute.present?
-      model_key = object.model_class&.to_s&.demodulize&.tableize
-
       I18n.t(
-        "#{model_key}.properties.#{object.model_attribute}.helper_text",
+        "forms.#{Translate.translation_key(object.model_class)}.#{object.model_attribute}.helper_text",
         default: [
-          :"properties.#{model_key}.#{object.model_attribute}.helper_text",
-          :"actions.default.#{object.model_attribute}.helper_text",
-          :"properties.#{object.model_attribute}.helper_text",
+          :"forms.default.#{object.model_attribute}.helper_text",
           fallback ? object.model_attribute.to_s.humanize : ''
         ]
       )
@@ -110,17 +127,13 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
 
   Translate.translations_for(:field, :label) do |object, fallback|
     if object.model_attribute.present?
-      model_key = object.model_class&.to_s&.demodulize&.tableize
-
       I18n.t(
-        "#{model_key}.properties.#{object.model_attribute}.label",
+        "forms.#{Translate.translation_key(object.model_class)}.#{object.model_attribute}.label",
         default: [
-          :"properties.#{model_key}.#{object.model_attribute}.label",
-          :"actions.default.#{object.model_attribute}.label",
-          :"properties.#{object.model_attribute}.label",
+          :"forms.default.#{object.model_attribute}.label",
           fallback ? object.model_attribute.to_s.humanize : ''
         ]
-      )
+      ).presence
     end
   end
 

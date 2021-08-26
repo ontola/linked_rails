@@ -22,7 +22,7 @@ module LinkedRails
 
       def handle_error(error)
         respond_to do |format|
-          (RDF_CONTENT_TYPES + [:json]).each do |type|
+          (LinkedRails::Renderers.rdf_content_types + [:json]).each do |type|
             format.send(type) { error_response_serializer(error, type) }
           end
         end
@@ -33,10 +33,6 @@ module LinkedRails
         raise if response_body
 
         handle_error(error)
-      end
-
-      def error_id(error)
-        self.class.error_types[error.class.to_s].try(:[], :id) || 'SERVER_ERROR'
       end
 
       def error_mode(exception)
@@ -57,13 +53,22 @@ module LinkedRails
       end
 
       def error_status(error)
-        self.class.error_types[error.class.to_s].try(:[], :status) || 500
+        self.class.error_status_codes[error.class.to_s] || 500
       end
 
       module ClassMethods
-        def error_types
-          @error_types =
-            YAML.safe_load(File.read(Rails.root.join('config/errors.yml'))).with_indifferent_access.freeze
+        def error_status_codes # rubocop:disable Metrics/MethodLength
+          @error_status_codes ||= {
+            'ActionController::ParameterMissing' => 422,
+            'ActionController::RoutingError' => 404,
+            'ActionController::UnpermittedParameters' => 422,
+            'ActiveRecord::RecordNotFound' => 404,
+            'ActiveRecord::RecordNotUnique' => 304,
+            'Doorkeeper::Errors::InvalidGrantReuse' => 422,
+            'LinkedRails::Auth::Errors::Expired' => 410,
+            'LinkedRails::Auth::Errors::Unauthorized' => 401,
+            'Pundit::NotAuthorizedError' => 403
+          }
         end
       end
     end

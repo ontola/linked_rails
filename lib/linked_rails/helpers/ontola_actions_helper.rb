@@ -17,7 +17,7 @@ module LinkedRails
       end
 
       def ontola_dialog_close_action
-        NS.libro['actions/dialog/close']
+        Vocab.libro['actions/dialog/close']
       end
 
       def ontola_redirect_action(location, reload: nil)
