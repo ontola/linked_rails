@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'kaminari-activerecord'
   spec.add_dependency 'pundit'
   spec.add_dependency 'rdf'
-  spec.add_dependency 'rdf-serializers', '~> 0.0.8'
+  spec.add_dependency 'rdf-serializers', '~> 0.0.9'
   spec.add_dependency 'rdf-vocab'
   spec.add_dependency 'uri_template'
 
