@@ -46,21 +46,27 @@ module LinkedRails
     end
   end
 
-  %i[collection entry_point ontology].each { |klass| configurable_class(nil, klass) }
-  %i[filter sorting view infinite_view paginated_view].each { |klass| configurable_class(:collection, klass) }
+  configurable_class(:actions, :item)
+  configurable_class(:collection, :filter)
+  configurable_class(:collection, :sorting)
+  configurable_class(:collection, :view)
+  configurable_class(:collection, :infinite_view)
+  configurable_class(:collection, :paginated_view)
+  configurable_class(:menus, :item)
   configurable_class(:ontology, :class)
   configurable_class(:ontology, :property)
-  configurable_class(:actions, :item)
-  configurable_class(:menus, :item)
-  configurable_class(nil, :current_user)
-  configurable_class(nil, :manifest)
-  configurable_class(nil, :rdf_error, default: 'LinkedRails::RDFError')
   configurable_class(nil, :action_list_parent, default: 'ApplicationActionList')
+  configurable_class(nil, :collection)
   configurable_class(nil, :controller_parent, default: 'ApplicationController')
+  configurable_class(nil, :current_user)
+  configurable_class(nil, :entry_point)
   configurable_class(nil, :form_parent, default: 'ApplicationForm')
-  configurable_class(nil, :policy_parent, default: 'ApplicationPolicy')
-  configurable_class(nil, :serializer_parent, default: 'ApplicationSerializer')
   configurable_class(nil, :iri_mapper, default: 'LinkedRails::IRIMapper', reader: :iri_mapper)
+  configurable_class(nil, :manifest)
+  configurable_class(nil, :ontology)
+  configurable_class(nil, :policy_parent, default: 'ApplicationPolicy')
+  configurable_class(nil, :rdf_error, default: 'LinkedRails::RDFError')
+  configurable_class(nil, :serializer_parent, default: 'ApplicationSerializer')
 end
 
 ActiveSupport::Inflector.inflections do |inflect|

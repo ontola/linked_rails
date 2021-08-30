@@ -2,5 +2,18 @@
 
 <% module_namespacing do -%>
 class <%= class_name %>Policy < ApplicationPolicy
+  permit_attributes %i[<%= attributes.map { |attribute| attribute.name }.join(' ') %>]
+
+  def create?
+    false
+  end
+
+  def update?
+    false
+  end
+
+  def destroy?
+    false
+  end
 end
 <% end -%>

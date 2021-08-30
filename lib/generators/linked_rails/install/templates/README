@@ -2,4 +2,6 @@ Add the following to config/development.rb
   config.hosts = []
   config.hosts << 'localhost'
   config.hosts << '.svc.cluster.local'
+  config.hosts << [YOUR_LOCAL_HOSTNAME]
 
+And update the host in config/initializers/linked_rails.rb

@@ -2,6 +2,10 @@
 
 <% module_namespacing do -%>
 class <%= controller_class_name %>Controller < ApplicationController
-    active_response :show, :index
+  active_response :show, :index
+
+  has_collection_create_action
+  has_resource_update_action
+  has_resource_destroy_action
 end
 <% end -%>

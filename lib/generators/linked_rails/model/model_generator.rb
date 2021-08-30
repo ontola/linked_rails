@@ -17,7 +17,6 @@ module LinkedRails
     end
 
     def copy_files # rubocop:disable Metrics/AbcSize
-      template 'action_list.rb', File.join('app', 'actions', class_path, "#{file_name}_action_list.rb")
       template 'controller.rb', File.join('app', 'controllers', class_path, "#{plural_file_name}_controller.rb")
       template 'form.rb', File.join('app', 'forms', class_path, "#{file_name}_form.rb")
       template 'menu_list.rb', File.join('app', 'menus', class_path, "#{file_name}_menu_list.rb")

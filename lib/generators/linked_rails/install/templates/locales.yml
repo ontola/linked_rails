@@ -1,4 +1,16 @@
 en:
+  actions:
+    default:
+      create:
+        label: "New %{type}"
+        success: 'Created successfully'
+      destroy:
+        label: "Delete"
+        description: "Are you sure you want to delete this %{type}?"
+        success: 'Destroyed successfully'
+      update:
+        label: "Edit"
+        success: 'Updated successfully'
   linked_rails:
     status:
       400: "Error in request"

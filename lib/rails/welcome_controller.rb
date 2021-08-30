@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require 'rails/application_controller'
+
 module Rails
-  class WelcomeController
-    include AbstractController::Callbacks
-    include ActiveResponse::Controller
+  class WelcomeController < Rails::ApplicationController
     include LinkedRails::Controller
 
     def index

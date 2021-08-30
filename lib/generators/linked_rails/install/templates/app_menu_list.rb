@@ -13,24 +13,53 @@ class AppMenuList < ApplicationMenuList
 
   private
 
-  def navigation_links
-    items = []
-    items << menu_item(
+  def home_menu_item
+    menu_item(
       :home,
       label: I18n.t('menus.home'),
       href: LinkedRails.iri,
       image: 'fa-home'
     )
-    items
+  end
+
+  def navigation_links
+    [home_menu_item]
   end
 
   def user_menu_items
     return [] if user_context.guest?
 
-    [user_menu_sign_out_item]
+    [
+      otp_menu_item,
+      sign_out_menu_item
+    ]
   end
 
-  def user_menu_sign_out_item
+  def otp_menu_item
+    if user_context.otp_active?
+      delete_otp_menu_item
+    else
+      add_otp_menu_item
+    end
+  end
+
+  def delete_otp_menu_item
+    menu_item(
+      :otp,
+      label: I18n.t('menus.delete_otp'),
+      href: LinkedRails.iri(path: 'u/otp_secret/delete')
+    )
+  end
+
+  def add_otp_menu_item
+    menu_item(
+      :otp,
+      label: I18n.t('menus.add_otp'),
+      href: LinkedRails.iri(path: 'u/otp_secret/new')
+    )
+  end
+
+  def sign_out_menu_item
     menu_item(
       :signout,
       action: Vocab.libro['actions/logout'],

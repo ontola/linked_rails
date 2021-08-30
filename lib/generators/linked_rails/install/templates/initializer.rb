@@ -2,8 +2,7 @@
 
 require_relative '../../lib/vocab'
 
-LinkedRails.host = 'example.com'
+LinkedRails.host = raise('Enter your host. Use an ENV var if you have multiple environments')
 LinkedRails.scheme = :https
-LinkedRails.app_vocab = Vocab.example
 
 LinkedRails::Renderers.register!

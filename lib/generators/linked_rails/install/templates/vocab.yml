@@ -1,10 +1,10 @@
 en:
   foaf:
     name:
-      label: "Naam"
+      label: "Name"
   ontola:
     password:
-      label: "Wachtwoord"
+      label: "Password"
     quickActions:
       label: "Actions"
   rdfv:
