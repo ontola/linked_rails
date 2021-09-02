@@ -41,7 +41,10 @@ module LinkedRails
       end
 
       def changes_triples # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        serializer = RDF::Serializers.serializer_for(current_resource).new(current_resource)
+        serializer_class = RDF::Serializers.serializer_for(current_resource)
+        return [] if serializer_class.blank?
+
+        serializer = serializer_class.new(current_resource)
 
         current_resource.previous_changes_by_predicate.map do |predicate, (_old_value, _new_value)|
           serializer_attributes = current_resource.class.predicate_mapping[predicate]
