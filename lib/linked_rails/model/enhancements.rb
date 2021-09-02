@@ -23,7 +23,6 @@ module LinkedRails
           self.enhancements[enhancement] = opts
           return if already_included
 
-          enhance_routing(enhancement) if enhancement.const_defined?(:Routing) && enhanced_with?(enhancement, :Routing)
           include enhancement::Model if enhancement.const_defined?(:Model) && enhanced_with?(enhancement, :Model)
         end
 
@@ -45,10 +44,6 @@ module LinkedRails
         end
 
         private
-
-        def enhance_routing(enhancement)
-          LinkedRails::Enhancements::RouteConcerns.add_concern(enhancement)
-        end
 
         def initialize_enhancements
           return if enhancements && method(:enhancements).owner == singleton_class

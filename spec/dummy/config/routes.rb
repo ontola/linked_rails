@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   end
 
   resources :records do
-    include_route_concerns
     collection { concerns :nested_actionable }
   end
 end
