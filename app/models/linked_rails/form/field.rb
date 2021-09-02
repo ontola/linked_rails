@@ -3,8 +3,7 @@
 module LinkedRails
   class Form
     class Field < LinkedRails::Resource
-      attr_writer :datatype,
-                  :description,
+      attr_writer :description,
                   :helper_text,
                   :label,
                   :max_length,
@@ -13,7 +12,8 @@ module LinkedRails
                   :sh_in,
                   :pattern,
                   :path
-      attr_accessor :default_value,
+      attr_accessor :datatype,
+                    :default_value,
                     :max_count,
                     :max_count_prop,
                     :max_inclusive,
@@ -31,9 +31,6 @@ module LinkedRails
                     :validators,
                     :sh_in_prop,
                     :key
-      def datatype
-        @datatype || raise("No datatype found for #{key} in #{form.name}")
-      end
 
       def description
         description_from_attribute || description_fallback
