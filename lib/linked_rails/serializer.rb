@@ -92,6 +92,11 @@ module LinkedRails
         false
       end
 
+      def secret_attribute(key, **opts)
+        opts[:if] = method(:never)
+        attribute(key, **opts)
+      end
+
       def serializable_class
         @serializable_class ||= name.gsub('Serializer', '').safe_constantize
       end
