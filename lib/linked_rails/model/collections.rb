@@ -30,7 +30,7 @@ module LinkedRails
       end
 
       def parent_collections(user_context)
-        return [] if try(:parent).try(:collections).blank?
+        return [self.class.root_collection(user_context: user_context)] if try(:parent).try(:collections).blank?
 
         parent_collections_for(parent, user_context)
       end
