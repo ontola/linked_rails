@@ -50,7 +50,7 @@ module LinkedRails
         def requested_resource
           @requested_resource ||= controller_class.try(
             :requested_resource,
-            LinkedRails.iri_mapper.route_params_to_opts(params.dup),
+            LinkedRails.iri_mapper.route_params_to_opts(params.dup, request.original_url),
             user_context
           )
         end
