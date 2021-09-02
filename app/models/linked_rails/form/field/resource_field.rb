@@ -10,6 +10,8 @@ module LinkedRails
 
         attr_reader :path
 
+        def label_from_property; end
+
         def permission_required?
           false
         end

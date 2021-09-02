@@ -62,28 +62,38 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
   end
 
   Translate.translations_for(:action, :description) do |object, fallback|
+    result_class = object.list.send(:result_class)
+    klass_iri = result_class.iri.is_a?(Array) ? result_class.iri.first : result_class.iri
+    type = LinkedRails.translate(:class, :label, klass_iri)&.downcase
+
     I18n.t(
-      "actions.#{Translate.translation_key(object)}.#{object.tag}.description",
+      "actions.#{Translate.translation_key(object.resource)}.#{object.tag}.description",
       default: [
         :"actions.default.#{object.tag}.description",
         fallback ? object.tag.to_s.humanize : ''
-      ]
+      ],
+      type: type
     )
   end
 
   Translate.translations_for(:action, :label) do |object, fallback|
+    result_class = object.list.send(:result_class)
+    klass_iri = result_class.iri.is_a?(Array) ? result_class.iri.first : result_class.iri
+    type = LinkedRails.translate(:class, :label, klass_iri)&.downcase
+
     I18n.t(
-      "actions.#{Translate.translation_key(object)}.#{object.tag}.label",
+      "actions.#{Translate.translation_key(object.resource)}.#{object.tag}.label",
       default: [
         :"actions.default.#{object.tag}.label",
         fallback ? object.tag.to_s.humanize : ''
-      ]
+      ],
+      type: type
     )
   end
 
   Translate.translations_for(:action, :submit) do |object, fallback|
     I18n.t(
-      "actions.#{Translate.translation_key(object)}.#{object.tag}.submit",
+      "actions.#{Translate.translation_key(object.resource)}.#{object.tag}.submit",
       default: [
         :"actions.default.#{object.tag}.submit",
         fallback ? object.tag.to_s.humanize : ''
@@ -93,7 +103,7 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
 
   Translate.translations_for(:enum, :label) do |object|
     I18n.t(
-      "enums.#{Translate.translation_key(object)}.#{object.attr}.#{object.key}",
+      "enums.#{Translate.translation_key(object.klass)}.#{object.attr}.#{object.key}",
       default: [
         :"enums.#{object.attr}.#{object.key}",
         object.key.to_s.humanize
