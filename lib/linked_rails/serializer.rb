@@ -58,7 +58,6 @@ module LinkedRails
         ]
       end
 
-      # rubocop:disable Naming/PredicateName
       def has_one(key, opts = {})
         opts[:id_method_name] = :iri
 
@@ -78,7 +77,6 @@ module LinkedRails
           object.send(key)
         end
       end
-      # rubocop:enable Naming/PredicateName
 
       def named_object?(object)
         !object.iri.anonymous?

@@ -4,11 +4,11 @@ module LinkedRails
   module Actions
     module DefaultActions
       module Create
-        def has_collection_create_action(overwrite = {}) # rubocop:disable Naming/PredicateName
+        def has_collection_create_action(overwrite = {})
           has_collection_action(:create, create_collection_options(overwrite))
         end
 
-        def has_singular_create_action(overwrite = {}) # rubocop:disable Naming/PredicateName
+        def has_singular_create_action(overwrite = {})
           has_singular_action(:create, create_singular_options(overwrite))
         end
 

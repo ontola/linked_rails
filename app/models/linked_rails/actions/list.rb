@@ -77,17 +77,17 @@ module LinkedRails
 
         private
 
-        def has_collection_action(action, opts = {}) # rubocop:disable Naming/PredicateName
+        def has_collection_action(action, opts = {})
           opts[:http_method] ||= 'POST'
           defined_actions[:collection][action] = opts
         end
 
-        def has_resource_action(action, opts = {}) # rubocop:disable Naming/PredicateName
+        def has_resource_action(action, opts = {})
           opts[:http_method] ||= 'POST'
           defined_actions[:resource][action] = opts
         end
 
-        def has_singular_action(action, opts = {}) # rubocop:disable Naming/PredicateName
+        def has_singular_action(action, opts = {})
           opts[:http_method] ||= 'POST'
           defined_actions[:singular][action] = opts
         end

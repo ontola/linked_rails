@@ -35,7 +35,7 @@ module LinkedRails
       )
       attr_writer :has_value, :sh_in
 
-      def has_value # rubocop:disable Naming/PredicateName
+      def has_value
         @has_value.respond_to?(:call) ? @has_value.call : @has_value
       end
 

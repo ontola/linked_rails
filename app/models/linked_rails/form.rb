@@ -120,7 +120,6 @@ module LinkedRails
         group
       end
 
-      # rubocop:disable Naming/PredicateName
       def has_many(key, opts = {})
         opts[:input_field] = Form::Field::AssociationInput
         opts[:max_count] = 99
@@ -132,7 +131,6 @@ module LinkedRails
         opts[:max_count] = 1
         field(key, opts)
       end
-      # rubocop:enable Naming/PredicateName
 
       def hidden(&block)
         group(:hidden, collapsible: false, hidden: true, &block)

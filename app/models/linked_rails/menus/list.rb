@@ -88,7 +88,7 @@ module LinkedRails
           _defined_menus || {}
         end
 
-        def has_menu(tag, opts = {}) # rubocop:disable Naming/PredicateName
+        def has_menu(tag, opts = {})
           defined_menus[tag] = opts
         end
 

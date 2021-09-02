@@ -22,7 +22,7 @@ module LinkedRails
       module ClassMethods
         private
 
-        def has_properties_shapes(properties) # rubocop:disable Naming/PredicateName
+        def has_properties_shapes(properties)
           properties.map do |key, boolean|
             SHACL::PropertyShape.new(
               path: policy_class.predicate_for_key(key),
@@ -32,7 +32,7 @@ module LinkedRails
           end
         end
 
-        def has_values_shapes(values) # rubocop:disable Naming/PredicateName
+        def has_values_shapes(values)
           values.map do |key, value|
             enum = RDF::Serializers.serializer_for(policy_class).enum_options(key).try(:[], value)
             santized_value = enum ? -> { enum.iri } : value

@@ -4,11 +4,11 @@ module LinkedRails
   module Actions
     module DefaultActions
       module Update
-        def has_resource_update_action(overwrite = {}) # rubocop:disable Naming/PredicateName
+        def has_resource_update_action(overwrite = {})
           has_resource_action(:update, update_resource_options(overwrite))
         end
 
-        def has_singular_update_action(overwrite = {}) # rubocop:disable Naming/PredicateName
+        def has_singular_update_action(overwrite = {})
           has_singular_action(:update, update_singular_options(overwrite))
         end
 

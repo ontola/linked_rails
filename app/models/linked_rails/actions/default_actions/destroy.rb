@@ -4,11 +4,11 @@ module LinkedRails
   module Actions
     module DefaultActions
       module Destroy
-        def has_resource_destroy_action(overwrite = {}) # rubocop:disable Naming/PredicateName
+        def has_resource_destroy_action(overwrite = {})
           has_resource_action(:destroy, destroy_resource_options(overwrite))
         end
 
-        def has_singular_destroy_action(overwrite = {}) # rubocop:disable Naming/PredicateName
+        def has_singular_destroy_action(overwrite = {})
           has_singular_action(:destroy, destroy_singular_options(overwrite))
         end
 
