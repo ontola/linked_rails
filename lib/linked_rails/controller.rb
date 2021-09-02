@@ -34,9 +34,13 @@ module LinkedRails
     end
 
     module ClassMethods
-      def controller_class
-        @controller_class ||=
-          name.sub(/Controller$/, '').classify.safe_constantize || try(:controller_name)&.classify&.safe_constantize
+      def controller_class(klass = nil)
+        if klass.present?
+          @controller_class = klass
+        else
+          @controller_class ||=
+            name.sub(/Controller$/, '').classify.safe_constantize || try(:controller_name)&.classify&.safe_constantize
+        end
       end
     end
   end
