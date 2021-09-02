@@ -7,7 +7,6 @@ module LinkedRails
     class Item # rubocop:disable Metrics/ClassLength
       include ActiveModel::Model
       include LinkedRails::Model
-      enhance LinkedRails::Enhancements::Singularable
 
       attr_accessor :list, :policy_arguments, :submit_label
       attr_writer :parent, :resource, :root_relative_iri, :user_context, :object,

@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
+require_relative 'serializer/menuable'
+require_relative 'serializer/singularable'
+
 module LinkedRails
   module Serializer
     extend ActiveSupport::Concern
 
     included do
       include RDF::Serializers::ObjectSerializer
+      include Serializer::Menuable
+      include Serializer::Singularable
+
       extend Enhanceable
 
       enhanceable :serializable_class, :Serializer
@@ -15,7 +21,7 @@ module LinkedRails
       set_id :iri
 
       attribute :rdf_type, predicate: Vocab.rdfv.type, datatype: Vocab.xsd.anyURI
-      attribute :created_at, predicate: Vocab.schema[:dateCreated] do |object|
+      attribute :created_at, predicate: Vocab.schema.dateCreated do |object|
         object.try(:created_at)
       end
     end

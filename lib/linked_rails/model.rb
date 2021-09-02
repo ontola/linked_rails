@@ -7,8 +7,11 @@ require_relative 'model/filtering'
 require_relative 'model/indexable'
 require_relative 'model/iri'
 require_relative 'model/iri_mapping'
+require_relative 'model/menuable'
 require_relative 'model/serialization'
+require_relative 'model/singularable'
 require_relative 'model/sorting'
+require_relative 'model/tables'
 
 module LinkedRails
   module Model
@@ -20,15 +23,14 @@ module LinkedRails
     include Indexable
     include Iri
     include IriMapping
+    include Menuable
     include Serialization
+    include Singularable
     include Sorting
+    include Tables
 
     def build_child(klass, user_context: nil)
       klass.build_new(parent: self, user_context: user_context)
-    end
-
-    def singular_resource?
-      false
     end
 
     module ClassMethods

@@ -84,12 +84,6 @@ module LinkedRails
         URITemplate.new("#{template_base.to_s.sub(/{#[\w]+}/, '').split('#').first}##{fragment}")
       end
 
-      def singular_iri; end
-
-      def singular_iri_opts
-        {}
-      end
-
       module ClassMethods
         def iri
           @iri ||= iri_namespace[iri_value] if iri_namespace

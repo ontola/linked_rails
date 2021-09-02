@@ -75,11 +75,31 @@ module LinkedRails
       end
 
       def resource_added_delta(resource)
-        invalidate_parent_collections_delta(resource)
+        invalidate_parent_collections_delta(resource) + singular_added_delta(resource)
       end
 
       def resource_removed_delta(resource)
-        invalidate_parent_collections_delta(resource)
+        invalidate_parent_collections_delta(resource) + singular_removed_delta(resource)
+      end
+
+      def same_as_statement(from, to)
+        [
+          from,
+          Vocab.owl.sameAs,
+          to
+        ]
+      end
+
+      def singular_added_delta(resource)
+        return [] unless resource.try(:singular_resource?)
+
+        [same_as_statement(resource.singular_iri, resource.iri)]
+      end
+
+      def singular_removed_delta(resource)
+        return [] unless resource.try(:singular_resource?)
+
+        [invalidate_resource_delta(resource.singular_iri)]
       end
     end
   end
