@@ -19,6 +19,14 @@ module LinkedRails
     end
 
     class << self
+      def app_vocabulary(key)
+        vocabulary = send(key)
+
+        LinkedRails::Vocab.define_singleton_method :app do
+          vocabulary
+        end
+      end
+
       def define_shortcut(key)
         define_singleton_method(key) do
           options = RDF::Vocabulary.vocab_map.fetch(key)

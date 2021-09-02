@@ -6,8 +6,8 @@ class RecordSerializer
 
   attribute :title, predicate: Vocab.schema.name
   attribute :body, predicate: Vocab.schema.text
-  attribute :key, predicate: LinkedRails.app_vocab[:key]
-  attribute :key1, predicate: LinkedRails.app_vocab[:key1]
-  attribute :key2, predicate: LinkedRails.app_vocab[:key2]
-  attribute :key3, predicate: LinkedRails.app_vocab[:key3]
+  attribute :key, predicate: Vocab.app[:key]
+  attribute :key1, predicate: Vocab.app[:key1]
+  attribute :key2, predicate: Vocab.app[:key2]
+  attribute :key3, predicate: Vocab.app[:key3]
 end

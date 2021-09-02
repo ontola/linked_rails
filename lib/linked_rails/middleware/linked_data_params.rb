@@ -80,7 +80,7 @@ module LinkedRails
       end
 
       def iri_to_class(iri)
-        iri.to_s.split(LinkedRails.app_vocab.to_s).pop&.classify&.safe_constantize ||
+        iri.to_s.split(Vocab.app.to_s).pop&.classify&.safe_constantize ||
           ApplicationRecord.descendants.detect { |klass| klass.iri == iri }
       end
 

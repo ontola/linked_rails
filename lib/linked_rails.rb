@@ -16,7 +16,6 @@ require 'linked_rails/renderers'
 module LinkedRails
   @model_classes = {}
 
-  mattr_accessor :app_vocab, default: RDF::Vocabulary.new('http://example.com/my_vocab#')
   mattr_accessor :whitelisted_spi_ips
   mattr_writer :host, :scheme
 

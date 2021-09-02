@@ -99,7 +99,7 @@ module LinkedRails
           return if self == ApplicationRecord
 
           superclass.try(:iri_namespace) ||
-            (linked_rails_module? ? Vocab.ontola : LinkedRails.app_vocab)
+            (linked_rails_module? ? Vocab.ontola : Vocab.app)
         end
 
         def iri_value
