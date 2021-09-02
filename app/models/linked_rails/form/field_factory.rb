@@ -3,6 +3,11 @@
 module LinkedRails
   class Form
     class FieldFactory # rubocop:disable Metrics/ClassLength
+      DATABASE_ERRORS = [
+        'PG::ConnectionBad'.safe_constantize,
+        ActiveRecord::StatementInvalid,
+        ActiveRecord::ConnectionNotEstablished
+      ].compact.freeze
       MAX_STR_LEN = 255
       VALIDATOR_SELECTORS = [
         [:min_length, ActiveModel::Validations::LengthValidator, :minimum],
@@ -45,8 +50,7 @@ module LinkedRails
       end
 
       def attr_to_datatype # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-        name = serializer_attribute&.key&.to_s || key.to_s
-        case attribute_type(name)
+        case attribute_type
         when :string, :text
           Vocab.xsd.string
         when :integer
@@ -58,17 +62,21 @@ module LinkedRails
         when :boolean
           Vocab.xsd.boolean
         when :decimal
-          decimal_data_type(name)
+          decimal_data_type(attribute_name)
         when :file
           Vocab.ll[:blob]
         else
-          Vocab.xsd.string if model_class.try(:defined_enums)&.key?(name)
+          Vocab.xsd.string if model_class.try(:defined_enums)&.key?(attribute_name)
         end
       end
 
-      def attribute_type(name)
-        model_class.try(:attribute_types).try(:[], name)&.type
-      rescue PG::ConnectionBad, ActiveRecord::StatementInvalid, ActiveRecord::ConnectionNotEstablished
+      def attribute_name
+        serializer_attribute&.key&.to_s || key.to_s
+      end
+
+      def attribute_type
+        model_class.try(:attribute_types).try(:[], attribute_name)&.type
+      rescue *DATABASE_ERRORS
         :string
       end
 
@@ -143,7 +151,7 @@ module LinkedRails
         when Vocab.ontola['datatype/postalRange']
           return Form::Field::PostalRangeInput
         else
-          max_length && max_length > MAX_STR_LEN ? Form::Field::TextAreaInput : Form::Field::TextInput
+          attribute_type == :text ? Form::Field::TextAreaInput : Form::Field::TextInput
         end
       end
       # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
