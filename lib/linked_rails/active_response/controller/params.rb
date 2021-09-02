@@ -37,7 +37,9 @@ module LinkedRails
         end
 
         def permit_params_with_filters
-          permit_filter_params.merge(permit_params.to_h)
+          permitted = permit_filter_params.merge(permit_params.to_h)
+          permitted[:singular_resource] = true if params[:singular_route].to_s == 'true'
+          permitted
         end
 
         def resource_params

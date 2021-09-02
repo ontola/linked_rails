@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'serializer/actionable'
 require_relative 'serializer/menuable'
 require_relative 'serializer/singularable'
 
@@ -9,6 +10,7 @@ module LinkedRails
 
     included do
       include RDF::Serializers::ObjectSerializer
+      include Serializer::Actionable
       include Serializer::Menuable
       include Serializer::Singularable
 

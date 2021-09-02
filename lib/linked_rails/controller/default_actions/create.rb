@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module LinkedRails
-  module Actions
+  module Controller
     module DefaultActions
       module Create
         def has_collection_create_action(overwrite = {})
-          has_collection_action(:create, create_collection_options(overwrite))
+          has_collection_action(:create, **create_collection_options(overwrite))
         end
 
         def has_singular_create_action(overwrite = {})
-          has_singular_action(:create, create_singular_options(overwrite))
+          has_singular_action(:create, **create_singular_options(overwrite))
         end
 
         private
@@ -26,32 +26,24 @@ module LinkedRails
           default_create_options(
             form: -> { resource.class.try(:form_class) },
             object: -> { resource },
-            policy: :create?,
-            url: -> { resource.singular_iri }
+            policy: :create?
           ).merge(overwrite)
         end
 
-        def default_create_options(overwrite = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def default_create_options(overwrite = {}) # rubocop:disable Metrics/MethodLength
           {
+            action_name: :new,
+            action_path: :new,
+            execute: :create_execute,
             http_method: :post,
             image: 'fa-plus',
-            label: lambda do
-              item = LinkedRails::Actions::Item.new(resource: result_class.new, tag: :create)
-              LinkedRails.translate(:action, :label, item, false).presence ||
-                I18n.t("#{association}.type_new", default: "New #{result_class.name.demodulize.humanize}")
-            end,
-            root_relative_iri: lambda {
-              uri = resource.root_relative_iri.dup
-              uri.path ||= ''
-              uri.path += '/new'
-              uri.query = Rack::Utils.parse_nested_query(uri.query).except('display', 'sort').to_param.presence
-              uri.to_s
-            },
+            on_failure: :create_failure,
+            on_success: :create_success,
             result: -> { result_class },
+            target_path: '',
             type: lambda {
               [Vocab.ontola["Create::#{result_class}"], Vocab.schema.CreateAction]
-            },
-            url: -> { resource.iri }
+            }
           }.merge(overwrite)
         end
       end

@@ -9,7 +9,7 @@ module LinkedRails
         def index_association; end
 
         def index_includes
-          requested_resource.preview_includes
+          requested_resource!.preview_includes
         end
 
         def index_iri

@@ -75,7 +75,8 @@ module LinkedRails
         scope: scope,
         short_name: app_name,
         start_url: scope,
-        theme_color: site_theme_color
+        theme_color: site_theme_color,
+        websocket_path: websocket_path
       }
     end
 
@@ -97,6 +98,10 @@ module LinkedRails
         src: "#{scope}/sw.js?manifestLocation=#{Rack::Utils.escape("#{scope}/manifest.json")}",
         scope: scope
       }
+    end
+
+    def websocket_path
+      Rails.application.config.try(:action_cable).try(:mount_path).try(:[], 1..-1)
     end
   end
 end

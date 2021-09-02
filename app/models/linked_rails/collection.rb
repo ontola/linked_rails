@@ -15,14 +15,12 @@ require_relative 'collection/infinite_view'
 module LinkedRails
   class Collection # rubocop:disable Metrics/ClassLength
     include ActiveModel::Model
-    include LinkedRails::Model::Enhancements
+    include LinkedRails::Model::Actionable
     include LinkedRails::Model::Iri
     include LinkedRails::Collection::Filterable
     include LinkedRails::Collection::Iri
     include LinkedRails::Collection::IriMapping
     include LinkedRails::Collection::Sortable
-
-    enhance LinkedRails::Enhancements::Actionable
 
     attr_accessor :association, :association_class, :association_scope, :grid_max_columns, :joins,
                   :name, :page_size, :parent, :part_of, :policy, :user_context, :view

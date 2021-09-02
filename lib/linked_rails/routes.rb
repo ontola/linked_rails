@@ -22,24 +22,28 @@ module LinkedRails
 
       get '(*parent_iri)/actions', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#index"
       get '(*parent_iri)/actions/:id', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show"
-      get '(*parent_iri)/new', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :create
-      get '(*parent_iri)/edit', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :update
-      get '(*parent_iri)/delete', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :destroy
-      get '(*parent_iri)/trash', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :trash
-      get '(*parent_iri)/untrash', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show", id: :untrash
     end
 
-    def linked_resource(klass, controller: nil, nested: false, &block)
+    def linked_resource(klass, controller: nil, collection: true, nested: false, resource: true, &block) # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
       options = route_options(klass, controller, nested, klass.route_key)
+
+      if collection
+        get(options[:parentable_path], to: "#{options[:controller]}#index")
+        route_block(
+          klass,
+          :collection,
+          controller: options[:controller],
+          prefix: options[:parentable_path]
+        ).call
+      end
+
+      return unless resource
 
       resources(
         options[:route_name],
         active_controller_opts(options),
-        &route_block(klass, &block)
+        &route_block(klass, :resource, &block)
       )
-
-      post(options[:parentable_path], to: "#{options[:controller]}#create") if options[:creatable]
-      get(options[:parentable_path], to: "#{options[:controller]}#index")
     end
 
     def singular_linked_resource(klass, controller: nil, nested: true, &block)
@@ -48,10 +52,8 @@ module LinkedRails
       resource(
         options[:route_name],
         active_controller_opts(options).merge(singular_route: true),
-        &route_block(klass, &block)
+        &route_block(klass, :singular, &block)
       )
-
-      post(options[:parentable_path], to: "#{options[:controller]}#create", singular_route: true) if options[:creatable]
     end
 
     def find_tenant_route
@@ -59,6 +61,16 @@ module LinkedRails
     end
 
     private
+
+    def action_routes(controller, prefix, key, value)
+      path = value.fetch(:action_path, key)
+      action = value.fetch(:action_name)
+      get([prefix, path].compact.join('/'), action: action, action_key: key, controller: controller)
+      return if value[:target_path].nil?
+
+      method = value.fetch(:http_method).downcase
+      send(method, [prefix, value.fetch(:target_path)].compact.join('/'), action: key, controller: controller)
+    end
 
     def active_controller_opts(route_options)
       {
@@ -68,28 +80,31 @@ module LinkedRails
       }
     end
 
-    def creatable(klass)
-      klass.enhanced_with?(LinkedRails::Enhancements::Creatable, :Routing)
-    end
-
-    def route_block(klass)
+    def route_block(klass, action_type, controller: nil, prefix: nil)
       lambda do
-        include_route_concerns(klass: klass)
-
+        klass.action_list.defined_actions[action_type].each do |key, value|
+          action_routes(controller, prefix, key, value)
+        end
         yield if block_given?
       end
     end
 
     def route_options(klass, controller, nested, path)
+      touch_controller(klass)
+
       {
         controller: controller || klass.name.tableize,
-        creatable: creatable(klass),
         nested: nested,
         only: %i[show],
         parentable_path: "(*parent_iri)/#{path}",
         path: path,
         route_name: klass.name.demodulize.tableize
       }.with_indifferent_access
+    end
+
+    # Make sure all actions are initialized before generating the routes
+    def touch_controller(klass)
+      klass.controller_class
     end
   end
 end

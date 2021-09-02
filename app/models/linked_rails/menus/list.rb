@@ -34,7 +34,7 @@ module LinkedRails
       private
 
       def default_label(tag, options)
-        I18n.t("menus.#{resource&.class&.name&.tableize}.#{tag}", options[:label_params])
+        I18n.t("menus.#{resource&.class&.name&.tableize}.#{tag}", **options[:label_params])
       end
 
       def menu_available?(_tag, options)

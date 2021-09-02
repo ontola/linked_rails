@@ -6,7 +6,7 @@ module LinkedRails
 
     attribute :label, predicate: Vocab.schema.name
     attribute :description, predicate: Vocab.schema.text
-    attribute :url, predicate: Vocab.schema.url
+    attribute :target_url, predicate: Vocab.schema.url
     attribute :http_method, key: :method, predicate: Vocab.schema.httpMethod do |object|
       object.http_method.upcase
     end

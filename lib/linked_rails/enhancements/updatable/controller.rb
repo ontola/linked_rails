@@ -7,7 +7,7 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          active_response :update
+          has_resource_update_action
         end
       end
     end

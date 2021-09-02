@@ -33,5 +33,15 @@ module LinkedRails
     def serializer_params
       {}
     end
+
+    def success_message_translation_key
+      "actions.#{Translate.translation_key(controller_class)}.#{action_name}.success"
+    end
+
+    def success_message_translation_opts
+      {
+        default: [:"actions.default.#{action_name}.success", '']
+      }
+    end
   end
 end

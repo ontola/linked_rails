@@ -94,7 +94,7 @@ module LinkedRails
 
       def sanitized_route_params(controller_class, params)
         new_params = params.except(:action, :controller)
-        nested_key = :"#{controller_class.name.downcase.singularize}_id"
+        nested_key = :"#{controller_class.name.tableize.singularize}_id"
         new_params[:id] ||= new_params.delete(nested_key) if new_params.key?(nested_key)
         new_params
       end

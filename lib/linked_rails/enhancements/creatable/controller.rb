@@ -7,7 +7,7 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          active_response :create
+          has_collection_create_action
         end
       end
     end

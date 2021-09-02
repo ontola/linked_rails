@@ -15,7 +15,7 @@ module LinkedRails
       enhanceable :policy_class, :Policy
       class_attribute :_permitted_attributes
 
-      attr_reader :message, :user_context, :record
+      attr_reader :action_status, :message, :user_context, :record
 
       def initialize(user_context, record)
         @user_context = user_context
@@ -36,6 +36,10 @@ module LinkedRails
         .select { |opts| attribute_permitted?(opts[:conditions]) }
         .map { |opts| sanitized_attributes(opts[:attributes], opts[:options] || {}) }
         .flatten
+    end
+
+    def policy_class
+      self.class.policy_class
     end
 
     def show?
@@ -68,8 +72,15 @@ module LinkedRails
       Pundit.policy(user_context, record.build_child(klass, opts.merge(user_context: user_context)))
     end
 
-    def forbid_with_message(message)
+    def forbid_with_message(message, status = nil)
+      forbid_with_status(status) if status
       @message = message
+      false
+    end
+
+    def forbid_with_status(status, message = nil)
+      forbid_with_message(message) if message
+      @action_status = status
       false
     end
 
@@ -77,10 +88,6 @@ module LinkedRails
       return if record.try(:parent).blank?
 
       @parent_policy ||= Pundit.policy(user_context, record.parent)
-    end
-
-    def policy_class
-      self.class.policy_class
     end
 
     def sanitize_array_attribute(attr)
@@ -131,6 +138,10 @@ module LinkedRails
         end
       end
 
+      def policy_class
+        @policy_class ||= name.sub(/Policy/, '').classify.safe_constantize
+      end
+
       def permitted_attributes
         initialize_permitted_attributes
 
@@ -175,10 +186,6 @@ module LinkedRails
 
       def permit_nested_attributes(attrs, conditions = {})
         permitted_attributes << {attributes: attrs, conditions: conditions, options: {nested: true}}
-      end
-
-      def policy_class
-        @policy_class ||= name.sub(/Policy/, '').classify.safe_constantize
       end
 
       def property_shapes(conditions)

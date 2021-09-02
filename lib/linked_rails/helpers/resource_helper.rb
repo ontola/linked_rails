@@ -59,7 +59,7 @@ module LinkedRails
 
       def resolve_current_resource
         case action_name
-        when 'create', 'new'
+        when 'create'
           new_resource
         else
           requested_resource

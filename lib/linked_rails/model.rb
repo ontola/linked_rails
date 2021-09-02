@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'model/actionable'
 require_relative 'model/collections'
 require_relative 'model/dirty'
 require_relative 'model/enhancements'
@@ -16,6 +17,7 @@ require_relative 'model/tables'
 module LinkedRails
   module Model
     extend ActiveSupport::Concern
+    include Actionable
     include Collections
     include Dirty
     include Enhancements
@@ -36,6 +38,10 @@ module LinkedRails
     module ClassMethods
       def build_new(parent: nil, user_context: nil)
         new(attributes_for_new(parent: parent, user_context: user_context))
+      end
+
+      def controller_class
+        @controller_class ||= "#{to_s.pluralize}Controller".safe_constantize || superclass.try(:controller_class)
       end
 
       def form_class

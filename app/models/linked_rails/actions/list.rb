@@ -7,14 +7,12 @@ module LinkedRails
     class List
       include ActiveModel::Model
       include LinkedRails::Model
-      include DefaultActions
-      extend LinkedRails::Enhanceable
 
       attr_accessor :resource, :user_context
       class_attribute :_defined_actions, instance_reader: false, instance_writer: false
 
       def actions
-        @actions ||= defined_actions.map { |tag, opts| action_item(tag, opts.dup) }
+        @actions ||= defined_actions.map { |tag, opts| action_item(tag, opts.dup) }.select(&:available?)
       end
 
       def action(tag)
@@ -34,9 +32,9 @@ module LinkedRails
       private
 
       def action_item(tag, options)
-        options[:tag] ||= options[:action_tag] || tag
+        options[:tag] ||= tag
         options[:list] ||= self
-        LinkedRails.actions_item_class.new(options.except(:action_tag))
+        LinkedRails.actions_item_class.new(options.except(:action_name))
       end
 
       def association
@@ -77,26 +75,11 @@ module LinkedRails
 
         private
 
-        def has_collection_action(action, opts = {})
-          opts[:http_method] ||= 'POST'
-          defined_actions[:collection][action] = opts
-        end
-
-        def has_resource_action(action, opts = {})
-          opts[:http_method] ||= 'POST'
-          defined_actions[:resource][action] = opts
-        end
-
-        def has_singular_action(action, opts = {})
-          opts[:http_method] ||= 'POST'
-          defined_actions[:singular][action] = opts
-        end
-
         def initial_defined_actions(clone_from = {})
           {
-            collection: clone_from[:collection].dup || {},
-            resource: clone_from[:resource].dup || {},
-            singular: clone_from[:singular].dup || {}
+            collection: clone_from[:collection].dup&.select { |_, value| value[:inherit] != false } || {},
+            resource: clone_from[:resource].dup&.select { |_, value| value[:inherit] != false } || {},
+            singular: clone_from[:singular].dup&.select { |_, value| value[:inherit] != false } || {}
           }
         end
 
@@ -106,8 +89,6 @@ module LinkedRails
           self._defined_actions = initial_defined_actions(superclass.try(:_defined_actions) || {})
         end
       end
-
-      enhanceable :actionable_class, :Action
     end
   end
 end

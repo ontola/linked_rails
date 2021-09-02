@@ -7,7 +7,7 @@ module LinkedRails
         extend ActiveSupport::Concern
 
         included do
-          active_response :destroy
+          has_resource_destroy_action
         end
       end
     end

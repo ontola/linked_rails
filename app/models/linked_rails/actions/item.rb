@@ -8,13 +8,13 @@ module LinkedRails
       include ActiveModel::Model
       include LinkedRails::Model
 
-      attr_accessor :list, :policy_arguments, :submit_label
+      attr_accessor :inherit, :list, :policy_arguments, :submit_label, :target_path
       attr_writer :parent, :resource, :root_relative_iri, :user_context, :object,
                   :target
       delegate :user_context, to: :list, allow_nil: true
 
-      %i[description result type policy label image url include_object include_paths collection condition form completed
-         tag http_method favorite path policy_resource predicate resource].each do |method|
+      %i[condition description result type policy label image target_url collection form completed
+         tag http_method favorite action_path policy_resource predicate resource].each do |method|
         attr_writer method
         define_method method do
           var = instance_variable_get(:"@#{method}")
@@ -25,12 +25,14 @@ module LinkedRails
         end
       end
 
-      def action_status
+      def action_status # rubocop:disable Metrics/MethodLength
         @action_status ||=
           if completed
             Vocab.schema.CompletedActionStatus
           elsif policy_valid?
             Vocab.schema.PotentialActionStatus
+          elsif policy_status
+            policy_status
           elsif policy_expired?
             Vocab.ontola[:ExpiredActionStatus]
           else
@@ -43,8 +45,6 @@ module LinkedRails
       end
 
       def available?
-        return false unless action_status == Vocab.schema.PotentialActionStatus
-
         @condition.nil? || condition
       end
 
@@ -61,9 +61,8 @@ module LinkedRails
           I18n.t("actions.status.#{action_status.to_s.split('#').last}", default: nil)
       end
 
-      def form_resource_includes # rubocop:disable Metrics/CyclomaticComplexity
+      def form_resource_includes
         return {} if included_object.nil?
-        return include_paths || {} if iri.anonymous?
 
         includes = included_object.class.try(:preview_includes)&.presence || []
 
@@ -71,7 +70,7 @@ module LinkedRails
       end
 
       def included_object
-        object if include_object || object&.iri&.anonymous?
+        object if object&.iri&.anonymous?
       end
 
       def object
@@ -116,16 +115,23 @@ module LinkedRails
         resource.try(:singular_resource?)
       end
 
+      def policy_status
+        resource_policy.try(:action_status)
+      end
+
       def iri_opts
-        resource&.iri_opts || {}
+        return {} if resource.blank?
+
+        resource.try(:singular_resource?) ? resource.singular_iri_opts : resource.iri_opts
       end
 
       def iri_template
-        path_suffix = path.blank? ? "/actions/#{tag}" : "/#{path}"
+        path_suffix = "/#{action_path || tag}"
 
         return @iri_template ||= URITemplate.new(path_suffix) if resource.blank?
 
-        @iri_template ||= iri_template_expand_path(resource.send(:iri_template), path_suffix)
+        base_template = resource.send(resource.try(:singular_resource?) ? :singular_iri_template : :iri_template)
+        @iri_template ||= iri_template_expand_path(base_template, path_suffix)
       end
 
       def rdf_type
@@ -183,6 +189,12 @@ module LinkedRails
         @root_relative_iri
       end
 
+      def target_url_fallback
+        base = (resource.try(:singular_resource?) ? resource.singular_iri : resource.iri).dup
+        base.path += "/#{target_path}" if target_path.present?
+        base
+      end
+
       def type_fallback
         Vocab.schema.UpdateAction
       end
@@ -202,7 +214,7 @@ module LinkedRails
         end
 
         def requested_index_resource(params, user_context)
-          parent = parent_from_params(params, user_context)
+          parent = parent_from_params!(params, user_context) if params.key?(:parent_iri)
           action_list = parent ? parent.action_list(user_context) : app_action_list(user_context)
 
           LinkedRails.collection_class.new(
@@ -218,7 +230,7 @@ module LinkedRails
         def requested_single_resource(params, user_context)
           return nil if params[:id].blank?
 
-          parent = parent_from_params(params, user_context)
+          parent = parent_from_params!(params, user_context) if params.key?(:parent_iri)
           action_list = parent ? parent.action_list(user_context) : app_action_list(user_context)
 
           action_list&.action(params[:id].to_sym)

@@ -10,6 +10,19 @@ module LinkedRails
           LinkedRails.iri_mapper.parent_from_params(params, user_context)
         end
 
+        def parent_from_params!(params, user_context)
+          parent_from_params(params, user_context) || raise(ActiveRecord::RecordNotFound)
+        end
+
+        def requested_action(opts, user_context)
+          action_key = opts[:params][:action_key]
+          resource = LinkedRails.iri_mapper.resource_from_iri(
+            iri_without_action(opts[:iri]),
+            user_context
+          )
+          resource&.action(action_key, user_context)
+        end
+
         def requested_index_resource(params, user_context)
           if params.key?(:parent_iri)
             collection_from_parent(index_collection_params(params, user_context))
@@ -22,9 +35,11 @@ module LinkedRails
           requested_index_resource(params, user_context) || raise(ActiveRecord::RecordNotFound)
         end
 
-        def requested_resource(opts, user_context)
+        def requested_resource(opts, user_context) # rubocop:disable Metrics/MethodLength
           if collection_action?(opts)
             requested_index_resource(opts[:params], user_context)
+          elsif action_item_action?(opts)
+            requested_action(opts, user_context)
           elsif singular_action?(opts)
             resource = requested_singular_resource(opts[:params], user_context)
             resource&.singular_resource = true
@@ -48,8 +63,13 @@ module LinkedRails
 
         private
 
+        def action_item_action?(opts)
+          opts[:params][:action_key].present?
+        end
+
         def collection_action?(opts)
-          %w[index create].include?(opts[:action]) && !opts[:params][:singular_route]
+          opts[:action] == 'index' ||
+            opts[:class].action_list.defined_actions[:collection].key?(opts[:action].to_sym)
         end
 
         def index_collection_params(params, user_context)
@@ -58,6 +78,12 @@ module LinkedRails
           {
             user_context: user_context
           }.merge(params_hash).with_indifferent_access
+        end
+
+        def iri_without_action(url)
+          iri = RDF::URI(url)
+          iri.path = iri.path.split('/')[0...-1].join('/')
+          iri.to_s
         end
 
         def singular_action?(opts)

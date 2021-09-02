@@ -54,7 +54,7 @@ module LinkedRails
   configurable_class(:menus, :item)
   configurable_class(:ontology, :class)
   configurable_class(:ontology, :property)
-  configurable_class(nil, :action_list_parent, default: 'ApplicationActionList')
+  configurable_class(nil, :action_list_parent, default: 'LinkedRails::Actions::List')
   configurable_class(nil, :collection)
   configurable_class(nil, :controller_parent, default: 'ApplicationController')
   configurable_class(nil, :current_user)

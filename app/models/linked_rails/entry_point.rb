@@ -6,7 +6,7 @@ module LinkedRails
     include LinkedRails::Model
 
     attr_accessor :parent
-    attr_writer :url
+    attr_writer :target_url
     delegate :form, :description, :http_method, :image, :user_context,
              :resource, :tag, to: :parent
 
@@ -30,8 +30,8 @@ module LinkedRails
       value || label_fallback
     end
 
-    def url
-      @url || parent.url
+    def target_url
+      @target_url || parent.target_url
     end
 
     private
