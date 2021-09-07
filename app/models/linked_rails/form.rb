@@ -6,7 +6,7 @@ module LinkedRails
   class Form # rubocop:disable Metrics/ClassLength
     include LinkedRails::Model
 
-    class_attribute :pages, :model_class
+    class_attribute :abstract_form, :pages, :model_class
 
     def root_relative_iri(_opts = {})
       self.class.form_iri_path

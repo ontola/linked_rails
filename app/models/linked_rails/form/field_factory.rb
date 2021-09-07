@@ -20,7 +20,8 @@ module LinkedRails
 
       attr_accessor :field_options, :form, :key
 
-      delegate :form_options_iri,
+      delegate :abstract_form,
+               :form_options_iri,
                :model_class,
                :model_policy!,
                :serializer_attributes,
@@ -29,6 +30,8 @@ module LinkedRails
                to: :form
 
       def condition_or_field
+        return field if abstract_form
+
         @condition_or_field ||= model_policy!.condition_for(
           key,
           field,
@@ -81,7 +84,7 @@ module LinkedRails
       end
 
       def attribute_validators
-        @attribute_validators ||= model_class.validators.select { |v| v.attributes.include?(model_attribute) }
+        @attribute_validators ||= model_class&.validators&.select { |v| v.attributes.include?(model_attribute) }
       end
 
       def datatype
