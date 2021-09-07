@@ -12,6 +12,7 @@ module LinkedRails
       end
       attribute :action_status, predicate: Vocab.schema.actionStatus
       attribute :favorite, predicate: Vocab.ontola[:favoriteAction]
+      attribute :one_click, predicate: Vocab.ontola[:oneClick]
       attribute :target_url, predicate: Vocab.schema.url do |object|
         object.target[:id] if object.target.is_a?(Hash)
       end

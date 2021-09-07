@@ -56,6 +56,8 @@ module LinkedRails
         # @option opts [proc<string>, string] :image A fontawesome icon, prepended with 'fa-'
         # @option opts [boolean] :inherit Whether descendant controllers should clone this action.
         #   Defaults to true
+        # @option opts [boolean] :one_click Whether the action can be executed with one click.
+        #   Defaults to false
         # @option opts [proc<string>, string] :label The label of the action
         # @option opts [LinkedRails::Model] :object The object on which the action will be executed
         # @option opts [symbol] :on_failure Callback when the execute method failed.

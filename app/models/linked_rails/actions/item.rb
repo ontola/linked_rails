@@ -8,7 +8,7 @@ module LinkedRails
       include ActiveModel::Model
       include LinkedRails::Model
 
-      attr_accessor :inherit, :list, :policy_arguments, :submit_label, :target_path
+      attr_accessor :inherit, :list, :one_click, :policy_arguments, :submit_label, :target_path
       attr_writer :parent, :resource, :root_relative_iri, :user_context, :object,
                   :target
       delegate :user_context, to: :list, allow_nil: true
