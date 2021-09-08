@@ -13,7 +13,7 @@ module LinkedRails
                   :target
       delegate :user_context, to: :list, allow_nil: true
 
-      %i[condition description result type policy label image target_url collection form completed
+      %i[condition description result type policy label image target_url collection form
          tag http_method favorite action_path policy_resource predicate resource].each do |method|
         attr_writer method
         define_method method do
@@ -27,9 +27,7 @@ module LinkedRails
 
       def action_status # rubocop:disable Metrics/MethodLength
         @action_status ||=
-          if completed
-            Vocab.schema.CompletedActionStatus
-          elsif policy_valid?
+          if policy_valid?
             Vocab.schema.PotentialActionStatus
           elsif policy_status
             policy_status
@@ -90,7 +88,7 @@ module LinkedRails
       end
 
       def policy_message
-        resource_policy.try(:message) if action_status == Vocab.ontola[:DisabledActionStatus]
+        resource_policy.try(:message) unless policy_valid?
       end
 
       def root_relative_iri(_opts = {})

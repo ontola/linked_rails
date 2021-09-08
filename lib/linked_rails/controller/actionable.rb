@@ -43,8 +43,6 @@ module LinkedRails
         #   A route is automatically generated. Defaults to the action key
         # @option opts [proc<string>, string] :action_path The path to be appended to the resource iri.
         #   Defaults to "#{action_key}_action"
-        # @option opts [proc<boolean>, boolean] :completed If true, the action status will be set to
-        #   schema.CompletedActionStatus
         # @option opts [proc<string>, string] :description The description of this action
         # @option opts [symbol] :execute The controller method to use when this action is executed.
         #   Defaults to "#{action}_execute"
