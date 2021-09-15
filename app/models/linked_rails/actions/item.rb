@@ -25,7 +25,7 @@ module LinkedRails
         end
       end
 
-      def action_status # rubocop:disable Metrics/MethodLength
+      def action_status
         @action_status ||=
           if policy_valid?
             Vocab.schema.PotentialActionStatus

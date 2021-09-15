@@ -146,10 +146,24 @@ module LinkedRails
       nil
     end
 
+    def ontology_class(iri)
+      klass = ApplicationRecord.descendants.detect do |klass|
+        (klass.iri.is_a?(Array) ? klass.iri : [klass.iri]).include?(iri)
+      end
+      LinkedRails.ontology_class_class.new(iri: iri, klass: klass)
+    end
+
+    def ontology_property(iri)
+      LinkedRails.ontology_property_class.new(iri: iri)
+    end
+
     def ontology_term_response(iri, term, include)
+      capital = term.relativize(term.vocab).to_s[0] =~ /[A-Z]/
+      resource = capital ? ontology_class(term) : ontology_property(term)
+
       resource_response(
         iri,
-        body: include ? resource_body(LinkedRails.ontology_property_class.new(iri: term)) : nil,
+        body: include ? resource_body(resource) : nil,
         cache: :public,
         language: I18n.locale,
         status: 200
