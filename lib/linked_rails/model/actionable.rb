@@ -28,16 +28,18 @@ module LinkedRails
         end.flatten
       end
 
+      def favorite_actions
+        actions.filter(&:favorite)
+      end
+
       private
 
       def triples_for_actions(actions)
         actions.flat_map do |action|
-          triples = [
+          [
             [iri, action.predicate, action.iri],
             [iri, Vocab.schema.potentialAction, action.iri]
           ]
-          triples << [iri, LinkedRails::Vocab.ontola[:favoriteAction], action.iri] if action.favorite
-          triples
         end
       end
 

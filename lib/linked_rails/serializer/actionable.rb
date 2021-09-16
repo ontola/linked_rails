@@ -6,6 +6,10 @@ module LinkedRails
       extend ActiveSupport::Concern
 
       included do
+        has_many :favorite_actions,
+                 predicate: Vocab.ontola[:favoriteAction] do |object|
+          object.try(:favorite_actions)
+        end
         statements :action_triples
       end
 
