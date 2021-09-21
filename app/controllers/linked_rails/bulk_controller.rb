@@ -37,10 +37,10 @@ module LinkedRails
     def handle_resource_error(opts, error)
       log_resource_error(error)
       status = error_status(error)
-      body = error_body(status, error, opts[:iri]) if opts[:include].to_s == 'true'
+      body = error_body(status, error, URI(opts[:iri])) if opts[:include].to_s == 'true'
 
       resource_response(
-        opts[:iri],
+        URI(opts[:iri]),
         body: body,
         status: status
       )
