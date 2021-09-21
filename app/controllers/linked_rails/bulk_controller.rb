@@ -30,7 +30,7 @@ module LinkedRails
       @authorized_resources ||=
         params
           .require(:resources)
-          .map { |param| param.permit(:include, :iri) }
+          .map { |param| resource_params(param) }
           .map(&method(:timed_authorized_resource))
     end
 
@@ -81,6 +81,12 @@ module LinkedRails
         serializer_params
       )
       RDF::Serializers.serializer_for(resource).new(resource, serializer_options).send(:render_hndjson)
+    end
+
+    def resource_params(param)
+      params = param.permit(:include, :iri)
+      params[:iri] = URI(params[:iri])
+      params
     end
 
     def resource_response_body(iri, rack_body, status)
@@ -134,7 +140,7 @@ module LinkedRails
 
     def term_from_vocab(iri)
       vocab = Vocab.for(iri)
-      tag = iri.split(vocab.to_s).last
+      tag = iri.to_s.split(vocab.to_s).last
       vocab[tag]
     rescue NoMethodError
       nil
@@ -189,7 +195,7 @@ module LinkedRails
     end
 
     def wrong_host?(iri)
-      !iri.starts_with?(LinkedRails.iri)
+      !iri.to_s.starts_with?(LinkedRails.iri)
     end
   end
 end
