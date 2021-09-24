@@ -8,7 +8,7 @@ module LinkedRails
     attr_writer :resources, :size
     attr_accessor :parent, :topology
 
-    def iri(_opts = {})
+    def iri(**_opts)
       @iri ||= RDF::Node.new
     end
 

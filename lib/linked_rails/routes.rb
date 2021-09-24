@@ -4,7 +4,7 @@ require 'linked_rails/constraints/whitelist'
 
 module LinkedRails
   module Routes
-    def use_linked_rails(opts = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def use_linked_rails(**opts) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       constraints(LinkedRails::Constraints::Whitelist) do
         post 'spi/bulk', to: "#{opts.fetch(:bulk, 'linked_rails/bulk')}#show"
       end

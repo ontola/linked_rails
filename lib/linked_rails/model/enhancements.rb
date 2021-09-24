@@ -16,7 +16,7 @@ module LinkedRails
 
       module ClassMethods
         # Adds an enhancement to a model and includes the Model module.
-        def enhance(enhancement, opts = {})
+        def enhance(enhancement, **opts)
           initialize_enhancements
           already_included = enhanced_with?(enhancement)
 

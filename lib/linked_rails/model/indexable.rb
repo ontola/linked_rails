@@ -15,7 +15,7 @@ module LinkedRails
           parent.send(collection_name, params) if collection_name
         end
 
-        def root_collection(params = {})
+        def root_collection(**params)
           return unless root_collection?
 
           root_collection_class.collection_or_view(root_collection_opts, params)

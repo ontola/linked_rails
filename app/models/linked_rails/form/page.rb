@@ -6,13 +6,13 @@ module LinkedRails
       attr_accessor :groups, :label, :description
       attr_writer :key
 
-      def initialize(attrs = {})
-        super(attrs)
+      def initialize(**attrs)
+        super(**attrs)
         self.groups = []
       end
 
-      def add_group(opts)
-        group = Form::Group.new(opts)
+      def add_group(**opts)
+        group = Form::Group.new(**opts)
         groups << group
         group
       end

@@ -16,7 +16,7 @@ module LinkedRails
           class_variables.include?(:@@filter_options) ? super : {}
         end
 
-        def filterable(options = {})
+        def filterable(**options)
           initialize_filter_options
 
           self.filter_options = HashWithIndifferentAccess.new(options).merge(filter_options)
@@ -26,7 +26,7 @@ module LinkedRails
 
         private
 
-        def boolean_filter(true_filter, false_filter, options = {})
+        def boolean_filter(true_filter, false_filter, **options)
           {
             filter: resolve_boolean_filter(true_filter, false_filter),
             values: [true, false]

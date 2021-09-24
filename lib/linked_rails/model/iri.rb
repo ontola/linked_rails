@@ -14,9 +14,9 @@ module LinkedRails
       end
 
       # @return [RDF::URI].
-      def iri(opts = {})
+      def iri(**opts)
         return anonymous_iri if anonymous_iri?
-        return iri_with_root(root_relative_iri(opts)) if opts.present?
+        return iri_with_root(root_relative_iri(**opts)) if opts.present?
 
         @iri ||= iri_with_root(root_relative_iri)
       end
@@ -33,14 +33,14 @@ module LinkedRails
         self.class.iri
       end
 
-      def reload(_opts = {})
+      def reload(**_opts)
         @iri = nil
         super
       end
 
       # @return [RDF::URI]
-      def root_relative_iri(opts = {})
-        RDF::URI(expand_iri_template(iri_opts.merge(opts)))
+      def root_relative_iri(**opts)
+        RDF::URI(expand_iri_template(**iri_opts.merge(opts)))
       end
 
       # @return [String, Symbol]
@@ -49,7 +49,7 @@ module LinkedRails
       private
 
       # @return [String]
-      def expand_iri_template(args = {})
+      def expand_iri_template(**args)
         iri_template.expand(args)
       end
 

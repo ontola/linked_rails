@@ -38,7 +38,7 @@ module LinkedRails
           end
       end
 
-      def as_json(_opts = {})
+      def as_json(**_opts)
         {}
       end
 
@@ -91,7 +91,7 @@ module LinkedRails
         resource_policy.try(:message) unless policy_valid?
       end
 
-      def root_relative_iri(_opts = {})
+      def root_relative_iri(**_opts)
         value = root_relative_iri_from_var
         value = RDF::URI(value) unless value.blank? || value.is_a?(RDF::URI)
         return @root_relative_iri = value if value

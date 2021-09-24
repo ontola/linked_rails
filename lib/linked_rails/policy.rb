@@ -23,11 +23,11 @@ module LinkedRails
       end
     end
 
-    def create_child?(klass, opts = {})
+    def create_child?(klass, **opts)
       child_policy(klass, opts).create?
     end
 
-    def index_children?(klass, opts = {})
+    def index_children?(klass, **opts)
       child_policy(klass, opts).show?
     end
 
@@ -68,7 +68,7 @@ module LinkedRails
       end
     end
 
-    def child_policy(klass, opts = {})
+    def child_policy(klass, **opts)
       Pundit.policy(user_context, record.build_child(klass, opts.merge(user_context: user_context)))
     end
 
@@ -125,7 +125,7 @@ module LinkedRails
     end
 
     module ClassMethods
-      def condition_for(attr, pass, shape_opts = {})
+      def condition_for(attr, pass, **shape_opts)
         raise("#{attr} not permitted by #{self}") if attribute_options(attr).blank? && pass.permission_required?
 
         alternatives = node_shapes_for(attr, **shape_opts)
@@ -176,15 +176,15 @@ module LinkedRails
         self._permitted_attributes = superclass.try(:_permitted_attributes)&.dup || []
       end
 
-      def permit_attributes(attrs, conditions = {})
+      def permit_attributes(attrs, **conditions)
         permitted_attributes << {attributes: attrs, conditions: conditions, options: {}}
       end
 
-      def permit_array_attributes(attrs, conditions = {})
+      def permit_array_attributes(attrs, **conditions)
         permitted_attributes << {attributes: attrs, conditions: conditions, options: {array: true}}
       end
 
-      def permit_nested_attributes(attrs, conditions = {})
+      def permit_nested_attributes(attrs, **conditions)
         permitted_attributes << {attributes: attrs, conditions: conditions, options: {nested: true}}
       end
 

@@ -33,7 +33,7 @@ module LinkedRails
       end
       # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
-      def iri(_opts = {})
+      def iri(**_opts)
         self
       end
 

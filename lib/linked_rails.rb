@@ -41,7 +41,7 @@ module LinkedRails
       @@scheme ||= Rails.application.routes.default_url_options[:protocol] || :http # rubocop:disable Style/ClassVars
     end
 
-    def iri(opts = {})
+    def iri(**opts)
       RDF::URI.new(**{scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(opts))
     end
   end

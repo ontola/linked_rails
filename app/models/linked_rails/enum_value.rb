@@ -12,7 +12,7 @@ module LinkedRails
       label_from_variable || LinkedRails.translate(:enum, :label, self)
     end
 
-    def iri(_opts = {})
+    def iri(**_opts)
       @iri || iri_with_root(RDF::URI("/enums/#{klass.name.tableize}/#{attr}##{key}"))
     end
 

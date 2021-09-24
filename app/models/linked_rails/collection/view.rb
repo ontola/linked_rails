@@ -14,8 +14,8 @@ module LinkedRails
 
       alias id iri
 
-      def root_relative_iri(opts = {})
-        collection.unfiltered.root_relative_iri(iri_opts.merge(opts))
+      def root_relative_iri(**opts)
+        collection.unfiltered.root_relative_iri(**iri_opts.merge(opts))
       end
 
       def member_sequence
@@ -78,15 +78,15 @@ module LinkedRails
           [super, Vocab.as.CollectionPage]
         end
 
-        def new(opts = {})
+        def new(**opts)
           type = opts.delete(:type)&.to_sym
           return super if type.nil?
 
           case type
           when :paginated
-            LinkedRails.collection_paginated_view_class.new(opts)
+            LinkedRails.collection_paginated_view_class.new(**opts)
           when :infinite
-            LinkedRails.collection_infinite_view_class.new(opts)
+            LinkedRails.collection_infinite_view_class.new(**opts)
           else
             raise ActionController::BadRequest, "'#{type}' is not a valid collection type"
           end

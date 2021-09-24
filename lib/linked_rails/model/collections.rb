@@ -18,7 +18,7 @@ module LinkedRails
       # @param [ApplicationRecord] part_of
       # @param [Hash] opts Additional options to be passed to the collection.
       # @return [Collection]
-      def collection_for(name, instance_opts = {})
+      def collection_for(name, **instance_opts)
         collection_opts = collections.detect { |c| c[:name] == name }.try(:[], :options).dup
         return if collection_opts.blank?
 
@@ -66,14 +66,14 @@ module LinkedRails
         # @option options [Class] association_class the class of the association
         # @option options [Sym] joins the associations to join
         # @return [Collection]
-        def with_collection(name, options = {})
+        def with_collection(name, **options)
           options[:association] ||= name.to_sym
           options[:association_class] ||= name.to_s.classify.constantize
 
           collections_add(name: name, options: options)
 
           define_method "#{name.to_s.singularize}_collection" do |opts = {}|
-            collection_for(name, opts)
+            collection_for(name, **opts)
           end
         end
       end

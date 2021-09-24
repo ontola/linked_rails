@@ -4,25 +4,25 @@ module LinkedRails
   module Controller
     module DefaultActions
       module Destroy
-        def has_resource_destroy_action(overwrite = {})
-          has_resource_action(:destroy, **destroy_resource_options(overwrite))
+        def has_resource_destroy_action(**overwrite)
+          has_resource_action(:destroy, **destroy_resource_options(**overwrite))
         end
 
-        def has_singular_destroy_action(overwrite = {})
-          has_singular_action(:destroy, **destroy_singular_options(overwrite))
+        def has_singular_destroy_action(**overwrite)
+          has_singular_action(:destroy, **destroy_singular_options(**overwrite))
         end
 
         private
 
-        def destroy_resource_options(overwrite = {})
-          default_destroy_options(overwrite)
+        def destroy_resource_options(**overwrite)
+          default_destroy_options(**overwrite)
         end
 
-        def destroy_singular_options(overwrite = {})
-          default_destroy_options(overwrite)
+        def destroy_singular_options(**overwrite)
+          default_destroy_options(**overwrite)
         end
 
-        def default_destroy_options(overwrite = {}) # rubocop:disable Metrics/MethodLength
+        def default_destroy_options(**overwrite) # rubocop:disable Metrics/MethodLength
           {
             action_name: :delete,
             action_path: :delete,

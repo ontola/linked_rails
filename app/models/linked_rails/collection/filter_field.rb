@@ -13,7 +13,7 @@ module LinkedRails
       callable_variable(:options_array)
       callable_variable(:options_in)
 
-      def iri(_opts = {})
+      def iri(**_opts)
         self
       end
 

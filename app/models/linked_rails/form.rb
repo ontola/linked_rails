@@ -8,7 +8,7 @@ module LinkedRails
 
     class_attribute :abstract_form, :pages, :model_class
 
-    def root_relative_iri(_opts = {})
+    def root_relative_iri(**_opts)
       self.class.form_iri_path
     end
 
@@ -85,7 +85,7 @@ module LinkedRails
         @default_page ||= page(:default)
       end
 
-      def field(key, opts = {})
+      def field(key, **opts)
         current_group.fields << Form::FieldFactory.new(
           field_options: opts,
           form: self,
@@ -108,10 +108,10 @@ module LinkedRails
         current_page.footer_group
       end
 
-      def group(key, opts = {})
+      def group(key, **opts)
         opts[:collapsible] = true unless opts.key?(:collapsible)
         opts[:key] = key
-        group = current_page.add_group(opts)
+        group = current_page.add_group(**opts)
         @current_group = group
 
         yield if block_given?
@@ -120,24 +120,24 @@ module LinkedRails
         group
       end
 
-      def has_many(key, opts = {})
+      def has_many(key, **opts)
         opts[:input_field] = Form::Field::AssociationInput
         opts[:max_count] = 99
-        field(key, opts)
+        field(key, **opts)
       end
 
-      def has_one(key, opts = {})
+      def has_one(key, **opts)
         opts[:input_field] = Form::Field::AssociationInput
         opts[:max_count] = 1
-        field(key, opts)
+        field(key, **opts)
       end
 
       def hidden(&block)
         group(:hidden, collapsible: false, hidden: true, &block)
       end
 
-      def page(key, opts = {})
-        page = Form::Page.new(opts.merge(key: key))
+      def page(key, **opts)
+        page = Form::Page.new(**opts.merge(key: key))
         @current_page = page
         pages << @current_page
         yield if block_given?
@@ -145,9 +145,9 @@ module LinkedRails
         page
       end
 
-      def resource(key, opts = {})
+      def resource(key, **opts)
         opts[:input_field] = Form::Field::ResourceField
-        field(key, opts)
+        field(key, **opts)
       end
     end
   end

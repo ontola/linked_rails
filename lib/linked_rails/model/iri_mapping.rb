@@ -27,7 +27,7 @@ module LinkedRails
           if params.key?(:parent_iri)
             collection_from_parent(index_collection_params(params, user_context))
           else
-            root_collection(index_collection_params(params, user_context))
+            root_collection(**index_collection_params(params, user_context))
           end
         end
 

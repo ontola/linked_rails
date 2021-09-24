@@ -6,8 +6,8 @@ module LinkedRails
       attr_accessor :fields, :collapsible, :hidden, :footer
       attr_writer :description, :key, :label
 
-      def initialize(attrs = {})
-        super(attrs)
+      def initialize(**attrs)
+        super(**attrs)
         self.fields = []
       end
 

@@ -5,7 +5,7 @@ module LinkedRails
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def callable_variable(method, opts = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def callable_variable(method, **opts) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         variable ||= opts[:variable] || method
         default ||= opts[:default]
 

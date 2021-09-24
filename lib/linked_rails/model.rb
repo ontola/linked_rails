@@ -37,7 +37,7 @@ module LinkedRails
 
     module ClassMethods
       def build_new(parent: nil, user_context: nil)
-        new(attributes_for_new(parent: parent, user_context: user_context))
+        new(**attributes_for_new(parent: parent, user_context: user_context))
       end
 
       def controller_class

@@ -66,7 +66,7 @@ module LinkedRails
         ]
       end
 
-      def has_one(key, opts = {})
+      def has_one(key, **opts)
         opts[:id_method_name] = :iri
 
         return super if block_given?
@@ -76,7 +76,7 @@ module LinkedRails
         end
       end
 
-      def has_many(key, opts = {})
+      def has_many(key, **opts)
         opts[:id_method_name] = :iri
 
         return super if block_given?
@@ -111,7 +111,7 @@ module LinkedRails
         end
       end
 
-      def with_collection(name, opts = {})
+      def with_collection(name, **opts)
         collection_name = "#{name.to_s.singularize}_collection"
         page_size = opts.delete(:page_size)
         display = opts.delete(:display)
@@ -119,7 +119,7 @@ module LinkedRails
         opts[:polymorphic] ||= true
         opts[:if] ||= method(:named_object?)
 
-        has_one collection_name, opts do |object, params|
+        has_one collection_name, **opts do |object, params|
           object.send(collection_name, user_context: params[:scope], display: display, page_size: page_size)
         end
       end

@@ -9,18 +9,18 @@ module LinkedRails
         attr_accessor :singular_resource
       end
 
-      def root_relative_singular_iri(opts = {})
+      def root_relative_singular_iri(**opts)
         RDF::URI(self.class.singular_iri_template.expand(singular_iri_opts.merge(opts)))
       end
 
-      def root_relative_iri(opts = {})
+      def root_relative_iri(**opts)
         return super unless anonymous_iri?
 
-        root_relative_singular_iri(opts)
+        root_relative_singular_iri(**opts)
       end
 
-      def singular_iri(opts = {})
-        return iri_with_root(root_relative_singular_iri(opts)) if opts.present?
+      def singular_iri(**opts)
+        return iri_with_root(root_relative_singular_iri(**opts)) if opts.present?
 
         @singular_iri ||= iri_with_root(root_relative_singular_iri)
       end

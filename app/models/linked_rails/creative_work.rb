@@ -8,7 +8,7 @@ module LinkedRails
     attr_writer :iri
     attr_accessor :description, :name, :text, :url
 
-    def iri(_opts = {})
+    def iri(**_opts)
       @iri ||= RDF::Node.new
     end
 

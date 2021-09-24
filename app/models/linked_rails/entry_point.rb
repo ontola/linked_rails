@@ -16,7 +16,7 @@ module LinkedRails
       form&.form_iri
     end
 
-    def as_json(_opts = {})
+    def as_json(**_opts)
       {}
     end
 

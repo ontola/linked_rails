@@ -5,7 +5,7 @@ module LinkedRails
     attr_accessor :node, :member_includes, :parent, :raw_members, :scope, :user_context
     alias read_attribute_for_serialization send
 
-    def initialize(members, opts = {})
+    def initialize(members, **opts)
       self.member_includes = opts[:member_includes]
       self.node = opts[:id] || RDF::Node.new
       self.parent = opts[:parent]
@@ -14,7 +14,7 @@ module LinkedRails
       self.user_context = opts[:user_context]
     end
 
-    def iri(_opts = {})
+    def iri(**_opts)
       node
     end
     alias id iri

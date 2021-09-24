@@ -108,7 +108,7 @@ module LinkedRails
 
     def new_child(options)
       attrs = options.merge(new_child_values)
-      self.class.new(attrs)
+      self.class.new(**attrs)
     end
 
     def preview_includes
@@ -158,7 +158,7 @@ module LinkedRails
 
     def view_with_opts(opts)
       @views ||= []
-      view = LinkedRails.collection_view_class.new({collection: self, type: type}.merge(opts))
+      view = LinkedRails.collection_view_class.new(**{collection: self, type: type}.merge(opts))
       @views << view
       view
     end
