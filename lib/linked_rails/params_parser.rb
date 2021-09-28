@@ -145,7 +145,7 @@ module LinkedRails
 
       key = foreign_key_for_reflection(reflection)
 
-      value = resource&.send(reflection.association_primary_key) if key
+      value = resource&.try(reflection.association_primary_key) if key
 
       [key, value] if value
     end

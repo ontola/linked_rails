@@ -26,8 +26,8 @@ module LinkedRails
         %i[classes properties]
       end
 
-      def requested_resource(_opts, _user_context)
-        LinkedRails.ontology_class.new
+      def requested_resource(opts, _user_context)
+        LinkedRails.ontology_class.new if opts[:iri].ends_with?(new.root_relative_iri)
       end
     end
   end
