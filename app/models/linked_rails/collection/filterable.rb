@@ -7,6 +7,10 @@ module LinkedRails
 
       attr_writer :filter, :unfiltered_collection
 
+      def base_collection?
+        unfiltered_collection.iri == iri
+      end
+
       def filter
         default_filters.merge(@filter || {})
       end

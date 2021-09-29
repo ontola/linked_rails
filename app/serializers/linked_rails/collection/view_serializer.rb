@@ -9,6 +9,7 @@ module LinkedRails
       attribute :display, predicate: Vocab.ontola[:collectionDisplay] do |object|
         Vocab.ontola["collectionDisplay/#{object.display || :default}"]
       end
+      attribute :collected_at_with_default, predicate: Vocab.ontola[:collectedAt]
 
       %i[next prev].each do |attr|
         attribute attr, predicate: Vocab.as[attr]

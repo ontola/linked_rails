@@ -26,7 +26,7 @@ module LinkedRails
     include LinkedRails::Collection::IRIMapping
     include LinkedRails::Collection::Sortable
 
-    attr_accessor :name, :policy, :user_context
+    attr_accessor :collected_at, :name, :policy, :user_context
     attr_writer :association_base, :views
 
     alias id iri
@@ -38,6 +38,7 @@ module LinkedRails
         raise("No #{key} given") if opts[key].blank?
       end
       opts[:route_key] ||= opts[:association_class].collection_route_key
+      opts[:collected_at] = DateTime.parse(opts[:collected_at]) if opts.key?(:collected_at)
 
       super
     end
@@ -69,6 +70,10 @@ module LinkedRails
 
     def child_resource
       @child_resource ||= build_child
+    end
+
+    def collected_at_with_default
+      @collected_at_with_default ||= collected_at || Time.now
     end
 
     def columns

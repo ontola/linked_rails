@@ -6,9 +6,9 @@ module LinkedRails
       extend ActiveSupport::Concern
 
       included do
-        statements :same_as_statement
+        statements :same_as_statements
 
-        def self.same_as_statement(object, _params)
+        def self.same_as_statements(object, _params)
           return [] unless object.try(:singular_resource?) && object.singular_iri != object.iri
 
           [

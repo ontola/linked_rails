@@ -64,7 +64,7 @@ module LinkedRails
       end
 
       def invalidate_collection_delta(collection)
-        [Vocab.sp[:Variable], Vocab.ontola[:baseCollection], collection.iri, delta_iri(:invalidate)]
+        [collection.iri, Vocab.ontola[:lastActivityAt], Time.current, delta_iri(:replace)]
       end
 
       def invalidate_parent_collections_delta(resource)

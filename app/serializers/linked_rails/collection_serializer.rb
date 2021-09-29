@@ -3,6 +3,7 @@
 module LinkedRails
   class CollectionSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
+    extend LinkedRails::Helpers::DeltaHelper
 
     attribute :base_url, predicate: Vocab.schema.url do |object|
       object.iri(display: nil, page_size: nil, table_type: nil)
@@ -30,6 +31,10 @@ module LinkedRails
     attribute :grid_max_columns, predicate: Vocab.ontola['grid/maxColumns']
     attribute :sort_options, predicate: Vocab.ontola[:sortOptions]
     attribute :view, predicate: Vocab.ll[:view]
+    attribute :collected_at_with_default, predicate: Vocab.ontola[:collectedAt]
+    attribute :last_activity_at, predicate: Vocab.ontola[:lastActivityAt] do |object|
+      object.collected_at if object.base_collection?
+    end
 
     has_one :unfiltered_collection, predicate: Vocab.ontola[:baseCollection]
     has_one :part_of, predicate: Vocab.schema.isPartOf do |object|

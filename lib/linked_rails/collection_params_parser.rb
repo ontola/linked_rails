@@ -12,7 +12,7 @@ module LinkedRails
     def collection_params
       return @collection_params if instance_variable_defined?(:@collection_params)
 
-      values = permit_params(:display, :page_size, :table_type, :title, :type)
+      values = permit_params(:collected_at, :display, :page_size, :table_type, :title, :type)
 
       filter = filter_params
       values[:filter] = filter if filter
