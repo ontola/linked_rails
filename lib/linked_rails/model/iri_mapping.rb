@@ -41,9 +41,7 @@ module LinkedRails
           elsif action_item_action?(opts)
             requested_action(opts, user_context)
           elsif singular_action?(opts)
-            resource = requested_singular_resource(opts[:params], user_context)
-            resource&.singular_resource = true
-            resource
+            singular_resource(requested_singular_resource(opts[:params], user_context))
           else
             requested_single_resource(opts[:params], user_context)
           end
@@ -59,6 +57,11 @@ module LinkedRails
 
         def requested_single_resource!(params, user_context)
           requested_single_resource(params, user_context) || raise(ActiveRecord::RecordNotFound)
+        end
+
+        def singular_resource(resource)
+          resource&.singular_resource = true
+          resource
         end
 
         private
