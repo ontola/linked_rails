@@ -35,7 +35,7 @@ module LinkedRails
     end
 
     def handle_resource_error(opts, error)
-      log_resource_error(error)
+      log_resource_error(error, opts[:iri])
       status = error_status(error)
       body = error_body(status, error, opts[:iri]) if opts[:include].to_s == 'true'
 
@@ -50,7 +50,7 @@ module LinkedRails
       resource_body(error_resource(status, error, iri))
     end
 
-    def log_resource_error(error)
+    def log_resource_error(error, _iri)
       return unless log_resource_error?(error)
 
       Rails.logger.error(error)

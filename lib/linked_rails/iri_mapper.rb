@@ -51,7 +51,7 @@ module LinkedRails
       end
 
       def resource_from_iri(iri, user_context)
-        ensure_absolute_iri!(iri)
+        return nil unless absolute_iri?(iri)
 
         opts = opts_from_iri(iri)
         resource_from_opts(opts, user_context)
@@ -80,16 +80,16 @@ module LinkedRails
 
       private
 
+      def absolute_iri?(iri)
+        iri.present? && !URI(iri).relative?
+      end
+
       def class_for_controller(controller)
         return if controller.blank?
 
         "::#{controller.camelize}Controller"
           .safe_constantize
           .try(:controller_class)
-      end
-
-      def ensure_absolute_iri!(iri)
-        raise("An absolute url is expected. #{iri} is given.") if iri.blank? || URI(iri).relative?
       end
 
       def sanitized_route_params(controller_class, params)
