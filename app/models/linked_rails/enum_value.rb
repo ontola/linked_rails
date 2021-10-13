@@ -32,19 +32,13 @@ module LinkedRails
 
     class << self
       def class_for_params(params)
-        linked_models.detect do |klass|
+        LinkedRails.linked_models.detect do |klass|
           klass.to_s == ([params[:module]].compact + [params[:klass]&.singularize]).join('/').classify
         end
       end
 
       def enum_options(params)
         serializer_for_params(params)&.enum_options(params[:attribute])
-      end
-
-      def linked_models
-        @linked_models ||= ObjectSpace.each_object(Class).select do |c|
-          c.included_modules.include?(LinkedRails::Model)
-        end
       end
 
       def requested_resource(opts, _user_context)

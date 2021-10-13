@@ -89,7 +89,7 @@ module LinkedRails
 
     def iri_to_class(iri)
       iri.to_s.split(Vocab.app.to_s).pop&.classify&.safe_constantize ||
-        ApplicationRecord.descendants.detect { |klass| klass.iri == iri }
+        LinkedRails.linked_models.detect { |klass| klass.iri == iri }
     end
 
     def nested_attributes(object, klass, association, collection)

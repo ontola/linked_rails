@@ -6,11 +6,11 @@ module LinkedRails
     include LinkedRails::Model
 
     def classes
-      @classes ||= ApplicationRecord.descendants.map do |klass|
+      @classes ||= LinkedRails.linked_models.map do |klass|
         iri = klass.iri.is_a?(Array) ? klass.iri.first : klass.iri
 
-        LinkedRails.ontology_class_class.new(klass: klass, iri: iri)
-      end
+        LinkedRails.ontology_class_class.new(klass: klass, iri: iri) if iri
+      end.compact
     end
 
     def properties
@@ -27,7 +27,7 @@ module LinkedRails
       end
 
       def requested_resource(opts, _user_context)
-        LinkedRails.ontology_class.new if opts[:iri].ends_with?(new.root_relative_iri)
+        LinkedRails.ontology_class.new if opts[:iri].include?(new.root_relative_iri)
       end
     end
   end

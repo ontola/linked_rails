@@ -15,7 +15,7 @@ module LinkedRails
         if klass.superclass == ApplicationRecord
           Vocab.schema.Thing
         else
-          klass.superclass.iri
+          klass.superclass.try(:iri)
         end
       end
 

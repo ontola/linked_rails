@@ -37,6 +37,12 @@ module LinkedRails
       # rubocop:enable Style/ClassVars
     end
 
+    def linked_models
+      @linked_models ||= ObjectSpace.each_object(Class).select do |c|
+        c.included_modules.include?(LinkedRails::Model)
+      end
+    end
+
     def scheme
       @@scheme ||= Rails.application.routes.default_url_options[:protocol] || :http # rubocop:disable Style/ClassVars
     end
