@@ -147,8 +147,8 @@ module LinkedRails
     end
 
     def ontology_class(iri)
-      klass = LinkedRails.linked_models.detect do |klass|
-        (klass.iri.is_a?(Array) ? klass.iri : [klass.iri]).include?(iri)
+      klass = LinkedRails.linked_models.detect do |model|
+        (model.iri.is_a?(Array) ? model.iri : [model.iri]).include?(iri)
       end
       LinkedRails.ontology_class_class.new(iri: iri, klass: klass)
     end

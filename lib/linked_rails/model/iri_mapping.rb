@@ -35,7 +35,7 @@ module LinkedRails
           requested_index_resource(params, user_context) || raise(ActiveRecord::RecordNotFound)
         end
 
-        def requested_resource(opts, user_context) # rubocop:disable Metrics/MethodLength
+        def requested_resource(opts, user_context)
           if collection_action?(opts)
             requested_index_resource(opts[:params], user_context)
           elsif action_item_action?(opts)
