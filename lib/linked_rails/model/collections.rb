@@ -25,7 +25,9 @@ module LinkedRails
         collection_opts[:name] = name
         collection_opts[:parent] = self
         collection_opts[:part_of] = collection_opts.key?(:part_of) ? send(collection_opts[:part_of]) : self
-        collection_class = collection_opts.delete(:collection_class) || LinkedRails.collection_class
+        collection_class =
+          collection_opts.delete(:collection_class) ||
+          collection_opts[:association_class].root_collection_class
         collection_class.collection_or_view(collection_opts, instance_opts)
       end
 

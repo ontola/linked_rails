@@ -9,7 +9,9 @@ require_relative 'collection/iri_mapping'
 require_relative 'collection/sortable'
 require_relative 'collection/sorting'
 require_relative 'collection/view'
+require_relative 'collection/paginated'
 require_relative 'collection/paginated_view'
+require_relative 'collection/infinite'
 require_relative 'collection/infinite_view'
 
 module LinkedRails
@@ -158,12 +160,16 @@ module LinkedRails
 
     def view_with_opts(opts)
       @views ||= []
-      view = LinkedRails.collection_view_class.new(**{collection: self, type: type}.merge(opts))
+      view = collection_view_class.new(**{collection: self, type: type}.merge(opts))
       @views << view
       view
     end
 
     private
+
+    def collection_view_class
+      LinkedRails.collection_view_class
+    end
 
     def default_display
       @default_display = @default_display.call(parent) if @default_display.respond_to?(:call)

@@ -84,9 +84,9 @@ module LinkedRails
 
           case type
           when :paginated
-            LinkedRails.collection_paginated_view_class.new(**opts)
+            collection_paginated_view_class.new(**opts)
           when :infinite
-            LinkedRails.collection_infinite_view_class.new(**opts)
+            collection_infinite_view_class.new(**opts)
           else
             raise ActionController::BadRequest, "'#{type}' is not a valid collection type"
           end
@@ -94,6 +94,16 @@ module LinkedRails
 
         def policy_class
           LinkedRails::Collection::ViewPolicy
+        end
+
+        private
+
+        def collection_paginated_view_class
+          LinkedRails.collection_paginated_view_class
+        end
+
+        def collection_infinite_view_class
+          LinkedRails.collection_infinite_view_class
         end
       end
     end
