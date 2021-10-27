@@ -76,12 +76,12 @@ module LinkedRails
 
         prefix = ind ? tokens[0...ind] : tokens
         suffix = ind ? tokens[ind..-1] : []
-        URITemplate.new([prefix, path, suffix].flatten.join)
+        LinkedRails::URITemplate.new([prefix, path, suffix].flatten.join)
       end
 
       # @return [URITemplate]
       def iri_template_with_fragment(template_base, fragment)
-        URITemplate.new("#{template_base.to_s.sub(/{#[\w]+}/, '').split('#').first}##{fragment}")
+        LinkedRails::URITemplate.new("#{template_base.to_s.sub(/{#[\w]+}/, '').split('#').first}##{fragment}")
       end
 
       module ClassMethods
@@ -101,7 +101,7 @@ module LinkedRails
         end
 
         def iri_template
-          @iri_template ||= URITemplate.new("/#{route_key}{/id}{#fragment}")
+          @iri_template ||= LinkedRails::URITemplate.new("/#{route_key}{/id}{#fragment}")
         end
 
         def linked_rails_module?

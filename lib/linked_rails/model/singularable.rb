@@ -43,7 +43,7 @@ module LinkedRails
         end
 
         def singular_iri_template
-          @singular_iri_template ||= URITemplate.new("{/parent_iri*}/#{singular_route_key}{#fragment}")
+          @singular_iri_template ||= LinkedRails::URITemplate.new("{/parent_iri*}/#{singular_route_key}{#fragment}")
         end
 
         def singular_route_key

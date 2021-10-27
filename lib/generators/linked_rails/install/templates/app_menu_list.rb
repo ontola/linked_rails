@@ -8,7 +8,7 @@ class AppMenuList < ApplicationMenuList
            menus: -> { user_menu_items }
 
   def iri_template
-    @iri_template ||= URITemplate.new('/menus{#fragment}')
+    @iri_template ||= LinkedRails::URITemplate.new('/menus{#fragment}')
   end
 
   private

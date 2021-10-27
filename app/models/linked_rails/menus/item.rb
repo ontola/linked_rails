@@ -26,7 +26,7 @@ module LinkedRails
       def iri_template
         return parent.send(:iri_template) unless parent.is_a?(LinkedRails::Menus::List)
 
-        return URITemplate.new("#{iri_base}{/tag}{#fragment}") if iri_base
+        return LinkedRails::URITemplate.new("#{iri_base}{/tag}{#fragment}") if iri_base
 
         iri_template_expand_path(parent.send(:iri_template), '{/tag}')
       end

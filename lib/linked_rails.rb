@@ -6,7 +6,6 @@ require 'kaminari/activerecord'
 require 'rdf'
 require 'rdf/query_fix'
 require 'rdf/vocab'
-require 'uri_template'
 require 'nill_class_renderer'
 require 'linked_rails/engine'
 require 'linked_rails/iri_mapper'
@@ -81,6 +80,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'SHACL'
 end
 
+require 'linked_rails/uri_template'
 require 'linked_rails/vocab'
 require 'linked_rails/cache'
 require 'linked_rails/enhancements'

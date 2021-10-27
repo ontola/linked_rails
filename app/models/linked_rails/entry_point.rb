@@ -21,7 +21,10 @@ module LinkedRails
     end
 
     def iri_template
-      @iri_template ||= iri_template_with_fragment(URITemplate.new(parent.root_relative_iri.to_s), :EntryPoint)
+      @iri_template ||= iri_template_with_fragment(
+        LinkedRails::URITemplate.new(parent.root_relative_iri.to_s),
+        :EntryPoint
+      )
     end
 
     def label
