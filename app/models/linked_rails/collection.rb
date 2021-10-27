@@ -2,6 +2,7 @@
 
 require 'pundit'
 
+require_relative 'collection/configuration'
 require_relative 'collection/filter'
 require_relative 'collection/filterable'
 require_relative 'collection/iri'
@@ -19,17 +20,27 @@ module LinkedRails
     include ActiveModel::Model
     include LinkedRails::Model::Actionable
     include LinkedRails::Model::Iri
+    include LinkedRails::Collection::Configuration
     include LinkedRails::Collection::Filterable
     include LinkedRails::Collection::Iri
     include LinkedRails::Collection::IriMapping
     include LinkedRails::Collection::Sortable
 
-    attr_accessor :association, :association_class, :association_scope, :grid_max_columns, :joins,
-                  :name, :page_size, :parent, :part_of, :policy, :user_context, :view
-    attr_writer :association_base, :table_type, :default_display, :default_title, :default_type,
-                :display, :policy_scope, :title, :type, :views
+    attr_accessor :name, :policy, :user_context, :view
+    attr_writer :association_base, :views
 
     alias id iri
+
+    def initialize(**opts)
+      opts = opts.with_indifferent_access
+
+      %i[association_class iri_template].each do |key|
+        raise("No #{key} given") if opts[key].blank?
+      end
+      opts[:route_key] ||= opts[:association_class].collection_route_key
+
+      super
+    end
 
     def action_list(user_context)
       @action_list ||= {}
@@ -79,16 +90,8 @@ module LinkedRails
       RDF::List[*columns_list] if columns_list.present?
     end
 
-    def default_page_size
-      association_class.try(:default_per_page) || 20
-    end
-
     def default_view
       @default_view ||= view_with_opts(default_view_opts)
-    end
-
-    def display
-      @display&.to_sym || default_display
     end
 
     def first
@@ -122,32 +125,12 @@ module LinkedRails
       }
     end
 
-    def title
-      var = @title || @default_title
-      return var.call(parent) if var.respond_to?(:call)
-
-      var || title_from_translation
-    end
-
-    def title_from_translation
-      plural = association_class.name.tableize
-      I18n.t(
-        "#{plural}.collection.#{@filter&.values&.join('.').presence || name || :default}",
-        count: ->(_opts) { total_count },
-        default: association_class.plural_label
-      )
-    end
-
     def total_count
       @total_count ||= association_base.try(:total_count) || unscoped_association.count
     end
 
     def total_page_count
-      (total_count / (page_size || default_page_size).to_f).ceil if total_count
-    end
-
-    def type
-      @type&.to_sym || default_type
+      (total_count / page_size.to_f).ceil if total_count
     end
 
     def unscoped_association
@@ -171,16 +154,6 @@ module LinkedRails
       LinkedRails.collection_view_class
     end
 
-    def default_display
-      @default_display = @default_display.call(parent) if @default_display.respond_to?(:call)
-
-      @default_display || association_class.try(:default_collection_display)
-    end
-
-    def default_type
-      @default_type || association_class.try(:default_collection_type) || :paginated
-    end
-
     def default_view_opts
       opts = {
         type: type,
@@ -191,30 +164,23 @@ module LinkedRails
       opts
     end
 
-    def policy_scope
-      return @policy_scope if @policy_scope == false
-
-      @policy_scope = policy ? policy::Scope : Pundit::PolicyFinder.new(filtered_association).scope!
-    end
-
     def paginated?
       type == :paginated
     end
 
-    def table_type
-      return @table_type if @table_type
+    def title_from_translation
+      plural = association_class.name.tableize
 
-      case display&.to_sym
-      when :table
-        :default
-      when :settingsTable
-        :settings
-      end
+      I18n.t(
+        "#{plural}.collection.#{filter&.values&.join('.').presence || name || :default}",
+        count: ->(_opts) { total_count },
+        default: association_class.plural_label
+      )
     end
 
     def new_child_values
       instance_values
-        .slice('association', 'association_class', 'association_scope', 'iri_template', 'parent')
+        .slice('iri_template', *LinkedRails::Model::Collections::COLLECTION_STATIC_OPTIONS.keys.map(&:to_s))
         .merge(
           unfiltered_collection: filtered? ? @unfiltered_collection : self,
           user_context: user_context

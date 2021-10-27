@@ -4,7 +4,7 @@ module LinkedRails
   class Collection
     module Sortable
       attr_accessor :sort
-      attr_writer :default_sortings, :sort_options
+      attr_writer :sort_options
 
       def default_before_value
         sortings.map do |sorting|
@@ -13,14 +13,6 @@ module LinkedRails
             value: sorting.default_value
           }
         end
-      end
-
-      def default_sortings
-        opts =
-          @default_sortings ||
-          association_class.try(:default_sortings) ||
-          [{key: Vocab.schema.dateCreated, direction: :desc}]
-        opts.respond_to?(:call) ? opts.call(parent) : opts
       end
 
       def parsed_sort_values

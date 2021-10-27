@@ -18,11 +18,8 @@ module LinkedRails
         def root_collection(**params)
           return unless root_collection?
 
-          root_collection_class.collection_or_view(root_collection_opts, params)
-        end
-
-        def root_collection_class
-          LinkedRails.collection_class
+          opts = default_collection_options
+          default_collection_option(:collection_class).collection_or_view(opts, params)
         end
 
         private
@@ -31,15 +28,6 @@ module LinkedRails
           collection_name = "#{name.underscore}_collection"
 
           collection_name if parent.respond_to?(collection_name, true)
-        end
-
-        def grid_max_columns; end
-
-        def root_collection_opts
-          {
-            association_class: self,
-            grid_max_columns: grid_max_columns
-          }
         end
 
         def root_collection?

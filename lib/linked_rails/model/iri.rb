@@ -21,6 +21,10 @@ module LinkedRails
         @iri ||= iri_with_root(root_relative_iri)
       end
 
+      def iri_elements
+        root_relative_iri.to_s&.split('?')&.first&.split('/')&.map(&:presence)&.compact&.presence
+      end
+
       # @return [Hash]
       def iri_opts
         @iri_opts ||= {

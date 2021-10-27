@@ -9,7 +9,7 @@ module LinkedRails
 
       def data
         data = []
-        iri.each_statement do |statement|
+        iri.try(:each_statement) do |statement|
           next unless include_data_statement?(statement)
 
           statement.graph_name = ::RDF::Serializers.config.default_graph

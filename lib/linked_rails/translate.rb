@@ -158,14 +158,14 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
   Translate.translations_for(:class, :label) do |object|
     I18n.t(
       Translate.key_for_iri(object, :label),
-      default: (object.label || Translate.tag_for_iri(object)).to_s.underscore.humanize
+      default: (object.try(:label) || Translate.tag_for_iri(object)).to_s.underscore.humanize
     )
   end
 
   Translate.translations_for(:class, :plural_label) do |object|
     I18n.t(
       Translate.key_for_iri(object, :plural_label),
-      default: (object.label || Translate.tag_for_iri(object)).to_s.tableize.humanize
+      default: (object.try(:label) || Translate.tag_for_iri(object)).to_s.tableize.humanize
     )
   end
 
@@ -180,7 +180,7 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
   Translate.translations_for(:property, :label) do |object|
     I18n.t(
       Translate.key_for_iri(object, :label),
-      default: (object.label || Translate.tag_for_iri(object)).to_s.underscore.humanize
+      default: (object.try(:label) || Translate.tag_for_iri(object)).to_s.underscore.humanize
     )
   end
 end

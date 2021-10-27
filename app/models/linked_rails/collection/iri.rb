@@ -3,57 +3,21 @@
 module LinkedRails
   class Collection
     module Iri
+      DEFAULT_IRI_TEMPLATE_KEYS = %i[before%5B%5D display filter%5B%5D page page_size sort%5B%5D title type].freeze
+
       extend ActiveSupport::Concern
 
-      included do
-        attr_writer :iri_template
-      end
-
       def iri_opts
-        opts = {}
-        iri_opts_add(opts, :display, display) if @display
-        iri_opts_add(opts, :title, title) if @title
-        iri_opts_add(opts, :type, type) if @type
-        iri_opts_add(opts, :page_size, page_size) if @page_size
-        iri_opts_add(opts, :filter, filter_iri_opts)
-        iri_opts_add(opts, :sort, sort_iri_opts)
-        opts
-      end
-
-      def iri_template
-        @iri_template ||=
-          LinkedRails::URITemplate.new(
-            [
-              [parent&.root_relative_iri&.to_s&.split('?')&.first, association_class.route_key].join('/'),
-              "{?#{self.class.iri_template_parsed_keys}}"
-            ].join('')
-          )
-      end
-
-      def iri_template_opts
-        opts = iri_opts.with_indifferent_access.slice(*self.class.iri_template_keys)
-        Hash[opts.keys.map { |key| [CGI.unescape(key).sub('[]', ''), opts[key]] }].to_param
-      end
-
-      def filter_iri_opts
-        return nil unless @filter.present?
-
-        Hash[
-          @filter.map do |key, values|
-            predicate = key.is_a?(RDF::URI) ? key : association_class.predicate_for_key(key)
-            [predicate, values]
-          end
-        ]
-      end
-
-      def iri_opts_add(opts, key, value)
-        opts[key] = value if value.present?
-      end
-
-      def sort_iri_opts
-        return nil unless sort.present?
-
-        Hash[sort.map { |s| [s[:key], s[:direction]] }]
+        {
+          parent_iri: parent&.iri_elements,
+          display: @display,
+          title: @title,
+          type: @type,
+          page_size: @page_size,
+          filter: self.class.filter_iri_opts(@filter),
+          route_key: route_key,
+          sort: self.class.sort_iri_opts(@sort)
+        }.compact
       end
 
       class_methods do
@@ -61,15 +25,29 @@ module LinkedRails
           [super, Vocab.as.Collection]
         end
 
-        def iri_template_keys
-          @iri_template_keys ||= %i[before%5B%5D display filter%5B%5D page page_size sort%5B%5D title type]
+        def filter_iri_opts(filters)
+          return nil if filters.blank?
+
+          Hash[
+            filters.map do |key, values|
+              predicate = key.is_a?(RDF::URI) ? key : association_class.predicate_for_key(key)
+              [predicate, values]
+            end
+          ]
         end
 
-        def iri_template_parsed_keys
-          @iri_template_parsed_keys ||=
-            iri_template_keys
-              .map { |k| k.to_s.ends_with?('%5B%5D') ? "#{k}*" : k.to_s }
-              .join(',')
+        def generate_iri_template(iri_template_keys)
+          URITemplate.new("{/parent_iri*}/{route_key}{?#{parse_iri_template_keys(iri_template_keys)}}")
+        end
+
+        def parse_iri_template_keys(keys)
+          (DEFAULT_IRI_TEMPLATE_KEYS + keys).map { |k| k.to_s.ends_with?('%5B%5D') ? "#{k}*" : k.to_s }.join(',')
+        end
+
+        def sort_iri_opts(sortings)
+          return nil if sortings.blank?
+
+          Hash[sortings.map { |s| [s[:key], s[:direction]] }]
         end
       end
     end

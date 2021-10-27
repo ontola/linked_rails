@@ -6,9 +6,7 @@ module LinkedRails
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :default_filters, instance_accessor: false, instance_predicate: false
         class_attribute :filter_options
-        self.default_filters = {}
       end
 
       module ClassMethods

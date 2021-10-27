@@ -5,12 +5,7 @@ module LinkedRails
     module Filterable
       include RDF::Serializers::DataTypeHelper
 
-      attr_writer :default_filters, :filter, :unfiltered_collection
-
-      def default_filters
-        opts = @default_filters || association_class.try(:default_filters) || {}
-        opts.respond_to?(:call) ? opts.call(parent) : opts
-      end
+      attr_writer :filter, :unfiltered_collection
 
       def filter
         default_filters.merge(@filter || {})

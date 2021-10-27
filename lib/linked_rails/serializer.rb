@@ -113,14 +113,16 @@ module LinkedRails
 
       def with_collection(name, **opts)
         collection_name = "#{name.to_s.singularize}_collection"
-        page_size = opts.delete(:page_size)
-        display = opts.delete(:display)
         opts[:association] ||= name
         opts[:polymorphic] ||= true
         opts[:if] ||= method(:named_object?)
 
+        collection_opts = {}
+        collection_opts[:page_size] = opts.delete(:page_size) if opts.key?(:page_size)
+        collection_opts[:display] = opts.delete(:display) if opts.key?(:display)
+
         has_one collection_name, **opts do |object, params|
-          object.send(collection_name, user_context: params[:scope], display: display, page_size: page_size)
+          object.send(collection_name, **collection_opts.merge(user_context: params[:scope]))
         end
       end
 

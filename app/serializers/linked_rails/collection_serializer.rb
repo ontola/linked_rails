@@ -11,8 +11,13 @@ module LinkedRails
     attribute :total_count, predicate: Vocab.as.totalItems do |object|
       object.total_count if object.type == :paginated
     end
-    attribute :iri_template, predicate: Vocab.ontola[:iriTemplate]
-    attribute :iri_template_opts, predicate: Vocab.ontola[:iriTemplateOpts]
+    attribute :iri_template, predicate: Vocab.ontola[:iriTemplate] do |object|
+      object
+        .iri_template
+        .to_s
+        .gsub('{route_key}', object.route_key.to_s)
+        .gsub('{/parent_iri*}', object.parent&.iri&.to_s&.split('?')&.first || LinkedRails.iri)
+    end
     attribute :default_type, predicate: Vocab.ontola[:defaultType], &:type
     attribute :display, predicate: Vocab.ontola[:collectionDisplay] do |object|
       Vocab.ontola["collectionDisplay/#{object.display || :default}"]
