@@ -12,10 +12,10 @@ module LinkedRails
       end
 
       def parent_class
-        if klass.superclass == ApplicationRecord
+        if klass&.superclass == ApplicationRecord
           Vocab.schema.Thing
         else
-          klass.superclass.try(:iri)
+          klass&.superclass.try(:iri) || Vocab.schema.Thing
         end
       end
 
@@ -26,7 +26,7 @@ module LinkedRails
       end
 
       def properties
-        @properties ||= klass.predicate_mapping.keys.map { |key| LinkedRails.ontology_property_class.new(iri: key) }
+        @properties ||= klass&.predicate_mapping&.keys&.map { |key| LinkedRails.ontology_property_class.new(iri: key) }
       end
 
       class << self
