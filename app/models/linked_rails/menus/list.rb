@@ -48,6 +48,7 @@ module LinkedRails
         options[:label_params] ||= {}
         options[:label_params][:default] ||= ["menus.default.#{tag}".to_sym, tag.to_s.capitalize]
         options[:label] ||= default_label(tag, options)
+        options[:action] = ontola_dialog_action(options[:href]) if options.delete(:dialog)
         options.except!(:policy_resource, :policy, :policy_arguments, :label_params)
         LinkedRails.menus_item_class.new(resource: resource, tag: tag, parent: self, **options)
       end
