@@ -37,7 +37,7 @@ module LinkedRails
           response_headers(opts)
           controller.respond_with_resource(
             resource: nil,
-            meta: error_meta(opts[:resource]),
+            meta: error_meta(opts[:resource], opts[:errors] || {}),
             status: :unprocessable_entity
           )
         end
@@ -89,10 +89,10 @@ module LinkedRails
           ]
         end
 
-        def error_statements(iri, resource)
+        def error_statements(iri, resource, resource_errors)
           index = 0
-          resource.errors.messages.map do |key, values|
-            predicate = resource.class.predicate_for_key(key.to_s.split('.').first)
+          resource_errors.map do |key, values|
+            predicate = resource&.class&.predicate_for_key(key.to_s.split('.').first)
             if predicate
               error_statements_for(iri, predicate, values)
             else
@@ -106,16 +106,18 @@ module LinkedRails
           values.map { |value| [iri, predicate, value.sub(/\S/, &:upcase)] }
         end
 
-        def error_meta(resource)
+        def error_meta(resource, custom_errors)
           form_iri = controller.request.headers['Request-Referrer']
-          return [] unless form_iri && resource.respond_to?(:errors)
+          resource_errors = (resource.try(:errors)&.messages || {}).merge(custom_errors)
+
+          return [] unless form_iri && resource_errors.present?
 
           error_object = ::RDF::Node.new
           [
             error_mapping(form_iri, error_object),
             error_type(error_object),
             error_status(error_object)
-          ] + error_statements(error_object, resource)
+          ] + error_statements(error_object, resource, resource_errors)
         end
 
         def error_type(error_object)
@@ -149,7 +151,7 @@ module LinkedRails
           error_statements_for(
             iri,
             ::RDF["_#{index}"],
-            values.map { |value| resource.errors.full_message(key, value) }
+            values.map { |value| resource&.errors&.full_message(key, value) || value }
           )
         end
       end
