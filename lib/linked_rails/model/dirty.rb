@@ -28,7 +28,7 @@ module LinkedRails
 
         Hash[
           previous_changes
-            .map { |k, v| [serializer_class.attributes_to_serialize[k.to_sym]&.predicate, v] }
+            .map { |k, v| [self.class.predicate_for_key(k.to_sym), v] }
             .select { |k, _v| k.present? }
         ]
       end
