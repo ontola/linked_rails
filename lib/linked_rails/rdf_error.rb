@@ -4,12 +4,12 @@ module LinkedRails
   class RDFError
     include ActiveModel::Model
 
-    attr_accessor :error, :iri, :status
-    delegate :message, to: :error
+    attr_accessor :error, :iri, :message, :status
 
     def initialize(status, requested_url, original_error)
       self.status = status
       self.error = original_error.is_a?(StandardError) ? original_error : original_error.new
+      self.message = error.message unless Rails.env.production?
       self.iri = ::RDF::URI(requested_url)
     end
 
