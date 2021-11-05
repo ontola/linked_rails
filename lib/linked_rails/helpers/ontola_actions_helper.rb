@@ -12,8 +12,8 @@ module LinkedRails
         Vocab.libro["actions/copyToClipboard?#{{value: value}.to_param}"]
       end
 
-      def ontola_dialog_action(resource, opener: nil)
-        Vocab.libro["actions/dialog/alert?#{{resource: resource, opener: opener}.compact.to_param}"]
+      def ontola_dialog_action(resource, opener: nil, size: nil)
+        Vocab.libro["actions/dialog/alert?#{{resource: resource, opener: opener, size: size}.compact.to_param}"]
       end
 
       def ontola_dialog_close_action
