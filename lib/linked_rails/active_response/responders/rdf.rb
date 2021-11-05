@@ -49,13 +49,19 @@ module LinkedRails
 
         def redirect(**opts) # rubocop:disable Metrics/AbcSize
           return super if controller.request.head?
+          opts[:status] ||= 200
 
           response_headers(opts)
           add_exec_action_header(
             controller.response.headers,
             ontola_redirect_action(opts[:location], reload: opts[:reload])
           )
-          controller.head 200, content_type: content_type, location: opts[:location]
+          if (opts[:meta].blank?) || head_request?
+            controller.head(opts[:status], location: opts[:location], content_type: content_type)
+          else
+            opts[format] = []
+            controller.render opts
+          end
         end
 
         def resource(**opts) # rubocop:disable Metrics/AbcSize
