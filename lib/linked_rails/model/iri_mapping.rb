@@ -80,7 +80,7 @@ module LinkedRails
 
           {
             user_context: user_context
-          }.merge(params_hash).with_indifferent_access
+          }.merge(params_hash).symbolize_keys
         end
 
         def iri_without_action(url)

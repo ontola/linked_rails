@@ -10,8 +10,8 @@ module LinkedRails
           current_resource!
             .class
             .try(:reflect_on_all_associations)
-            .select(&:collection?)
-            .each { |association| current_resource!.association(association.name).reset }
+            &.select(&:collection?)
+            &.each { |association| current_resource!.association(association.name).reset }
         end
 
         def create_execute

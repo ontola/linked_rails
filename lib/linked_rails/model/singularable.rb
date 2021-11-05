@@ -10,7 +10,7 @@ module LinkedRails
       end
 
       def root_relative_singular_iri(**opts)
-        RDF::URI(self.class.singular_iri_template.expand(singular_iri_opts.merge(opts)))
+        RDF::URI(singular_iri_template.expand(singular_iri_opts.merge(opts)))
       end
 
       def root_relative_iri(**opts)
