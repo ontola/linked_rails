@@ -47,8 +47,9 @@ module LinkedRails
           controller.respond_with_resource(opts)
         end
 
-        def redirect(**opts) # rubocop:disable Metrics/AbcSize
+        def redirect(**opts) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           return super if controller.request.head?
+
           opts[:status] ||= 200
 
           response_headers(opts)
@@ -56,7 +57,7 @@ module LinkedRails
             controller.response.headers,
             ontola_redirect_action(opts[:location], reload: opts[:reload])
           )
-          if (opts[:meta].blank?) || head_request?
+          if opts[:meta].blank? || head_request?
             controller.head(opts[:status], location: opts[:location], content_type: content_type)
           else
             opts[format] = []

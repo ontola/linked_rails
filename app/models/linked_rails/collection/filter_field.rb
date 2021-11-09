@@ -25,6 +25,10 @@ module LinkedRails
         attrs = option.is_a?(Hash) ? option : {value: option}
         Collection::FilterOption.new(attrs.merge(collection: collection, key: key))
       end
+
+      def serializable?
+        options_in || options_array
+      end
     end
   end
 end
