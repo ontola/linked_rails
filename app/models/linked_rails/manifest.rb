@@ -75,8 +75,7 @@ module LinkedRails
         scope: scope,
         short_name: app_name,
         start_url: scope,
-        theme_color: site_theme_color,
-        websocket_path: websocket_path
+        theme_color: site_theme_color
       }
     end
 
@@ -89,7 +88,9 @@ module LinkedRails
         primary_color: site_theme_color,
         secondary_color: site_secondary_color,
         theme: theme,
-        theme_options: theme_options.to_query
+        theme_options: theme_options.to_query,
+        website_iri: LinkedRails.iri,
+        websocket_path: websocket_path
       }
     end
 
