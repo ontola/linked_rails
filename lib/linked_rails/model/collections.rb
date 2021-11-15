@@ -13,6 +13,8 @@ module LinkedRails
         grid_max_columns: 3,
         # page_size [Integer] The default page size.
         page_size: 20,
+        #parent_iri [Array<String>] The iri elements of the parent
+        parent_iri: -> { parent&.iri_elements },
         # table_type [Sym] The columns to use in the table.
         table_type: lambda {
           case display&.to_sym

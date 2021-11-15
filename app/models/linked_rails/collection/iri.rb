@@ -9,7 +9,7 @@ module LinkedRails
 
       def iri_opts
         {
-          parent_iri: parent&.iri_elements,
+          parent_iri: parent_iri,
           display: @display,
           title: @title,
           type: @type,
