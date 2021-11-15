@@ -129,7 +129,10 @@ module LinkedRails
         return @iri_template ||= LinkedRails::URITemplate.new(path_suffix) if resource.blank?
 
         base_template = resource.send(resource.try(:singular_resource?) ? :singular_iri_template : :iri_template)
-        @iri_template ||= iri_template_expand_path(base_template, path_suffix)
+        @iri_template ||= iri_template_expand_path(
+          base_template.to_s.sub('display,', '').sub('sort%5B%5D*,', ''),
+          path_suffix
+        )
       end
 
       def rdf_type

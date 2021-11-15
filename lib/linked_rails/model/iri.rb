@@ -72,7 +72,7 @@ module LinkedRails
 
       # @return [URITemplate]
       def iri_template_expand_path(template_base, path)
-        tokens = template_base.tokens
+        tokens = (template_base.is_a?(String) ? LinkedRails::URITemplate.new(template_base) : template_base).tokens
 
         ind = tokens.find_index do |t|
           t.is_a?(URITemplate::RFC6570::Expression::FormQuery) || t.is_a?(URITemplate::RFC6570::Expression::Fragment)
