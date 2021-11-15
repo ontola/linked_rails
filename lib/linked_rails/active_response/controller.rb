@@ -40,7 +40,8 @@ module LinkedRails
 
     def success_message_translation_opts
       {
-        default: [:"actions.default.#{action_name}.success", '']
+        default: [:"actions.default.#{action_name}.success", ''],
+        type: I18n.t("#{controller_class.model_name.collection}.type").capitalize
       }
     end
   end
