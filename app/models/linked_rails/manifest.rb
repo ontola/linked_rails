@@ -79,7 +79,7 @@ module LinkedRails
       }
     end
 
-    def web_manifest_ontola_section
+    def web_manifest_ontola_section # rubocop:disable Metrics/MethodLength
       {
         css_class: css_class,
         header_background: header_background,

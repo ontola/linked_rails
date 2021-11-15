@@ -111,7 +111,7 @@ module LinkedRails
         end
       end
 
-      def with_collection(name, **opts)
+      def with_collection(name, **opts) # rubocop:disable Metrics/AbcSize
         collection_name = "#{name.to_s.singularize}_collection"
         opts[:association] ||= name
         opts[:polymorphic] ||= true
