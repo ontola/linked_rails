@@ -12,6 +12,15 @@ module LinkedRails
       attr_writer :parent, :resource, :root_relative_iri, :user_context, :object,
                   :target
       delegate :user_context, to: :list, allow_nil: true
+      collection_options(
+        association_base: lambda {
+          action_list = parent ? parent.action_list(user_context) : association_class.app_action_list(user_context)
+
+          action_list.actions
+        },
+        display: :grid,
+        title: -> { I18n.t('actions.plural') }
+      )
 
       %i[condition description result type policy label image target_url collection form
          tag http_method favorite action_path policy_resource predicate resource].each do |method|
@@ -216,15 +225,10 @@ module LinkedRails
 
         def requested_index_resource(params, user_context)
           parent = parent_from_params!(params, user_context) if params.key?(:parent_iri)
-          action_list = parent ? parent.action_list(user_context) : app_action_list(user_context)
 
-          LinkedRails.collection_class.new(
-            association_base: action_list.actions,
-            association_class: ::Actions::Item,
-            default_display: :grid,
-            default_title: I18n.t('actions.plural'),
-            parent: parent,
-            title: params[:title]
+          default_collection_option(:collection_class).collection_or_view(
+            default_collection_options.merge(parent: parent),
+            index_collection_params(params, user_context)
           )
         end
 

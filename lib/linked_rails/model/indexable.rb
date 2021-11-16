@@ -18,8 +18,10 @@ module LinkedRails
         def root_collection(**params)
           return unless root_collection?
 
-          opts = default_collection_options
-          default_collection_option(:collection_class).collection_or_view(opts, params)
+          default_collection_option(:collection_class).collection_or_view(
+            default_collection_options,
+            params
+          )
         end
 
         private

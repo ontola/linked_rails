@@ -33,6 +33,8 @@ module LinkedRails
       COLLECTION_STATIC_OPTIONS = {
         # association [Sym] The association of the collection items.
         association: nil,
+        # association_base [Scope, Array] The items of the collection.
+        association_base: -> { apply_scope(sorted_association(filtered_association)) },
         # association_class [Class] The class of the collection items.
         association_class: nil,
         # association_scope [Sym] The scope applied to the collection.

@@ -67,10 +67,6 @@ module LinkedRails
       super(options.merge(except: %w[association_class unfiltered_collection collection]))
     end
 
-    def association_base
-      @association_base ||= apply_scope(sorted_association(filtered_association))
-    end
-
     def build_child # rubocop:disable Metrics/AbcSize
       child =
         parent&.build_child(association_class, user_context: user_context) ||
