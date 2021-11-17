@@ -13,8 +13,6 @@ module LinkedRails
         grid_max_columns: 3,
         # page_size [Integer] The default page size.
         page_size: 20,
-        # parent_iri [Array<String>] The iri elements of the parent
-        parent_iri: -> { parent&.iri_elements },
         # table_type [Sym] The columns to use in the table.
         table_type: lambda {
           case display&.to_sym
@@ -52,6 +50,8 @@ module LinkedRails
         joins: nil,
         # parent [Instance] The default parent of a collection.
         parent: nil,
+        # parent_iri [Array<String>] The iri elements of the parent
+        parent_iri: -> { parent&.iri_elements },
         # part_of [Instance] The record to serialize as isPartOf
         part_of: -> { parent },
         # policy_scope [Scope] The policy scope class to be used for scoping
