@@ -81,7 +81,7 @@ module LinkedRails
 
     def foreign_key_for_reflection(reflection)
       if reflection.options[:through]
-        reflection.has_one? ? "#{reflection.name}_id" : "#{reflection.name.singularize}_ids"
+        reflection.has_one? ? "#{reflection.name}_id" : "#{reflection.name.to_s.singularize}_ids"
       elsif reflection.belongs_to?
         reflection.foreign_key
       end
