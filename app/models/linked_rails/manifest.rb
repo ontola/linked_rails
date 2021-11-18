@@ -89,7 +89,7 @@ module LinkedRails
         secondary_color: site_secondary_color,
         theme: theme,
         theme_options: theme_options.to_query,
-        website_iri: LinkedRails.iri,
+        website_iri: LinkedRails.iri.to_s,
         websocket_path: websocket_path
       }
     end
