@@ -79,7 +79,7 @@ module LinkedRails
 
             _default_collection_opts[key] = value
           end
-          _default_collection_opts[:iri_template] = LinkedRails.collection_class.generate_iri_template(
+          _default_collection_opts[:iri_template] = _default_collection_opts[:collection_class].generate_iri_template(
             _default_collection_opts[:iri_template_keys]
           )
           _default_collection_opts
@@ -115,7 +115,7 @@ module LinkedRails
           options[:association] ||= name.to_sym
           options[:association_class] ||= name.to_s.classify.constantize
           merged_options = options[:association_class].default_collection_options.merge(options)
-          merged_options[:iri_template] = LinkedRails.collection_class.generate_iri_template(
+          merged_options[:iri_template] = merged_options[:collection_class].generate_iri_template(
             merged_options[:iri_template_keys]
           )
           collections_add(name: name, options: merged_options)
@@ -147,7 +147,7 @@ module LinkedRails
 
           _default_collection_opts[:collection_class] ||= LinkedRails.collection_class
           _default_collection_opts[:association_class] = self
-          _default_collection_opts[:iri_template] = LinkedRails.collection_class.generate_iri_template(
+          _default_collection_opts[:iri_template] = _default_collection_opts[:collection_class].generate_iri_template(
             _default_collection_opts[:iri_template_keys]
           )
 
