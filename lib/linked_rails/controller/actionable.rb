@@ -70,10 +70,11 @@ module LinkedRails
         # @option opts [proc<LinkedRails::Model>, LinkedRails::Model] :result
         # @option opts [proc<string>, string] :submit_label The label for the submit button of the action
         # @option opts [proc<string>, string] :target_url The url whereto the request will be made.
-        #   Use target_path when the url starts with the iri of the resource, so a route can be generated.
+        #   Use target_path/target_query  when the url starts with the iri of the resource, so a route can be generated.
         # @option opts [string] :target_path The path appended to the iri of the resource to determine
         #   the url whereto the request will be made. A route is automatically generated.
         #   Defaults to the action key
+        # @option opts [hash] :target_query The query appended to the iri of the resource to determine
         # @option opts [array<RDF::URI>, RDF::URI] :type The rdf type of the action.
         #   Defaults to schema.UpdateAction
         def has_action(type, action_key, opts)

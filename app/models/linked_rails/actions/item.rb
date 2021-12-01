@@ -8,7 +8,7 @@ module LinkedRails
       include ActiveModel::Model
       include LinkedRails::Model
 
-      attr_accessor :inherit, :list, :one_click, :policy_arguments, :submit_label, :target_path
+      attr_accessor :inherit, :list, :one_click, :policy_arguments, :submit_label, :target_path, :target_query
       attr_writer :parent, :resource, :root_relative_iri, :user_context, :object,
                   :target
       delegate :user_context, to: :list, allow_nil: true
@@ -199,9 +199,10 @@ module LinkedRails
         @root_relative_iri
       end
 
-      def target_url_fallback
+      def target_url_fallback # rubocop:disable Metrics/AbcSize
         base = (resource.try(:singular_resource?) ? resource.singular_iri : resource.iri).dup
-        base.path += "/#{target_path}" if target_path.present?
+        base.path = "#{base.path}/#{target_path}" if target_path.present?
+        base.query = Rack::Utils.parse_nested_query(base.query).merge(target_query).to_param if target_query.present?
         base
       end
 
