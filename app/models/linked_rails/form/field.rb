@@ -6,8 +6,10 @@ module LinkedRails
       attr_writer :description,
                   :helper_text,
                   :label,
+                  :max_inclusive,
                   :max_length,
                   :min_count,
+                  :min_inclusive,
                   :min_length,
                   :pattern,
                   :path,
@@ -39,12 +41,20 @@ module LinkedRails
         helper_text_from_attribute || helper_text_fallback
       end
 
+      def max_inclusive
+        @max_inclusive || validators[:max_inclusive]
+      end
+
       def max_length
         @max_length || validators[:max_length]
       end
 
       def min_count
         @min_count || (validators[:presence] ? 1 : nil)
+      end
+
+      def min_inclusive
+        @min_inclusive || validators[:min_inclusive]
       end
 
       def min_length

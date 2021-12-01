@@ -11,7 +11,9 @@ module LinkedRails
       MAX_STR_LEN = 255
       VALIDATOR_SELECTORS = [
         [:min_length, ActiveModel::Validations::LengthValidator, :minimum],
+        [:min_inclusive, ActiveModel::Validations::NumericalityValidator, :greater_than_or_equal_to],
         [:max_length, ActiveModel::Validations::LengthValidator, :maximum],
+        [:max_inclusive, ActiveModel::Validations::NumericalityValidator, :less_than_or_equal_to],
         [:pattern, ActiveModel::Validations::FormatValidator, :with],
         [:presence, ActiveModel::Validations::PresenceValidator, nil],
         [:sh_in, ActiveModel::Validations::InclusionValidator, :in]
@@ -212,10 +214,9 @@ module LinkedRails
       end
 
       def validator_by_class(klass)
-        matched_validator = attribute_validators&.detect { |v| v.is_a?(klass) }
-        return if matched_validator.blank?
-
-        matched_validator if matched_validator.options[:if].blank? && matched_validator.options[:unless].blank?
+        attribute_validators&.detect do |validator|
+          validator.is_a?(klass) && validator.options[:if].blank? && validator.options[:unless].blank?
+        end
       end
 
       def validators
