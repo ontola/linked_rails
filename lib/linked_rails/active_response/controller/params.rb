@@ -41,7 +41,9 @@ module LinkedRails
         end
 
         def resource_params
-          return ActionController::Parameters.new if !params.key?(permit_param_key) && allow_empty_params?
+          empty_params = !params.key?(permit_param_key) || params[permit_param_key] == {}
+
+          return ActionController::Parameters.new if empty_params && allow_empty_params?
 
           params.require(permit_param_key)
         end
