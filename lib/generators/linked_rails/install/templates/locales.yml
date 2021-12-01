@@ -22,3 +22,5 @@ en:
   menus:
     home: "Home"
     sign_out: "Sign out"
+    add_otp: "Enable 2fa"
+    delete_otp: "Remove 2fa"

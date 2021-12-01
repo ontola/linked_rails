@@ -2,7 +2,7 @@
 
 <% module_namespacing do -%>
 class <%= class_name %>Policy < ApplicationPolicy
-  permit_attributes %i[<%= attributes.map { |attribute| attribute.name }.join(' ') %>]
+  permit_attributes %i[<%= attributes.reject(&:reference?).map { |attribute| attribute.name }.join(' ') %>]
 
   def create?
     false

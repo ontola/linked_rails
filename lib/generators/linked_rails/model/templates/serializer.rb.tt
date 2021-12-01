@@ -3,7 +3,11 @@
 <% module_namespacing do -%>
 class <%= class_name %>Serializer < ApplicationSerializer
 <% attributes.each do |attribute| -%>
-  attribute :<%= attribute.name %>, predicate: Vocab.app[:<%= attribute.name %>]
+<% if attribute.reference? -%>
+  has_one :<%= attribute.name %>, predicate: Vocab.app[:<%= attribute.name.camelize(:lower) %>]
+<% else -%>
+  attribute :<%= attribute.name %>, predicate: Vocab.app[:<%= attribute.name.camelize(:lower) %>]
+<% end -%>
 <% end -%>
 end
 <% end -%>
