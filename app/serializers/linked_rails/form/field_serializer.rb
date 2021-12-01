@@ -6,6 +6,7 @@ module LinkedRails
       attribute :name, predicate: Vocab.schema.name
       attribute :description, predicate: Vocab.schema.text
       attribute :helper_text, predicate: Vocab.ontola[:helperText]
+      attribute :placeholder, predicate: Vocab.form[:placeholder]
       attribute :default_value, predicate: Vocab.form[:defaultValue]
 
       attribute :datatype, predicate: Vocab.sh.datatype

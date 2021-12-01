@@ -135,6 +135,18 @@ module LinkedRails # rubocop:disable Metrics/ModuleLength
     end
   end
 
+  Translate.translations_for(:field, :placeholder) do |object, fallback|
+    if object.model_attribute.present?
+      I18n.t(
+        "forms.#{Translate.translation_key(object.model_class)}.#{object.model_attribute}.placeholder",
+        default: [
+          :"forms.default.#{object.model_attribute}.placeholder",
+          fallback ? object.model_attribute.to_s.humanize : ''
+        ]
+      )
+    end
+  end
+
   Translate.translations_for(:field, :label) do |object, fallback|
     if object.model_attribute.present?
       I18n.t(

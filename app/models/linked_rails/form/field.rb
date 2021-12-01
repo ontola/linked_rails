@@ -2,25 +2,24 @@
 
 module LinkedRails
   class Form
-    class Field < LinkedRails::Resource
+    class Field < LinkedRails::Resource # rubocop:disable Metrics/ClassLength
       attr_writer :description,
                   :helper_text,
                   :label,
                   :max_length,
                   :min_count,
                   :min_length,
-                  :sh_in,
                   :pattern,
-                  :path
+                  :path,
+                  :placeholder,
+                  :sh_in
       attr_accessor :datatype,
                     :default_value,
                     :max_count,
                     :max_count_prop,
-                    :max_inclusive,
                     :max_inclusive_prop,
                     :max_length_prop,
                     :min_count_prop,
-                    :min_inclusive,
                     :min_inclusive_prop,
                     :min_length_prop,
                     :model_attribute,
@@ -69,6 +68,10 @@ module LinkedRails
         true
       end
 
+      def placeholder
+        placeholder_from_attribute || placeholder_fallback
+      end
+
       def sh_in
         return validators[:sh_in] if @sh_in.blank?
 
@@ -103,6 +106,14 @@ module LinkedRails
 
       def label_from_property
         LinkedRails.translate(:property, :label, path) if path
+      end
+
+      def placeholder_from_attribute
+        @placeholder.respond_to?(:call) ? @placeholder.call : @placeholder
+      end
+
+      def placeholder_fallback
+        LinkedRails.translate(:field, :placeholder, self, false)
       end
 
       class << self
