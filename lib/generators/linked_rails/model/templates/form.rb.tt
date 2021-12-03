@@ -2,7 +2,7 @@
 
 <% module_namespacing do -%>
 class <%= class_name %>Form < ApplicationForm
-<% attributes.reject(:reference?).each do |attribute| -%>
+<% attributes.reject(&:reference?).each do |attribute| -%>
   field :<%= attribute.name %>
 <% end -%>
 end
