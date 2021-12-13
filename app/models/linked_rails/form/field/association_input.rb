@@ -9,7 +9,13 @@ module LinkedRails
         def datatype; end
 
         def nested_form
-          @nested_form ||= klass_name.constantize.form_class
+          @nested_form ||= target_class.form_class
+        end
+
+        def target_class
+          return @target_class if @target_class
+
+          klass_name.constantize unless form.abstract_form
         end
 
         private
