@@ -37,6 +37,8 @@ module LinkedRails
         association_class: nil,
         # association_scope [Sym] The scope applied to the collection.
         association_scope: nil,
+        # call_to_action [String] The label shown as call to action.
+        call_to_action: nil,
         # collection_class [Class] The base class of the collection.
         #   If you want to use a class other than LinkedRails.collection_class.
         collection_class: nil,

@@ -22,6 +22,7 @@ module LinkedRails
     attribute :display, predicate: Vocab.ontola[:collectionDisplay] do |object|
       Vocab.ontola["collectionDisplay/#{object.display || :default}"]
     end
+    attribute :call_to_action, predicate: Vocab.ontola[:callToAction]
     attribute :columns, predicate: Vocab.ontola[:columns]
     attribute :collection_type, predicate: Vocab.ontola[:collectionType] do |object|
       Vocab.ontola["collectionType/#{object.type || :paginated}"]
