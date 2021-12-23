@@ -21,7 +21,7 @@ module LinkedRails
       has_one :parent, predicate: Vocab.schema.isPartOf, polymorphic: true do |object|
         object.parent unless object.parent.try(:anonymous_iri?)
       end
-      has_one :object, predicate: Vocab.schema.object, polymorphic: true
+      attribute :object_iri, predicate: Vocab.schema.object
       has_one :target, predicate: Vocab.schema.target, polymorphic: true
       has_one :included_object, polymorphic: true
     end

@@ -55,35 +55,19 @@ module LinkedRails
         @condition.nil? || condition
       end
 
-      def built_associations
-        included_object
-          .class
-          .try(:reflect_on_all_associations)
-          &.select { |association| included_object.association(association.name).loaded? }
-          &.map(&:name)
-      end
-
       def error
         policy_message ||
           I18n.t("actions.status.#{action_status.to_s.split('#').last}", default: nil)
-      end
-
-      def form_resource_includes
-        return {} if included_object.nil?
-
-        includes = included_object.class.try(:preview_includes)&.presence || []
-
-        (includes.is_a?(Hash) ? [includes] : includes) + (built_associations || [])
-      end
-
-      def included_object
-        object if object&.iri&.anonymous?
       end
 
       def object
         @object = list.instance_exec(&@object) if @object.respond_to?(:call)
 
         @object || resource
+      end
+
+      def object_iri
+        object&.iri&.anonymous? ? anonymous_object_iri : object&.iri
       end
 
       def parent
@@ -115,7 +99,7 @@ module LinkedRails
       end
 
       def preview_includes
-        [:target, included_object: form_resource_includes]
+        %i[target]
       end
 
       def singular_resource?
@@ -157,6 +141,12 @@ module LinkedRails
       end
 
       private
+
+      def anonymous_object_iri
+        object_iri = iri.dup
+        object_iri.path += '/action_object'
+        object_iri
+      end
 
       def description_fallback
         LinkedRails.translate(:action, :description, self, false)

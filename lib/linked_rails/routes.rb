@@ -22,6 +22,7 @@ module LinkedRails
 
       get '(*parent_iri)/actions', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#index"
       get '(*parent_iri)/actions/:id', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/items#show"
+      get '(*parent_iri)/action_object', to: "#{opts.fetch(:actions, 'linked_rails/actions')}/objects#show"
     end
 
     def linked_resource(klass, controller: nil, collection: true, nested: false, resource: true, &block) # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
