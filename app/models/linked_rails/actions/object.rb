@@ -46,6 +46,12 @@ module LinkedRails
       end
 
       class << self
+        def requested_resource(opts, user_context)
+          parent_iri_with_query = [opts[:params][:parent_iri], opts[:iri].split('?').last].compact.join('?')
+
+          super(opts.merge(params: opts[:params].merge(parent_iri: parent_iri_with_query)), user_context)
+        end
+
         def requested_single_resource(params, user_context)
           return unless params.key?(:parent_iri)
 
