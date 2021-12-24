@@ -11,7 +11,8 @@ module LinkedRails
     def show
       render json: authorized_resources
 
-      print_timings
+      print_timings unless Rails.env.production?
+      send_timings if client
     end
 
     private
@@ -32,6 +33,10 @@ module LinkedRails
           .require(:resources)
           .map { |param| resource_params(param) }
           .map(&method(:timed_authorized_resource))
+    end
+
+    def client
+      nil
     end
 
     def handle_resource_error(opts, error)
@@ -64,9 +69,15 @@ module LinkedRails
     def print_timings
       Rails.logger.debug(
         "\n  CPU        system     user+system real        inc   status  cache   iri\n" \
-        "#{timings.join("\n")}\n" \
+        "#{timing_lines.join("\n")}\n" \
         "  User: #{current_user.class}(#{current_user.id})"
       )
+    end
+
+    def send_timings
+      timings.each do |timing|
+        client.send_json(timing_json(timing))
+      end
     end
 
     def require_doorkeeper_token?
@@ -146,6 +157,30 @@ module LinkedRails
       nil
     end
 
+    def timing_json(timing)# rubocop:disable Metrics/MethodLength
+      route = Rails.application.routes.recognize_path(timing[:resource].to_s)
+
+      {
+        type: 'web',
+        timings: {
+          total_duration: timing[:time].total
+        },
+        default_labels: {
+          action: route[:action] || 'show',
+          controller: route[:controller] || 'subresource',
+          status: timing[:status],
+          include: timing[:include]
+        }
+      }
+    end
+
+    def timing_lines
+      timings.map do |timing|
+        include = timing[:include].to_s.ljust(5)
+        "#{timing[:time].to_s[0..-2]} - #{include}  #{timing[:status]}   #{timing[:cache]} #{timing[:resource]}"
+      end
+    end
+
     def ontology_class(iri)
       klass = LinkedRails.linked_models.detect do |model|
         (model.iri.is_a?(Array) ? model.iri : [model.iri]).include?(iri)
@@ -201,10 +236,13 @@ module LinkedRails
     def timed_authorized_resource(resource)
       res = nil
       time = Benchmark.measure { res = authorized_resource(resource) }
-      unless Rails.env.production?
-        include = resource[:include].to_s.ljust(5)
-        timings << "#{time.to_s[0..-2]} - #{include}  #{res[:status]}   #{res[:cache]} #{resource[:iri]}"
-      end
+      timings << {
+        time: time,
+        include: resource[:include],
+        status: res[:status],
+        cache: res[:cache],
+        resource: resource[:iri]
+      }
       res
     end
 
