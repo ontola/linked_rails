@@ -11,7 +11,8 @@ module LinkedRails
     def show
       render json: authorized_resources
 
-      print_timings
+      print_timings unless Rails.env.production?
+      send_timings if client
     end
 
     private
@@ -32,6 +33,10 @@ module LinkedRails
           .require(:resources)
           .map { |param| resource_params(param) }
           .map(&method(:timed_authorized_resource))
+    end
+
+    def client
+      nil
     end
 
     def handle_resource_error(opts, error)
@@ -62,11 +67,37 @@ module LinkedRails
     end
 
     def print_timings
+      timing_lines = timings.map do |timing|
+        include = timing[:include].to_s.ljust(5)
+        "#{timing[:time].to_s[0..-2]} - #{include}  #{timing[:status]}   #{timing[:cache]} #{timing[:resource]}"
+      end
+
       Rails.logger.debug(
         "\n  CPU        system     user+system real        inc   status  cache   iri\n" \
-        "#{timings.join("\n")}\n" \
+        "#{timing_lines.join("\n")}\n" \
         "  User: #{current_user.class}(#{current_user.id})"
       )
+    end
+
+    def send_timings
+      timings.each do |timing|
+        route = Rails.application.routes.recognize_path(timing[:resource].to_s)
+
+        obj = {
+          type: "web",
+          timings: {
+            total_duration: timing[:time].total,
+          },
+          default_labels: {
+            action: route[:action] || "show",
+            controller: route[:controller] || "subresource",
+            status: timing[:status],
+            include: timing[:include],
+          }
+        }
+
+        client.send_json(obj)
+      end
     end
 
     def require_doorkeeper_token?
@@ -201,10 +232,13 @@ module LinkedRails
     def timed_authorized_resource(resource)
       res = nil
       time = Benchmark.measure { res = authorized_resource(resource) }
-      unless Rails.env.production?
-        include = resource[:include].to_s.ljust(5)
-        timings << "#{time.to_s[0..-2]} - #{include}  #{res[:status]}   #{res[:cache]} #{resource[:iri]}"
-      end
+      timings << {
+        time: time,
+        include: resource[:include],
+        status: res[:status],
+        cache: res[:cache],
+        resource: resource[:iri]
+      }
       res
     end
 
