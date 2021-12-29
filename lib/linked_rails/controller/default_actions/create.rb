@@ -17,7 +17,7 @@ module LinkedRails
         def create_collection_options(**overwrite)
           default_create_options(
             form: -> { resource.association_class.try(:form_class) },
-            object: -> { resource.build_child },
+            object: -> { resource.child_resource },
             policy: :create_child?
           ).merge(overwrite)
         end

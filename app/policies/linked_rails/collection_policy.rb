@@ -29,7 +29,7 @@ module LinkedRails
     end
 
     def child_resource
-      record.build_child
+      record.child_resource
     end
 
     def parent_policy

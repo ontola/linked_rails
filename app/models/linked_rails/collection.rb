@@ -67,17 +67,8 @@ module LinkedRails
       super(options.merge(except: %w[association_class unfiltered_collection collection]))
     end
 
-    def build_child # rubocop:disable Metrics/AbcSize
-      child =
-        parent&.build_child(association_class, user_context: user_context) ||
-        association_class.build_new(parent: parent, user_context: user_context)
-
-      parser = LinkedRails::ParamsParser.new(user_context: user_context, params: {filter: @filter})
-      permitted_child_keys = Pundit.policy(user_context, child)&.permitted_attributes || []
-      permitted_attributes_from_filters = parser.attributes_from_filters(association_class).permit(permitted_child_keys)
-
-      child.assign_attributes(permitted_attributes_from_filters)
-      child
+    def child_resource
+      @child_resource ||= build_child
     end
 
     def columns
@@ -146,6 +137,15 @@ module LinkedRails
 
     private
 
+    def build_child
+      child =
+        parent&.build_child(association_class, user_context: user_context) ||
+        association_class.build_new(parent: parent, user_context: user_context)
+
+      child.assign_attributes(permitted_attributes_from_filters(child))
+      child
+    end
+
     def collection_view_class
       LinkedRails.collection_view_class
     end
@@ -162,6 +162,14 @@ module LinkedRails
 
     def paginated?
       type == :paginated
+    end
+
+    def permitted_attributes_from_filters(child)
+      return {} if @filter.empty?
+
+      parser = LinkedRails::ParamsParser.new(user_context: user_context, params: {filter: @filter})
+      permitted_child_keys = Pundit.policy(user_context, child)&.permitted_attributes || []
+      parser.attributes_from_filters(association_class).permit(permitted_child_keys)
     end
 
     def title_from_translation
