@@ -30,9 +30,10 @@ module LinkedRails
       end
 
       def members_query
-        prepare_members(association_base)
-          .page(page)
-          .per(page_size)
+        @members_query ||=
+          prepare_members(association_base)
+            .page(page)
+            .per(page_size)
       end
 
       def prepare_members(scope)

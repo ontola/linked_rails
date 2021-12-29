@@ -69,13 +69,14 @@ module LinkedRails
       end
 
       def members_query
-        prepare_members(association_base)
-          .where(before_query)
-          .limit(page_size)
+        @members_query ||=
+          prepare_members(association_base)
+            .where(before_query)
+            .limit(page_size)
       end
 
       def next_before_values
-        last_record = members.last
+        last_record = members_query.last
         before_values.map do |val|
           value = last_record.send(val[:attribute])
           value = value.utc.iso8601(6) if value.is_a?(Time)

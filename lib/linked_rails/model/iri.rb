@@ -108,6 +108,15 @@ module LinkedRails
           @iri_template ||= LinkedRails::URITemplate.new("/#{route_key}{/id}{#fragment}")
         end
 
+        def iris_from_scope(scope)
+          ids = ids_for_iris(scope).uniq
+          ids.map { |id| LinkedRails.iri(path: iri_template.expand(id: id)) }
+        end
+
+        def ids_for_iris(scope)
+          scope.pluck(:id)
+        end
+
         def linked_rails_module?
           (Rails.version < '6' ? parents : module_parents).include?(LinkedRails)
         end
