@@ -46,6 +46,8 @@ module LinkedRails
         default_filters: {},
         # collection_class [Array<Hash>] The default sortings applied to the collection.
         default_sortings: [{key: Vocab.schema.dateCreated, direction: :desc}],
+        # include_members [Boolean] Whether to include the members of this collection.
+        include_members: false,
         # iri_template_keys [Array<Sym>] Custom query keys for the iri template
         iri_template_keys: [],
         # joins [Array<Sym>, Sym] The associations to join

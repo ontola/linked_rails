@@ -16,10 +16,6 @@ module LinkedRails
       end
 
       module ClassMethods
-        def include_in_collection?
-          false
-        end
-
         def input_select_property
           Vocab.schema.name
         end

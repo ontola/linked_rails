@@ -42,7 +42,7 @@ module LinkedRails
       end
 
       def preview_includes
-        return {member_sequence: {}} unless association_class.include_in_collection?
+        return {member_sequence: {}} unless include_members
 
         {member_sequence: {members: association_class.preview_includes}}
       end
