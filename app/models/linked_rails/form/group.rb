@@ -12,13 +12,11 @@ module LinkedRails
       end
 
       def description
-        @description = @description.call if @description.respond_to?(:call)
-        @description
+        @description.call if @description.respond_to?(:call)
       end
 
       def label
-        @label = @label.call if @label.respond_to?(:call)
-        @label
+        @label.call if @label.respond_to?(:call)
       end
 
       def rdf_type
