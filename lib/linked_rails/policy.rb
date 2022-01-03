@@ -24,11 +24,11 @@ module LinkedRails
     end
 
     def create_child?(klass, **opts)
-      child_policy(klass, opts).create?
+      child_policy(klass, **opts).create?
     end
 
     def index_children?(klass, **opts)
-      child_policy(klass, opts).show?
+      child_policy(klass, **opts).show?
     end
 
     def permitted_attributes
@@ -69,7 +69,7 @@ module LinkedRails
     end
 
     def child_policy(klass, **opts)
-      Pundit.policy(user_context, record.build_child(klass, opts.merge(user_context: user_context)))
+      Pundit.policy(user_context, record.build_child(klass, **opts.merge(user_context: user_context)))
     end
 
     def forbid_with_message(message, status = nil)
