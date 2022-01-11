@@ -45,9 +45,7 @@ module LinkedRails
 
       module ClassMethods
         def action_list
-          return @action_list if @action_list.try(:actionable_class) == self
-
-          @action_list = defined_action_list || define_action_list
+          @action_list ||= define_action_list
         end
 
         private
@@ -56,12 +54,13 @@ module LinkedRails
           superclass.try(:action_list) || LinkedRails.action_list_parent_class
         end
 
-        def defined_action_list
-          'ActionList'.safe_constantize
-        end
-
         def define_action_list
-          const_set('ActionList', Class.new(action_superclass))
+          klass = Class.new(action_superclass)
+          actionable_class = self
+          klass.define_singleton_method(:actionable_class) do
+            actionable_class
+          end
+          klass
         end
       end
     end

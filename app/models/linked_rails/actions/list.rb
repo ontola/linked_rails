@@ -50,12 +50,6 @@ module LinkedRails
       end
 
       class << self
-        def actionable_class
-          @actionable_class ||=
-            name.gsub('ActionList', '').safe_constantize ||
-            name.demodulize.gsub('ActionList', '').safe_constantize
-        end
-
         def collection_actions
           defined_actions[:collection]
         end
