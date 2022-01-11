@@ -23,8 +23,8 @@ module LinkedRails
     include Enhancements
     include Filtering
     include Indexable
-    include Iri
-    include IriMapping
+    include IRI
+    include IRIMapping
     include Menuable
     include Serialization
     include Singularable

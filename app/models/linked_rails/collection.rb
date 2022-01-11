@@ -19,11 +19,11 @@ module LinkedRails
   class Collection # rubocop:disable Metrics/ClassLength
     include ActiveModel::Model
     include LinkedRails::Model::Actionable
-    include LinkedRails::Model::Iri
+    include LinkedRails::Model::IRI
     include LinkedRails::Collection::Configuration
     include LinkedRails::Collection::Filterable
-    include LinkedRails::Collection::Iri
-    include LinkedRails::Collection::IriMapping
+    include LinkedRails::Collection::IRI
+    include LinkedRails::Collection::IRIMapping
     include LinkedRails::Collection::Sortable
 
     attr_accessor :name, :policy, :user_context, :view

@@ -2,7 +2,7 @@
 
 module LinkedRails
   module Model
-    module Iri
+    module IRI
       extend ActiveSupport::Concern
 
       def anonymous_iri

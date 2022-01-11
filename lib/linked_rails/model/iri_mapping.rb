@@ -2,7 +2,7 @@
 
 module LinkedRails
   module Model
-    module IriMapping
+    module IRIMapping
       extend ActiveSupport::Concern
 
       module ClassMethods

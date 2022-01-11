@@ -76,6 +76,7 @@ module LinkedRails
 end
 
 ActiveSupport::Inflector.inflections do |inflect|
+  inflect.acronym 'IRI'
   inflect.acronym 'RDF'
   inflect.acronym 'SHACL'
 end

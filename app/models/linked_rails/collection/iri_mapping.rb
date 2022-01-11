@@ -2,7 +2,7 @@
 
 module LinkedRails
   class Collection
-    module IriMapping
+    module IRIMapping
       extend ActiveSupport::Concern
 
       class_methods do
