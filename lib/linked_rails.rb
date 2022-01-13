@@ -12,6 +12,7 @@ require 'linked_rails/iri_mapper'
 require 'linked_rails/collection_params_parser'
 require 'linked_rails/params_parser'
 require 'linked_rails/middleware/linked_data_params'
+require 'linked_rails/middleware/error_handling'
 require 'linked_rails/renderers'
 
 module LinkedRails

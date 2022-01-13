@@ -6,12 +6,6 @@ module LinkedRails
       extend ActiveSupport::Concern
       include ActiveSupport::Rescuable
 
-      included do
-        rescue_from StandardError, with: :handle_and_report_error
-        rescue_from ActiveRecord::RecordNotFound, with: :handle_error
-        rescue_from Pundit::NotAuthorizedError, with: :handle_error
-      end
-
       private
 
       def add_error_snackbar(error)
@@ -23,6 +17,8 @@ module LinkedRails
       end
 
       def handle_error(error)
+        report_error(error) if error_status(error) == 500
+
         respond_to do |format|
           (LinkedRails::Renderers.rdf_content_types + [:json]).each do |type|
             format.send(type) { error_response_serializer(error, type) }
@@ -30,11 +26,9 @@ module LinkedRails
         end
       end
 
-      def handle_and_report_error(error)
-        raise if Rails.env.development? || Rails.env.test?
-        raise if response_body
-
-        handle_error(error)
+      def report_error(error)
+        raise(error) if Rails.env.development? || Rails.env.test?
+        raise(error) if response_body
       end
 
       def error_mode(exception)
