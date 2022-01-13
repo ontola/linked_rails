@@ -38,16 +38,14 @@ module LinkedRails
       end
 
       class_methods do
+        delegate :singular_route_key, to: :model_name
+
         def requested_singular_resource(_params, _user_context)
           raise(NotImplementedError)
         end
 
         def singular_iri_template
           @singular_iri_template ||= LinkedRails::URITemplate.new("{/parent_iri*}/#{singular_route_key}{#fragment}")
-        end
-
-        def singular_route_key
-          name.underscore
         end
       end
     end
