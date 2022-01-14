@@ -51,7 +51,7 @@ module LinkedRails
           if self < ActiveRecord::Base
             find_by(primary_key => params[:id]) if params.key?(:id)
           else
-            new(params)
+            new(params.except(:format))
           end
         end
 

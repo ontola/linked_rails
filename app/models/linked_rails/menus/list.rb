@@ -20,7 +20,9 @@ module LinkedRails
       end
 
       def iri_opts
-        resource&.iri_opts || {}
+        return {} if resource.blank?
+
+        resource.try(:singular_resource?) ? resource.singular_iri_opts : resource.iri_opts
       end
 
       def menus
@@ -63,7 +65,9 @@ module LinkedRails
       end
 
       def iri_template
-        @iri_template ||= iri_template_expand_path(resource.send(:iri_template), '/menus')
+        base_template = resource.send(resource.try(:singular_resource?) ? :singular_iri_template : :iri_template)
+
+        @iri_template ||= iri_template_expand_path(base_template, '/menus')
       end
 
       class << self

@@ -14,7 +14,7 @@ module LinkedRails
       end
 
       def root_relative_iri(**opts)
-        return super unless anonymous_iri?
+        return super unless singular_iri?
 
         root_relative_singular_iri(**opts)
       end
@@ -23,6 +23,10 @@ module LinkedRails
         return iri_with_root(root_relative_singular_iri(**opts)) if opts.present?
 
         @singular_iri ||= iri_with_root(root_relative_singular_iri)
+      end
+
+      def singular_iri?
+        anonymous_iri?
       end
 
       def singular_iri_opts

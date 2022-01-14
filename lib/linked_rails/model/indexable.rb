@@ -27,7 +27,7 @@ module LinkedRails
         private
 
         def collection_from_parent_name(parent, _params)
-          collection_name = "#{name.underscore}_collection"
+          collection_name = "#{name.demodulize.underscore}_collection"
 
           collection_name if parent.respond_to?(collection_name, true)
         end
