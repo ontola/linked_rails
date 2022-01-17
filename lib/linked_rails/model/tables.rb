@@ -18,7 +18,7 @@ module LinkedRails
         def initialize_columns
           return if defined_columns && method(:defined_columns).owner == singleton_class
 
-          self.defined_columns = superclass.try(:defined_columns)&.dup || {}
+          self.defined_columns = superclass.try(:defined_columns)&.dup || {}.with_indifferent_access
         end
       end
     end

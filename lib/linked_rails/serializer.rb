@@ -120,6 +120,7 @@ module LinkedRails
         collection_opts = {}
         collection_opts[:page_size] = opts.delete(:page_size) if opts.key?(:page_size)
         collection_opts[:display] = opts.delete(:display) if opts.key?(:display)
+        collection_opts[:table_type] = opts.delete(:table_type) if opts.key?(:table_type)
 
         has_one collection_name, **opts do |object, params|
           object.send(collection_name, **collection_opts.merge(user_context: params[:scope]))

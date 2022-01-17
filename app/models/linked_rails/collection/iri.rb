@@ -3,7 +3,7 @@
 module LinkedRails
   class Collection
     module IRI
-      DEFAULT_IRI_TEMPLATE_KEYS = %i[before%5B%5D display filter%5B%5D page page_size sort%5B%5D title type].freeze
+      DEFAULT_IRI_TEMPLATE_KEYS = %i[before%5B%5D display filter%5B%5D page page_size sort%5B%5D table_type title type].freeze
 
       extend ActiveSupport::Concern
 
@@ -11,6 +11,7 @@ module LinkedRails
         {
           parent_iri: parent_iri,
           display: @display,
+          table_type: @table_type,
           title: @title,
           type: @type,
           page_size: @page_size,
