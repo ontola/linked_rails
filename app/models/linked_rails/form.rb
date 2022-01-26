@@ -94,9 +94,10 @@ module LinkedRails
       end
 
       def find_form_class(params)
-        requested_class = [params[:module], "#{params[:id]&.singularize}_forms"].compact.join('/').classify
+        form_name = [params[:module], "#{params[:id]&.singularize}_forms"].compact.join('/').classify
+        requested_class = form_name.safe_constantize
 
-        LinkedRails::Form.descendants.detect { |klass| klass.to_s == requested_class }
+        requested_class if requested_class < LinkedRails::Form
       end
 
       def footer
