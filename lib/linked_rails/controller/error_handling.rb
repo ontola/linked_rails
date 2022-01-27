@@ -16,8 +16,13 @@ module LinkedRails
         !%w[GET HEAD].include?(request.method)
       end
 
-      def handle_error(error)
+      def handle_and_report_error(error)
         report_error(error) if error_status(error) == 500
+        handle_error(error)
+      end
+
+      def handle_error(error)
+        raise(error) if response_body
 
         respond_to do |format|
           (LinkedRails::Renderers.rdf_content_types + [:json]).each do |type|
@@ -28,7 +33,8 @@ module LinkedRails
 
       def report_error(error)
         raise(error) if Rails.env.development? || Rails.env.test?
-        raise(error) if response_body
+
+        Rails.logger.error(error)
       end
 
       def error_mode(exception)

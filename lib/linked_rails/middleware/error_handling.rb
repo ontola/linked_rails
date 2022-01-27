@@ -40,7 +40,7 @@ module LinkedRails
       def handle_error(env, error)
         controller = controller_instance(env)
 
-        controller.send(:handle_error, error)
+        controller.send(:handle_and_report_error, error)
         error_response = controller.response
         body = ActionDispatch::Response::RackBody.new(error_response)
 
