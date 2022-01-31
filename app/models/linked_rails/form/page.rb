@@ -21,6 +21,10 @@ module LinkedRails
         @footer_group ||= add_group(collapsible: false, footer: true, key: :footer)
       end
 
+      def footer_group!
+        @footer_group
+      end
+
       class << self
         def iri
           Vocab.form[:Page]
