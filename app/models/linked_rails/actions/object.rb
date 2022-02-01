@@ -57,7 +57,7 @@ module LinkedRails
         def requested_single_resource(params, user_context)
           return unless params.key?(:parent_iri)
 
-          parent = parent_from_params!(params, user_context) if params.key?(:parent_iri)
+          parent = parent_from_params!(params, user_context)
 
           new(action: parent) if parent.object.anonymous_iri?
         end
