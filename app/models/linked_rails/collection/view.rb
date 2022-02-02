@@ -41,12 +41,6 @@ module LinkedRails
         collection.page_size&.to_i || default_page_size
       end
 
-      def preview_includes
-        return {member_sequence: {}} unless include_members
-
-        {member_sequence: {members: association_class.preview_includes}}
-      end
-
       def title
         plural = association_class.name.tableize
         I18n.t(

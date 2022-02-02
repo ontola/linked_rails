@@ -2,7 +2,7 @@
 
 module LinkedRails
   class WebSiteSerializer < CreativeWorkSerializer
-    has_one :homepage, predicate: Vocab.foaf.homepage, polymorphic: true
+    has_one :homepage, predicate: Vocab.foaf.homepage
     attribute :image, predicate: Vocab.schema.image do |object|
       serialize_image(object.image)
     end

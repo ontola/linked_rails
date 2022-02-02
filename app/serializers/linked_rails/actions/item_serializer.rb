@@ -18,12 +18,11 @@ module LinkedRails
       end
       attribute :error, predicate: Vocab.schema.error
 
-      has_one :parent, predicate: Vocab.schema.isPartOf, polymorphic: true do |object|
+      has_one :parent, predicate: Vocab.schema.isPartOf do |object|
         object.parent unless object.parent.try(:anonymous_iri?)
       end
       attribute :object_iri, predicate: Vocab.schema.object
-      has_one :target, predicate: Vocab.schema.target, polymorphic: true
-      has_one :included_object, polymorphic: true
+      has_one :target, predicate: Vocab.schema.target
     end
   end
 end

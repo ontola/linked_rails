@@ -31,17 +31,17 @@ module LinkedRails
     attribute :sort_options, predicate: Vocab.ontola[:sortOptions]
     attribute :view, predicate: Vocab.ll[:view]
 
-    has_one :unfiltered_collection, predicate: Vocab.ontola[:baseCollection], polymorphic: true
-    has_one :part_of, predicate: Vocab.schema.isPartOf, polymorphic: true do |object|
+    has_one :unfiltered_collection, predicate: Vocab.ontola[:baseCollection]
+    has_one :part_of, predicate: Vocab.schema.isPartOf do |object|
       object.part_of unless object.part_of.try(:anonymous_iri?)
     end
-    has_one :default_view, predicate: Vocab.ontola[:pages], polymorphic: true
+    has_one :default_view, predicate: Vocab.ontola[:pages]
 
-    has_many :filter_fields, predicate: Vocab.ontola[:filterFields], polymorphic: true, sequence: true
-    has_many :filters, predicate: Vocab.ontola[:collectionFilter], polymorphic: true do |object|
+    has_many :filter_fields, predicate: Vocab.ontola[:filterFields], sequence: true
+    has_many :filters, predicate: Vocab.ontola[:collectionFilter] do |object|
       object.filters.reject(&:default_filter)
     end
-    has_many :sortings, polymorphic: true, predicate: Vocab.ontola[:collectionSorting]
+    has_many :sortings, predicate: Vocab.ontola[:collectionSorting]
 
     %i[first last].each do |attr|
       attribute attr, predicate: Vocab.as[attr]

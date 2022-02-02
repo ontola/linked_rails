@@ -157,7 +157,7 @@ module LinkedRails
       nil
     end
 
-    def timing_json(timing)# rubocop:disable Metrics/MethodLength
+    def timing_json(timing) # rubocop:disable Metrics/MethodLength
       route = Rails.application.routes.recognize_path(timing[:resource].to_s)
 
       {

@@ -67,17 +67,8 @@ module LinkedRails
       end
 
       class << self
-        def base_includes
-          [action: :target]
-        end
-
         def preview_includes
-          base_includes + [
-            menu_sequence: [
-              members: base_includes +
-                [menu_sequence: [members: base_includes]]
-            ]
-          ]
+          [menu_sequence: [members: [menu_sequence: :members]]]
         end
 
         def requested_index_resource(params, user_context)

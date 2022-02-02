@@ -103,15 +103,6 @@ module LinkedRails
       self.class.new(**attrs)
     end
 
-    def preview_includes
-      {
-        default_view: default_view.preview_includes,
-        filter_fields: :options,
-        filters: [],
-        sortings: []
-      }
-    end
-
     def total_count
       @total_count ||= association_base.try(:total_count) || unscoped_association.count
     end
@@ -184,7 +175,11 @@ module LinkedRails
 
     def new_child_values
       instance_values
-        .slice('iri_template', *LinkedRails::Model::Collections::COLLECTION_STATIC_OPTIONS.keys.map(&:to_s))
+        .slice(
+          'iri_template',
+          *LinkedRails::Model::Collections::COLLECTION_STATIC_OPTIONS.keys.map(&:to_s),
+          *LinkedRails::Model::Collections::COLLECTION_CUSTOMIZABLE_OPTIONS.keys.map { |key| "default_#{key}" }
+        )
         .merge(
           unfiltered_collection: filtered? ? @unfiltered_collection : self,
           user_context: user_context

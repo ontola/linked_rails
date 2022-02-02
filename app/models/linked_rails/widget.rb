@@ -19,12 +19,9 @@ module LinkedRails
     end
 
     def resource_sequence
-      @resource_sequence ||=
-        LinkedRails::Sequence.new(
-          @resources.map { |iri, predicate| predicate.present? ? property_shape(iri, predicate).iri : RDF::URI(iri) },
-          parent: self,
-          scope: false
-        )
+      @resource_sequence ||= @resources.map do |iri, predicate|
+        predicate.present? ? property_shape(iri, predicate) : RDF::URI(iri)
+      end
     end
 
     def size
@@ -45,10 +42,6 @@ module LinkedRails
     class << self
       def iri
         Vocab.ontola[:Widget]
-      end
-
-      def preview_includes
-        %i[resource_sequence property_shapes]
       end
     end
   end
