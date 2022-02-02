@@ -14,9 +14,9 @@ module LinkedRails
         attribute attr, predicate: Vocab.as[attr]
       end
 
-      has_one :collection, predicate: Vocab.as.partOf, polymorphic: true
-      has_one :unfiltered_collection, predicate: Vocab.ontola[:baseCollection], polymorphic: true
-      has_one :member_sequence, predicate: Vocab.as.items, polymorphic: true
+      has_one :collection, predicate: Vocab.as.partOf
+      has_one :unfiltered_collection, predicate: Vocab.ontola[:baseCollection]
+      has_one :member_sequence, predicate: Vocab.as.items
     end
   end
 end

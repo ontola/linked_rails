@@ -13,15 +13,15 @@ module LinkedRails
       attribute :image, predicate: Vocab.schema.image do |object|
         serialize_image(object.image)
       end
-      has_one :action, predicate: Vocab.ontola[:action], polymorphic: true do |object|
+      has_one :action, predicate: Vocab.ontola[:action] do |object|
         object.action unless object.action.is_a?(RDF::Resource)
       end
       has_one :menu_sequence,
               predicate: Vocab.ontola[:menuItems],
               if: ->(o, p) { menus_present?(o, p) },
               polymorphic: true
-      has_one :parent, predicate: Vocab.ontola[:parentMenu], if: ->(o, p) { parent_menu?(o, p) }, polymorphic: true
-      has_one :resource, predicate: Vocab.schema.isPartOf, polymorphic: true
+      has_one :parent, predicate: Vocab.ontola[:parentMenu], if: ->(o, p) { parent_menu?(o, p) }
+      has_one :resource, predicate: Vocab.schema.isPartOf
 
       def self.parent_menu?(object, _params)
         object.parent.is_a?(LinkedRails.menus_item_class)

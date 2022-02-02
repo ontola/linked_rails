@@ -63,10 +63,6 @@ module LinkedRails
         @serializer_reflections ||= serializer_class&.relationships_to_serialize || {}
       end
 
-      def preview_includes
-        [pages: {groups: [fields: [:fail, :pass, shape: [:property, nested_shapes: :property]]]}]
-      end
-
       private
 
       def current_group

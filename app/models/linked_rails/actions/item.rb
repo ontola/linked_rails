@@ -98,10 +98,6 @@ module LinkedRails
         RDF::URI(value)
       end
 
-      def preview_includes
-        %i[target]
-      end
-
       def singular_resource?
         resource.try(:singular_resource?)
       end

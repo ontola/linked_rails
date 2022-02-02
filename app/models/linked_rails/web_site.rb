@@ -8,10 +8,6 @@ module LinkedRails
       def iri
         Vocab.schema.WebSite
       end
-
-      def preview_includes
-        super + [homepage: LinkedRails::WebPage.preview_includes]
-      end
     end
   end
 end

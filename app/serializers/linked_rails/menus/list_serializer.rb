@@ -5,7 +5,7 @@ module LinkedRails
     class ListSerializer < LinkedRails.serializer_parent_class
       include LinkedRails::Serializer
 
-      has_many :menus, predicate: Vocab.ontola[:menus], polymorphic: true do |object|
+      has_many :menus, predicate: Vocab.ontola[:menus] do |object|
         object.menus&.compact
       end
     end

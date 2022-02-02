@@ -105,7 +105,6 @@ module LinkedRails
           LinkedRails::Sequence.new(
             menu_list.menus,
             id: menu_list.iri,
-            member_includes: Item.preview_includes,
             scope: false
           )
         end

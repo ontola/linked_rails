@@ -4,11 +4,8 @@ module LinkedRails
   class SequenceSerializer < LinkedRails.serializer_parent_class
     include LinkedRails::Serializer
 
-    statements :sequence
-    has_many :members, polymorphic: true
-
-    def self.sequence(object, _params)
-      object.sequence
+    has_many :members, predicate: ->(relationship, index) do
+      RDF["_#{index}"]
     end
   end
 end

@@ -13,10 +13,6 @@ module LinkedRails
       def iri
         Vocab.schema.WebPage
       end
-
-      def preview_includes
-        super + [:includes, widget_sequence: {members: LinkedRails::Widget.preview_includes}]
-      end
     end
   end
 end

@@ -7,7 +7,7 @@ module LinkedRails
 
       attribute :key, predicate: Vocab.ontola[:filterKey]
       attribute :value, predicate: Vocab.ontola[:filterValue]
-      has_one :collection, predicate: Vocab.schema.isPartOf, polymorphic: true
+      has_one :collection, predicate: Vocab.schema.isPartOf
     end
   end
 end

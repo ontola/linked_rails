@@ -11,8 +11,8 @@ module LinkedRails
       object.http_method.upcase
     end
 
-    has_one :parent, predicate: Vocab.schema.isPartOf, polymorphic: true
-    attribute :action_body, predicate: Vocab.ll[:actionBody], polymorphic: true
+    has_one :parent, predicate: Vocab.schema.isPartOf
+    attribute :action_body, predicate: Vocab.ll[:actionBody]
     attribute :image, predicate: Vocab.schema.image do |object|
       serialize_image(object.image)
     end

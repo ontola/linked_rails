@@ -2,11 +2,10 @@
 
 module LinkedRails
   class Sequence
-    attr_accessor :node, :member_includes, :parent, :raw_members, :scope, :user_context
+    attr_accessor :node, :parent, :raw_members, :scope, :user_context
     alias read_attribute_for_serialization send
 
     def initialize(members, **opts)
-      self.member_includes = opts[:member_includes]
       self.node = opts[:id] || RDF::Node.new
       self.parent = opts[:parent]
       self.raw_members = members
@@ -26,19 +25,11 @@ module LinkedRails
     end
 
     def preview_includes
-      [members: member_includes]
+      [:members]
     end
 
     def rdf_type
       self.class.iri
-    end
-
-    def sequence
-      return [] unless members
-
-      members.map.with_index do |item, index|
-        [iri, RDF["_#{index}"], item_iri(item), Vocab.ll[:supplant]]
-      end
     end
 
     private

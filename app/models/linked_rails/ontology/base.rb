@@ -41,7 +41,7 @@ module LinkedRails
       end
 
       def include_data_statement?(statement)
-        return false if statement.subject.node?
+        return false if statement.subject.node? || statement.object.node?
 
         statement.predicate != Vocab.rdfs.label &&
           statement.predicate != Vocab.rdfs.range &&

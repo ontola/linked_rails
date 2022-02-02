@@ -13,11 +13,11 @@ module LinkedRails
       attribute :target_node, predicate: Vocab.sh.targetNode
       attribute :target_objects_of, predicate: Vocab.sh.targetObjectsOf
       attribute :target_subjects_of, predicate: Vocab.sh.targetSubjectsOf
-      has_one :sh_not, predicate: Vocab.sh.not, polymorphic: true
-      has_many :and, predicate: Vocab.sh.and, polymorphic: true
-      has_many :or, predicate: Vocab.sh.or, polymorphic: true
-      has_many :xone, predicate: Vocab.sh.xone, polymorphic: true
-      has_many :nested_shapes, polymorphic: true do |object|
+      has_one :sh_not, predicate: Vocab.sh.not
+      has_many :and, predicate: Vocab.sh.and
+      has_many :or, predicate: Vocab.sh.or
+      has_many :xone, predicate: Vocab.sh.xone
+      has_many :nested_shapes do |object|
         [object.and, object.or, object.sh_not, object.xone].flatten.compact
       end
     end

@@ -21,7 +21,7 @@ module LinkedRails
         return ApplicationController if controller == ActionDispatch::Request::PASS_NOT_FOUND
 
         controller
-      rescue
+      rescue StandardError
         ApplicationController
       end
 
