@@ -5,7 +5,7 @@ module LinkedRails
     include ActiveModel::Model
     include LinkedRails::Model
 
-    attr_accessor :attr, :close_match, :exact_match, :group_by, :key, :klass, :type
+    attr_accessor :attr, :close_match, :exact_match, :group_by, :identifier, :key, :klass, :type
     attr_writer :iri, :label
 
     def label

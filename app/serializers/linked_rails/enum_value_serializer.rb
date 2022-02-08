@@ -8,5 +8,6 @@ module LinkedRails
     attribute :close_match, predicate: Vocab.skos.closeMatch
     attribute :exact_match, predicate: Vocab.skos.exactMatch
     attribute :group_by, predicate: Vocab.ontola[:groupBy]
+    attribute :identifier, predicate: Vocab.schema.identifier
   end
 end
