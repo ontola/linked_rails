@@ -62,7 +62,9 @@ module LinkedRails
         #   Set to false to skip scoping
         policy_scope: -> { policy ? policy::Scope : Pundit::PolicyFinder.new(filtered_association).scope! },
         # route_key [Symbol, String] The route key for the association
-        route_key: nil
+        route_key: nil,
+        # view [IRI] The view to use for rendering the members
+        view: nil
       }.freeze
       COLLECTION_OPTIONS = COLLECTION_CUSTOMIZABLE_OPTIONS.merge(COLLECTION_STATIC_OPTIONS)
 

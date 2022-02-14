@@ -26,7 +26,7 @@ module LinkedRails
     include LinkedRails::Collection::IRIMapping
     include LinkedRails::Collection::Sortable
 
-    attr_accessor :name, :policy, :user_context, :view
+    attr_accessor :name, :policy, :user_context
     attr_writer :association_base, :views
 
     alias id iri
