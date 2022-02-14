@@ -85,8 +85,14 @@ module LinkedRails
       end
 
       def polymorphic_collection?
-        members_query.where_values_hash.include?(association_class.inheritance_column) &&
-          members_query.where_values_hash[association_class.inheritance_column] != association_class.to_s
+        column = association_class.inheritance_column
+        polymorphic = association_class.columns_hash.include?(column)
+        return false unless polymorphic
+
+        return true if association_class.descends_from_active_record?
+
+        members_query.where_values_hash.include?(column) &&
+          members_query.where_values_hash[column] != association_class.to_s
       end
 
       def prepare_members(scope)
