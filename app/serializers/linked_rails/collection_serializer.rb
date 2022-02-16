@@ -5,7 +5,7 @@ module LinkedRails
     include LinkedRails::Serializer
 
     attribute :base_url, predicate: Vocab.schema.url do |object|
-      object.iri(display: nil, page_size: nil, table_type: nil)
+      object.iri(display: nil, page_size: nil)
     end
     attribute :title, predicate: Vocab.as.name
     attribute :total_count, predicate: Vocab.as.totalItems do |object|
