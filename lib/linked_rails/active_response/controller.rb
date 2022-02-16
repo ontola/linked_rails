@@ -8,7 +8,7 @@ require_relative 'controller/params'
 
 module LinkedRails
   module Controller
-    include Pundit
+    include Pundit::Authorization
     include LinkedRails::ActiveResponse::Controller::Collections
     include LinkedRails::ActiveResponse::Controller::CrudDefaults
     include LinkedRails::ActiveResponse::Controller::Params
