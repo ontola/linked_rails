@@ -119,6 +119,10 @@ module LinkedRails
           LinkedRails::Collection::ViewPolicy
         end
 
+        def preview_includes
+          %i[member_sequence]
+        end
+
         private
 
         def collection_paginated_view_class
