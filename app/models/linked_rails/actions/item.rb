@@ -157,7 +157,7 @@ module LinkedRails
       end
 
       def policy_resource_fallback
-        resource
+        object
       end
 
       def policy_valid?

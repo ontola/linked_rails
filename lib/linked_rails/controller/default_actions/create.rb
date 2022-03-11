@@ -18,7 +18,7 @@ module LinkedRails
           default_create_options(
             form: -> { resource.association_class.try(:form_class) },
             object: -> { resource.child_resource },
-            policy: :create_child?
+            policy: :create?
           ).merge(overwrite)
         end
 

@@ -58,6 +58,7 @@ module LinkedRails
         #   Defaults to false
         # @option opts [proc<string>, string] :label The label of the action
         # @option opts [LinkedRails::Model] :object The object on which the action will be executed
+        #   Defaults to the resource
         # @option opts [symbol] :on_failure Callback when the execute method failed.
         #   Defaults to "#{action}_failure"
         # @option opts [symbol] :on_success Callback when the execute method succeeded.
@@ -65,7 +66,8 @@ module LinkedRails
         # @option opts [symbol] :policy The method to be called on the policy of the policy_resource
         # @option opts [Array<symbol>] :policy_arguments The arguments passed to the policy method
         # @option opts [proc<LinkedRails::Model>, LinkedRails::Model] :policy_resource
-        #   The resource on which a policy needs to be authorized
+        #   The resource on which a policy needs to be authorized.
+        #   Defaults to the object
         # @option opts [proc<RDF::URI>, RDF::URI] :predicate The relation between the resource and the action
         # @option opts [proc<LinkedRails::Model>, LinkedRails::Model] :result
         # @option opts [proc<string>, string] :submit_label The label for the submit button of the action
