@@ -16,7 +16,7 @@ module LinkedRails
               object.singular_iri,
               Vocab.owl.sameAs,
               object.iri,
-              graph_name: Vocab.ll[:supplant]
+              graph_name: Vocab.ld[:supplant]
             )
           ]
         end

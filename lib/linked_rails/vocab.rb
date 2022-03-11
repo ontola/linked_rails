@@ -82,6 +82,7 @@ module LinkedRails
     register(:fhir, 'http://hl7.org/fhir/')
     register(:form, 'https://ns.ontola.io/form#')
     register(:libro, 'https://ns.ontola.io/libro/')
+    register(:ld, 'http://purl.org/linked-delta/')
     register(:ll, 'http://purl.org/link-lib/')
     register(:ontola, 'https://ns.ontola.io/core#')
     register(:sp, 'http://spinrdf.org/sp#')

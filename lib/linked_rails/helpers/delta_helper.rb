@@ -60,7 +60,7 @@ module LinkedRails
       end
 
       def delta_iri(delta)
-        %i[remove replace invalidate].include?(delta) ? Vocab.ontola[delta] : Vocab.ll[delta]
+        %i[remove replace invalidate].include?(delta) ? Vocab.ontola[delta] : Vocab.ld[delta]
       end
 
       def invalidate_collection_delta(collection)
