@@ -14,7 +14,7 @@ module LinkedRails
       delegate :filter_options, to: :association_class
 
       def filter_fields
-        @filter_fields ||= filter_options&.map { |key, options| filter_field(key, options) }&.select(&:serializable?)
+        @filter_fields ||= filter_options&.map { |key, options| filter_field(key, options) }
       end
 
       def filtered?
@@ -72,7 +72,8 @@ module LinkedRails
           klass: association_class,
           key: key,
           options_in: options[:values_in],
-          options_array: options[:values]
+          options_array: options[:values],
+          visible: options[:visible]
         )
       end
 

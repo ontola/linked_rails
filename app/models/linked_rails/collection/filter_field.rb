@@ -9,9 +9,10 @@ module LinkedRails
       include LinkedRails::CallableVariable
 
       attr_accessor :key, :klass, :collection
-      attr_writer :options_array, :options_in
+      attr_writer :options_array, :options_in, :visible
       callable_variable(:options_array)
       callable_variable(:options_in)
+      callable_variable(:visible)
 
       def iri(**_opts)
         self
@@ -26,8 +27,20 @@ module LinkedRails
         Collection::FilterOption.new(attrs.merge(collection: collection, key: key))
       end
 
-      def serializable?
-        options_in || options_array
+      def visible?
+        has_options? && condition_valid?
+      end
+
+      private
+
+      def condition_valid?
+        return true if visible.nil?
+
+        visible
+      end
+
+      def has_options?
+        !!(options_in || options_array)
       end
     end
   end

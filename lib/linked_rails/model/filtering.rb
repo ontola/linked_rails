@@ -17,7 +17,7 @@ module LinkedRails
         def filterable(**options)
           initialize_filter_options
 
-          self.filter_options = HashWithIndifferentAccess.new(options).merge(filter_options)
+          self.filter_options = filter_options.merge(options)
 
           options.map { |k, filter| define_filter_method(k, filter) }
         end
@@ -34,7 +34,7 @@ module LinkedRails
         def initialize_filter_options
           return if filter_options && method(:filter_options).owner == singleton_class
 
-          self.filter_options = superclass.try(:filter_options)&.dup || {}
+          self.filter_options = superclass.try(:filter_options)&.dup || HashWithIndifferentAccess.new
         end
 
         def define_filter_method(key, filter)
