@@ -38,7 +38,7 @@ module LinkedRails
     has_one :default_view, predicate: Vocab.ontola[:pages]
 
     has_many :filter_fields, predicate: Vocab.ontola[:filterFields], sequence: true
-    has_many :filters, predicate: Vocab.ontola[:collectionFilter] do |object|
+    has_many :filters, predicate: Vocab.ontola[:activeFilters] do |object|
       object.filters.reject(&:default_filter)
     end
     has_many :sortings, predicate: Vocab.ontola[:collectionSorting]
