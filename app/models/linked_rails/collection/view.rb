@@ -41,6 +41,10 @@ module LinkedRails
         collection.page_size&.to_i || default_page_size
       end
 
+      def preview_includes
+        include_members ? {member_sequence: :members} : %i[member_sequence]
+      end
+
       def title
         plural = association_class.name.tableize
         I18n.t(
@@ -117,10 +121,6 @@ module LinkedRails
 
         def policy_class
           LinkedRails::Collection::ViewPolicy
-        end
-
-        def preview_includes
-          %i[member_sequence]
         end
 
         private
