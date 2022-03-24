@@ -21,6 +21,23 @@ module LinkedRails
         }.compact
       end
 
+      def serialized_iri_template
+        iri_template
+          .to_s
+          .gsub('{route_key}', iri_template_route_key)
+          .gsub('{/parent_iri*}', iri_template_parent_iri)
+      end
+
+      private
+
+      def iri_template_parent_iri
+        parent&.iri&.to_s&.split('?')&.first || LinkedRails.iri
+      end
+
+      def iri_template_route_key
+        route_key.to_s
+      end
+
       class_methods do
         def iri
           [super, Vocab.as.Collection]
