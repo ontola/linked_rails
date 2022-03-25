@@ -41,7 +41,7 @@ module LinkedRails
       end
 
       def requested_resource_parent
-        requested_resource&.parent
+        requested_resource.try(:parent)
       end
 
       private
