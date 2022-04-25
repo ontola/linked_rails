@@ -21,6 +21,11 @@ module LinkedRails
         }.compact
       end
 
+      def iri_template_opts
+        opts = iri_opts.with_indifferent_access.slice(*(DEFAULT_IRI_TEMPLATE_KEYS + iri_template_keys))
+        Hash[opts.keys.map { |key| [CGI.unescape(key).sub('[]', ''), opts[key]] }].to_param
+      end
+
       def serialized_iri_template
         iri_template
           .to_s
