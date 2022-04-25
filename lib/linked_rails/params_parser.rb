@@ -152,8 +152,19 @@ module LinkedRails
 
     def parse_nested_resource(object, klass)
       resource = parse_resource(object, klass)
-      resource[:id] ||= LinkedRails.iri_mapper.opts_from_iri(object)[:params][:id] if object.iri?
+      resource[:id] ||= nested_resource_id(object)
       resource
+    end
+
+    def nested_resource_id(object)
+      return unless object.iri?
+
+      opts = LinkedRails.iri_mapper.opts_from_iri(object)
+      if opts[:class].method(:requested_single_resource).owner == LinkedRails::Model::IRIMapping::ClassMethods
+        opts[:params][:id]
+      else
+        opts[:class].requested_single_resource(opts[:params], nil)&.id
+      end
     end
 
     def parse_statement(statement, klass)

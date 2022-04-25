@@ -33,29 +33,28 @@ module LinkedRails
         ]
       end
 
-      def previously_changed_relations
+      def previously_changed_relations(depth = 0)
         serializer_class = RDF::Serializers.serializer_for(self)
         return {} unless serializer_class.try(:relationships_to_serialize)
 
         serializer_class.relationships_to_serialize.select do |key, _value|
           if respond_to?(key)
             association_key = key.to_s.ends_with?('_collection') ? send(key).association : key
-            association_has_destructed?(association_key) || association_changed?(association_key)
+            association_has_destructed?(association_key) || association_changed?(association_key, depth + 1)
           end
         end.with_indifferent_access
       end
 
       private
 
-      def association_changed?(association) # rubocop:disable Metrics/AbcSize
+      def association_changed?(association, depth) # rubocop:disable Metrics/AbcSize
         ids_method = "#{association.to_s.singularize}_ids"
         return true if previous_changes.include?("#{association}_id") || previous_changes.include?(ids_method)
         return false unless try(:association_cached?, association)
+        records = self.class.reflect_on_association(association).collection? ? send(association) : [send(association)]
 
-        if self.class.reflect_on_association(association).collection?
-          send(association).any? { |a| a.previous_changes.present? }
-        else
-          send(association)&.previous_changes&.present?
+        records.any? do |a|
+          a&.previous_changes.present? || (depth < 3 && a&.previously_changed_relations(depth).present?)
         end
       end
 

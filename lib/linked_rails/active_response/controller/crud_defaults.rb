@@ -80,7 +80,7 @@ module LinkedRails
         end
 
         def update_meta
-          changes_triples + changed_relations_triples
+          changes_triples(current_resource) + changed_relations_triples(current_resource)
         end
 
         def user_context
