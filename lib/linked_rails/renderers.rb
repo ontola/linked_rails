@@ -19,6 +19,7 @@ module LinkedRails
         end
 
         register_renderer(%i[hndjson], ['application/hex+x-ndjson'], :hndjson)
+        register_renderer(%i[empjson], ['application/empathy+json'], :empjson)
         rdf_content_types.freeze
       end
 

@@ -13,7 +13,7 @@ module LinkedRails
       include Serializer::Actionable
       include Serializer::Menuable
       include Serializer::Singularable
-
+      include EmpJSON::Serializer
       extend Enhanceable
 
       enhanceable :serializable_class, :Serializer

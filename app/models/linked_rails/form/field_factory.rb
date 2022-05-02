@@ -210,7 +210,9 @@ module LinkedRails
       def validator(klass, option_key)
         matched_validator = validator_by_class(klass)
 
-        option_key ? matched_validator&.options.try(:[], option_key) : matched_validator.present?
+        value = option_key ? matched_validator&.options.try(:[], option_key) : matched_validator.present?
+
+        value unless value.respond_to?(:call)
       end
 
       def validator_by_class(klass)
@@ -224,7 +226,7 @@ module LinkedRails
           VALIDATOR_SELECTORS.map do |key, klass, option_key|
             [key, validator(klass, option_key)]
           end
-        ]
+        ].compact
       end
     end
   end

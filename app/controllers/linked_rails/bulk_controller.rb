@@ -84,14 +84,12 @@ module LinkedRails
       false
     end
 
-    def resource_body(resource)
-      return if resource.nil?
+    def resource_hash(resource)
+      resource_serializer(resource).send(:emp_json_hash)
+    end
 
-      serializer_options = RDF::Serializers::Renderers.transform_opts(
-        {include: resource&.try(:preview_includes)},
-        serializer_params
-      )
-      RDF::Serializers.serializer_for(resource).new(resource, serializer_options).send(:render_hndjson)
+    def resource_body(resource)
+      resource_serializer(resource).send(:render_emp_json)
     end
 
     def resource_params(param)
@@ -126,7 +124,7 @@ module LinkedRails
       fullpath = iri.query.blank? ? iri.path : "#{iri.path}?#{iri.query}"
 
       request.env.slice(*REQUEST_HEADERS).merge(
-        'HTTP_ACCEPT' => 'application/hex+x-ndjson',
+        'HTTP_ACCEPT' => 'application/empathy+json',
         'HTTP_OPERATOR_ARG_GRAPH' => 'true',
         'ORIGINAL_FULLPATH' => fullpath
       )
@@ -139,6 +137,18 @@ module LinkedRails
         iri: iri,
         status: 404
       }.merge(opts)
+    end
+
+    def resource_serializer(resource)
+      return if resource.nil?
+
+      serializer_options = RDF::Serializers::Renderers.transform_opts(
+        {include: resource&.try(:preview_includes)},
+        serializer_params
+      )
+      RDF::Serializers
+        .serializer_for(resource)
+        .new(resource, serializer_options)
     end
 
     def response_for_wrong_host(opts)

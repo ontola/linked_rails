@@ -55,7 +55,7 @@ module LinkedRails
           serializer
             .attributes_to_serialize
             .values
-            .select { |attr| attr.predicate.present? }
+            .select { |attr| attr.predicate.present? && !attr.predicate.is_a?(Proc) }
             .map { |attr| [attr.predicate, attr] }
         end
 
@@ -66,7 +66,7 @@ module LinkedRails
           serializer
             .relationships_to_serialize
             .values
-            .select { |value| value.predicate.present? }
+            .select { |value| value.predicate.present? && !value.predicate.is_a?(Proc) }
             .map { |value| [value.predicate, value] }
         end
       end
