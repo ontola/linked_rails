@@ -3,11 +3,11 @@
 module LinkedRails
   module Helpers
     module DeltaHelper
-      def changed_relation_triples(predicate, destructed, resources, depth)
+      def changed_relation_triples(predicate, destructed, resources, inverted)
         related_resource_invalidations =
           resources.flat_map do |resource|
             resource_delta = invalidate_resource_delta(resource)
-            depth > 3 ? [resource_delta] : [resource_delta] + changed_relations_triples(resource, depth + 1)
+            [resource_delta] + changed_relations_triples(resource, inverted)
           end
 
         return related_resource_invalidations unless predicate
@@ -34,14 +34,14 @@ module LinkedRails
         end
       end
 
-      def changed_relations_triples(resource, depth = 0) # rubocop:disable Metrics/AbcSize
+      def changed_relations_triples(resource, inverted = nil) # rubocop:disable Metrics/AbcSize
         resource.previously_changed_relations.flat_map do |key, value|
           if key.to_s.ends_with?('_collection')
             changed_collection_triples(resource, key)
           else
             destructed = resource.send(:association_has_destructed?, key)
             records = value.relationship_type == :has_many ? resource.send(key) : [resource.send(key)]
-            changed_relation_triples(value.predicate, destructed, records, depth)
+            changed_relation_triples(value.predicate, destructed, records - [inverted], resource)
           end
         end
       end
