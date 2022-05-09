@@ -5,6 +5,8 @@ module LinkedRails
     module Primitives
       include EmpJSON::Constants
 
+      AS_TIME_WITH_ZONE = Object.const_defined?('ActiveSupport::TimeWithZone') && Object.const_get('ActiveSupport::TimeWithZone')
+
       def object_to_value(value)
         return primitive_to_value(value.iri) if value.respond_to?(:iri)
 
@@ -18,12 +20,16 @@ module LinkedRails
       end
 
       def primitive_to_value(value) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
+        throw_unknown_ruby_object(value) if value.nil?
+
+        return shorthand(EMP_TYPE_DATETIME, value.iso8601) if as_time_with_zone?(value)
+
         case value
         when RDF::Node
           node_to_local_id(value)
         when RDF::URI, URI
           shorthand(EMP_TYPE_GLOBAL_ID, value.to_s)
-        when DateTime, ActiveSupport::TimeWithZone
+        when DateTime
           shorthand(EMP_TYPE_DATETIME, value.iso8601)
         when String
           shorthand(EMP_TYPE_STRING, value)
@@ -38,7 +44,7 @@ module LinkedRails
         when RDF::Literal
           rdf_literal_to_value(value)
         else
-          throw "unknown ruby object: #{value} (#{value.class})"
+          throw_unknown_ruby_object(value)
         end
       end
 
@@ -92,6 +98,14 @@ module LinkedRails
           dt: datatype,
           v: value
         }
+      end
+
+      def as_time_with_zone?(value)
+        AS_TIME_WITH_ZONE && value.is_a?(AS_TIME_WITH_ZONE)
+      end
+
+      def throw_unknown_ruby_object(value)
+        throw "unknown ruby object: #{value} (#{value.class})"
       end
     end
   end
