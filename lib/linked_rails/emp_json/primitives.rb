@@ -75,6 +75,8 @@ module LinkedRails
           shorthand(EMP_TYPE_BOOL, value.value)
         when NS.xsd.integer
           integer_to_value(value.to_i)
+        when NS.xsd.token
+          primitive(NS.xsd.token, value.to_s)
         else
           throw 'unknown RDF::Literal'
         end
