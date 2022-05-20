@@ -133,6 +133,7 @@ module LinkedRails
         parent&.build_child(association_class, user_context: user_context) ||
         association_class.build_new(parent: parent, user_context: user_context)
 
+      child.assign_attributes(association_base.where_values_hash) if association_base.respond_to?(:where_values_hash)
       child.assign_attributes(permitted_attributes_from_filters(child))
       child
     end

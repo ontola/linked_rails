@@ -51,9 +51,10 @@ module LinkedRails
       end
 
       def apply_filter(scope, key, values)
-        filter = filter_options.fetch(key).try(:[], :filter)
+        filter = filter_options[key].try(:[], :filter)
 
         return filter.call(scope, values) if filter
+        return scope unless association_class.predicate_mapping.key?(key)
 
         scope.where(association_class.predicate_mapping[key].key => values)
       end
@@ -79,7 +80,7 @@ module LinkedRails
 
       def sanitized_filter_value(key, value)
         mapping = association_class.predicate_mapping[key]
-        datatype = mapping.is_a?(FastJsonapi::Relationship) ? Vocab.xsd.anyURI : mapping.datatype
+        datatype = mapping.is_a?(FastJsonapi::Relationship) ? Vocab.xsd.anyURI : mapping&.datatype
         val = xsd_to_rdf(datatype, value)
         val.literal? ? val.object : val
       end

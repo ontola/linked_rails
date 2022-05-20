@@ -51,6 +51,8 @@ module LinkedRails
       end
 
       def new_resource_from_parent
+        return requested_resource.child_resource if requested_resource.is_a?(Collection)
+
         parent_resource.build_child(
           controller_class,
           user_context: user_context
