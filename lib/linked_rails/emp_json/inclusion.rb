@@ -45,9 +45,11 @@ module LinkedRails
           next if value.blank?
 
           (value.is_a?(Array) || value.is_a?(ActiveRecord::Relation) ? value : [value]).each do |v|
-            next if slice_includes_record?(slice, v)
-
-            resource_to_emp_json(slice, serialization_params, resource: v, includes: nested, **options)
+            if slice_includes_record?(slice, v)
+              process_includes(slice, serialization_params, resource: v, includes: nested) if nested
+            else
+              resource_to_emp_json(slice, serialization_params, resource: v, includes: nested, **options)
+            end
           end
         end
       end
