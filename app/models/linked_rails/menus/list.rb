@@ -26,17 +26,22 @@ module LinkedRails
       end
 
       def menus
-        @menus ||= available_menus.map(&method(:menu_item))
+        @menus ||= available_menus.map(&method(:memoised_menu_item))
       end
 
       def menu(tag)
-        menu_item(tag, available_menus[tag].dup) if available_menus.key?(tag)
+        memoized_menu_item(tag, available_menus[tag].dup) if available_menus.key?(tag)
       end
 
       private
 
       def default_label(tag, options)
         I18n.t("menus.#{resource&.class&.name&.tableize}.#{tag}", **options[:label_params])
+      end
+
+      def memoized_menu_item(tag, options)
+        @memoized_menu_item ||= {}
+        @memoized_menu_item[tag] ||= menu_item(tag, options)
       end
 
       def menu_available?(_tag, options)

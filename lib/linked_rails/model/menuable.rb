@@ -14,7 +14,7 @@ module LinkedRails
       end
 
       def menu_list(user_context = nil)
-        @menu_list = {}
+        @menu_list ||= {}
         @menu_list[user_context] ||= self.class.menu_class.new(resource: self, user_context: user_context)
       end
 

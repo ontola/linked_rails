@@ -12,7 +12,7 @@ module LinkedRails
       delegate :iri_opts, to: :parent
 
       alias id iri
-      %i[action href image label menus iri_base].each do |method|
+      %i[action href image label iri_base].each do |method|
         callable_variable(method, instance: :parent)
       end
 
@@ -36,7 +36,7 @@ module LinkedRails
 
         @menu_sequence ||=
           LinkedRails::Sequence.new(
-            -> { menus&.compact&.each { |menu| menu.parent = self } },
+            -> { menus },
             id: menu_sequence_iri,
             parent: self,
             scope: false
@@ -50,6 +50,12 @@ module LinkedRails
         sequence_iri.path ||= ''
         sequence_iri.path += '/menu_items'
         sequence_iri
+      end
+
+      def menus
+        return @menus unless @menus.respond_to?(:call)
+
+        @menus = parent.instance_exec(&@menus).compact.each { |menu| menu.parent = self }
       end
 
       def rdf_type
