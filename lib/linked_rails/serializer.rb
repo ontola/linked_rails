@@ -104,7 +104,7 @@ module LinkedRails
       end
 
       def serialize_image(obj)
-        if obj.is_a?(String) || obj.is_a?(Symbol)
+        if (obj.is_a?(String) || obj.is_a?(Symbol)) && !obj.to_s.include?('http')
           RDF::URI(obj.to_s.gsub(/^fa-/, 'http://fontawesome.io/icon/'))
         else
           obj.presence
