@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
   spec.add_dependency 'active_response', '~> 0.0.2'
+  spec.add_dependency 'emp_json'
   spec.add_dependency 'kaminari-activerecord'
   spec.add_dependency 'pundit'
   spec.add_dependency 'rdf'

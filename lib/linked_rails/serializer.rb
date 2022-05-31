@@ -13,7 +13,7 @@ module LinkedRails
       include Serializer::Actionable
       include Serializer::Menuable
       include Serializer::Singularable
-      include EmpJSON::Serializer
+      include Empathy::EmpJson::Serializer
       extend Enhanceable
 
       enhanceable :serializable_class, :Serializer
@@ -149,3 +149,6 @@ module LinkedRails
     end
   end
 end
+
+RDF::Serializers::NilSerializer.include(Empathy::EmpJson::Serializer)
+RDF::Serializers::ListSerializer.include(Empathy::EmpJson::Serializer)

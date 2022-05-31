@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_response'
+require 'empathy/emp_json'
 require 'jsonapi/serializer'
 require 'kaminari/activerecord'
 require 'rdf'
@@ -11,7 +12,6 @@ require 'nill_class_renderer'
 require 'linked_rails/engine'
 require 'linked_rails/iri_mapper'
 require 'linked_rails/collection_params_parser'
-require 'linked_rails/emp_json/serializer'
 require 'linked_rails/params_parser'
 require 'linked_rails/middleware/linked_data_params'
 require 'linked_rails/middleware/error_handling'
