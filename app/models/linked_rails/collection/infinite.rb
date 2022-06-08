@@ -9,6 +9,12 @@ module LinkedRails
         attr_accessor :before
       end
 
+      def any?
+        return members_query.any? if members_query.is_a?(ActiveRecord::Relation)
+
+        count.positive?
+      end
+
       def initialize(orignial = {})
         attrs = orignial.with_indifferent_access
         attrs[:before] = attrs[:before]&.map { |val| val.with_indifferent_access }
@@ -24,7 +30,7 @@ module LinkedRails
         }
         next_view = collection.view_with_opts(current_opts.merge(before: next_before_values))
 
-        next_view.iri if next_view.count.positive?
+        next_view.iri if next_view.any?
       end
 
       def prev; end
@@ -67,6 +73,8 @@ module LinkedRails
           'before%5B%5D': before_iri_opts
         }.merge(collection.iri_opts)
       end
+
+      def iris_from_scope; end
 
       def members_query
         @members_query ||=
