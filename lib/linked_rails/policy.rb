@@ -125,17 +125,12 @@ module LinkedRails
     end
 
     module ClassMethods
-      def condition_for(attr, pass, **shape_opts)
-        raise("#{attr} not permitted by #{self}") if attribute_options(attr).blank? && pass.permission_required?
+      def condition_alternatives(attr, permission_required)
+        raise("#{attr} not permitted by #{self}") if attribute_options(attr).blank? && permission_required
 
-        alternatives = node_shapes_for(attr, **shape_opts)
-        if alternatives.count == 1
-          Condition.new(shape: alternatives.first, pass: pass)
-        elsif alternatives.count.positive?
-          Condition.new(shape: SHACL::NodeShape.new(or: alternatives), pass: pass)
-        else
-          pass
-        end
+        attribute_options(attr)
+          .select { |opts| opts[:conditions].present? }
+          .map { |opts| property_shapes(opts[:conditions]) }
       end
 
       def policy_class
@@ -152,22 +147,6 @@ module LinkedRails
 
       def attribute_options(attr)
         permitted_attributes.select { |opts| opts[:attributes].include?(attr) }
-      end
-
-      def condition_alternatives(attr)
-        attribute_options(attr)
-          .select { |opts| opts[:conditions].present? }
-          .map { |opts| opts[:conditions] }
-      end
-
-      def node_shapes_for(attr, property: [], sh_not: [])
-        alternatives = condition_alternatives(attr)
-        alternatives = [[]] if alternatives.empty? && (property.any? || sh_not.any?)
-
-        alternatives.map do |props|
-          properties = property_shapes(props) + property
-          SHACL::NodeShape.new(property: properties, sh_not: sh_not)
-        end
       end
 
       def initialize_permitted_attributes

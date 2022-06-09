@@ -32,14 +32,21 @@ module LinkedRails
                to: :form
 
       def condition_or_field
-        return field if abstract_form
+        return @condition_or_field if instance_variable_defined?(:@condition_or_field)
 
-        @condition_or_field ||= model_policy!.condition_for(
+        alternatives = node_shapes_for(
           key,
-          field,
           property: field_options[:if] || [],
           sh_not: field_options[:unless] || []
         )
+        @condition_or_field =
+          if alternatives.count == 1
+            Condition.new(shape: alternatives.first, pass: field)
+          elsif alternatives.count.positive?
+            Condition.new(shape: SHACL::NodeShape.new(or: alternatives), pass: field)
+          else
+            field
+          end
       end
 
       private
@@ -179,6 +186,15 @@ module LinkedRails
 
       def model_attribute
         @model_attribute ||= (model_class.try(:attribute_alias, key) || key).to_sym
+      end
+
+      def node_shapes_for(attr, property: [], sh_not: [])
+        alternatives = abstract_form ? [] : model_policy!.condition_alternatives(attr, field.permission_required?)
+        alternatives = [[]] if alternatives.empty? && (property.any? || sh_not.any?)
+
+        alternatives.map do |props|
+          SHACL::NodeShape.new(property: props + property, sh_not: sh_not)
+        end
       end
 
       def normalized_key(key)
