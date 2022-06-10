@@ -14,12 +14,10 @@ module LinkedRails
           @params_parser ||= LinkedRails::ParamsParser.new(params: params, user_context: user_context)
         end
 
-        def parsed_filter_params
-          params_parser.attributes_from_filters(controller_class)
-        end
-
         def permit_filter_params
-          @permit_filter_params ||= parsed_filter_params.permit(*permit_param_keys)
+          @permit_filter_params ||=
+            policy(requested_resource || new_resource)
+              .permitted_attributes_from_filters(params_parser.filter_params)
         end
 
         def permit_params

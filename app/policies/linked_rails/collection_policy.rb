@@ -2,7 +2,7 @@
 
 module LinkedRails
   class CollectionPolicy < LinkedRails.policy_parent_class
-    delegate :permitted_attributes, to: :child_policy
+    delegate :permitted_attributes, :permitted_attributes_from_filters, to: :child_policy
 
     def create_child?
       policy = Pundit.policy!(user_context, child_resource)

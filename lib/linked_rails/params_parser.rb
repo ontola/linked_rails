@@ -3,6 +3,7 @@
 module LinkedRails
   class ParamsParser # rubocop:disable Metrics/ClassLength
     attr_accessor :params, :graph, :user_context
+    delegate :filter_params, to: :collection_params_parser
 
     def initialize(graph: nil, params: {}, user_context: nil)
       self.graph = graph
@@ -12,7 +13,7 @@ module LinkedRails
 
     def attributes_from_filters(klass)
       ActionController::Parameters.new(
-        collection_params_parser.filter_params.each_with_object({}) do |(predicate, value), hash|
+        filter_params.each_with_object({}) do |(predicate, value), hash|
           key_and_value = filter_to_param(klass, predicate, value)
           hash[key_and_value.first] = key_and_value.second if key_and_value
         end

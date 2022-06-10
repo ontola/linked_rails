@@ -159,9 +159,7 @@ module LinkedRails
     def permitted_attributes_from_filters(child)
       return {} if @filter.empty?
 
-      parser = LinkedRails::ParamsParser.new(user_context: user_context, params: {filter: @filter})
-      permitted_child_keys = Pundit.policy(user_context, child)&.permitted_attributes || []
-      parser.attributes_from_filters(association_class).permit(permitted_child_keys)
+      Pundit.policy(user_context, child).try(:permitted_attributes_from_filters, @filter) || {}
     end
 
     def title_from_translation

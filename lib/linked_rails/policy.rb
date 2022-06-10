@@ -38,6 +38,10 @@ module LinkedRails
         .flatten
     end
 
+    def permitted_attributes_from_filters(filters)
+      params_parser(filters).attributes_from_filters(policy_class).permit(permitted_attributes)
+    end
+
     def policy_class
       self.class.policy_class
     end
@@ -82,6 +86,10 @@ module LinkedRails
       forbid_with_message(message) if message
       @action_status = status
       false
+    end
+
+    def params_parser(filters)
+      LinkedRails::ParamsParser.new(user_context: user_context, params: {filter: filters})
     end
 
     def parent_policy
