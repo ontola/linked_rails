@@ -226,6 +226,8 @@ module LinkedRails
         language: response_language(headers),
         status: status
       )
+    rescue URI::InvalidURIError, ActionController::BadRequest
+      resource_response(iri)
     end
 
     def response_language(headers)
