@@ -37,6 +37,8 @@ module LinkedRails
 
     module ClassMethods
       def build_new(parent: nil, user_context: nil)
+        raise(ActiveRecord::RecordNotFound) if try(:abstract_class?)
+
         new(**attributes_for_new(parent: parent, user_context: user_context))
       end
 

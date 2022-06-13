@@ -85,7 +85,7 @@ module LinkedRails
 
         def iri_without_action(url)
           iri = RDF::URI(url)
-          iri.path = iri.path.split('/')[0...-1].join('/')
+          iri.path = iri.path.split('/')[0...-1].join('/') if iri.path
           iri.to_s
         end
 

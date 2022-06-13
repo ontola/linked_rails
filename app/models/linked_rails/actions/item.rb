@@ -14,7 +14,7 @@ module LinkedRails
       delegate :user_context, to: :list, allow_nil: true
       collection_options(
         association_base: lambda {
-          action_list = parent ? parent.action_list(user_context) : association_class.app_action_list(user_context)
+          action_list = association_class.get_action_list(parent, user_context)
 
           action_list.actions
         },
@@ -210,6 +210,12 @@ module LinkedRails
           )
         end
 
+        def get_action_list(parent, user_context)
+          return parent.action_list(user_context) if parent.respond_to?(:action_list)
+
+          app_action_list(user_context)
+        end
+
         def requested_index_resource(params, user_context)
           parent = parent_from_params!(params, user_context) if params.key?(:parent_iri)
 
@@ -223,7 +229,7 @@ module LinkedRails
           return nil if params[:id].blank?
 
           parent = parent_from_params!(params, user_context) if params.key?(:parent_iri)
-          action_list = parent ? parent.action_list(user_context) : app_action_list(user_context)
+          action_list = get_action_list(parent, user_context)
 
           action_list&.action(params[:id].to_sym)
         end

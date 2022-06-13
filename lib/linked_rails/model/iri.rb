@@ -121,7 +121,9 @@ module LinkedRails
           (Rails.version < '6' ? parents : module_parents).include?(LinkedRails)
         end
 
-        delegate :route_key, to: :model_name
+        def route_key
+          try(:model_name)&.route_key || to_s.tableize
+        end
       end
     end
   end

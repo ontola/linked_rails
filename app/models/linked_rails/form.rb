@@ -93,7 +93,7 @@ module LinkedRails
         form_name = [params[:module], "#{params[:id]&.singularize}_forms"].compact.join('/').classify
         requested_class = form_name.safe_constantize
 
-        requested_class if requested_class < LinkedRails::Form
+        requested_class if requested_class && requested_class < LinkedRails::Form
       end
 
       def footer

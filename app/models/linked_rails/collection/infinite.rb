@@ -59,13 +59,15 @@ module LinkedRails
       def before_values
         @before_values ||= before&.map do |value|
           sorting = collection.sortings.detect { |s| s.key == value[:key] }
+          next if sorting.nil?
+
           {
             attribute: sorting.attribute_name,
             direction: sorting.sort_direction,
             key: value[:key],
             value: value[:value]
           }
-        end
+        end.compact
       end
 
       def iri_opts
