@@ -14,7 +14,8 @@ module LinkedRails
                   :pattern,
                   :path,
                   :placeholder,
-                  :sh_in
+                  :sh_in,
+                  :start_adornment
       attr_accessor :datatype,
                     :default_value,
                     :max_count,
@@ -86,6 +87,10 @@ module LinkedRails
         return validators[:sh_in] if @sh_in.blank?
 
         @sh_in.respond_to?(:call) ? @sh_in.call : @sh_in
+      end
+
+      def start_adornment
+        @start_adornment.respond_to?(:call) ? @start_adornment.call : @start_adornment
       end
 
       private
