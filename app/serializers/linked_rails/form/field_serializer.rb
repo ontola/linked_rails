@@ -5,7 +5,7 @@ module LinkedRails
     class FieldSerializer < LinkedRails.serializer_parent_class
       attribute :name, predicate: Vocab.schema.name
       attribute :description, predicate: Vocab.schema.text
-      attribute :helper_text, predicate: Vocab.ontola[:helperText]
+      attribute :helper_text, predicate: Vocab.form[:helperText]
       attribute :placeholder, predicate: Vocab.form[:placeholder]
       attribute :default_value, predicate: Vocab.form[:defaultValue]
 
