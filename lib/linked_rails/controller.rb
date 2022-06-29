@@ -4,6 +4,8 @@ require_relative 'active_response/controller'
 require_relative 'controller/actionable'
 require_relative 'controller/authorization'
 require_relative 'controller/error_handling'
+require_relative 'controller/delta'
+require_relative 'controller/rendering'
 
 module LinkedRails
   module Controller
@@ -20,8 +22,9 @@ module LinkedRails
       include LinkedRails::Controller::Actionable
       include LinkedRails::Controller::Authorization
       include LinkedRails::Controller::ErrorHandling
+      include LinkedRails::Controller::Rendering
+      include LinkedRails::Controller::Delta
       include LinkedRails::Helpers::OntolaActionsHelper
-      include LinkedRails::Helpers::DeltaHelper
       include LinkedRails::Helpers::ResourceHelper
 
       before_action :set_manifest_header

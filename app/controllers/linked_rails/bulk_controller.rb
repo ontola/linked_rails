@@ -84,14 +84,6 @@ module LinkedRails
       false
     end
 
-    def resource_hash(resource)
-      resource_serializer(resource).send(:emp_json_hash)
-    end
-
-    def resource_body(resource)
-      resource_serializer(resource).send(:render_emp_json)
-    end
-
     def resource_params(param)
       params = param.permit(:include, :iri)
       params[:iri] = URI(params[:iri])
@@ -137,18 +129,6 @@ module LinkedRails
         iri: iri,
         status: 404
       }.merge(opts)
-    end
-
-    def resource_serializer(resource)
-      return if resource.nil?
-
-      serializer_options = RDF::Serializers::Renderers.transform_opts(
-        {include: resource&.try(:preview_includes)},
-        serializer_params
-      )
-      RDF::Serializers
-        .serializer_for(resource)
-        .new(resource, serializer_options)
     end
 
     def response_for_wrong_host(opts)
