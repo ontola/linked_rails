@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.email       = ['arthur@argu.co']
   spec.homepage    = 'https://github.com/ontola/linked_rails'
   spec.summary     = 'LinkedRails helps you create a Linked Data application in a matter of seconds.'
-  spec.license     = 'GPL-3.0-or-later'
+  spec.license     = 'MIT'
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'LICENSE', 'Rakefile', 'README.md']
 
