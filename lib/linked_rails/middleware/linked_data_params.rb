@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+# require 'empathy/emp_json'
+
 module LinkedRails
   module Middleware
     class LinkedDataParams
+      include ::Empathy::EmpJson::Helpers::Slices
+      include ::Empathy::EmpJson::Helpers::Primitives
+
       def initialize(app)
         @app = app
       end
@@ -10,7 +15,7 @@ module LinkedRails
       def call(env)
         req = Rack::Request.new(env)
         params_from_query(req)
-        params_from_graph(req)
+        params_from_slice(req)
 
         @app.call(env)
       end
@@ -31,38 +36,32 @@ module LinkedRails
         request.update_param(class_key, data) if data.present?
       end
 
-      def graph_from_request(request)
-        request_graph = request.delete_param("<#{Vocab.ll[:graph].value}>")
-        return if request_graph.blank?
+      def slice_from_request(request)
+        return unless request.content_type == Mime::Type.lookup_by_extension(:empjson).to_s
 
-        RDF::Graph.load(
-          request_graph[:tempfile].path,
-          content_type: request_graph[:type],
-          canonicalize: true,
-          intern: false
-        )
+        body = request.body.read
+
+        JSON.parse(body) if body.present?
       end
 
-      # Converts a serialized graph from a multipart request body to a nested
-      # attributes hash.
+      # Converts a emp slice from to a nested attributes hash.
       #
-      # The graph sent to the server should be sent under the `ll:graph` form name.
-      # The entrypoint for the graph is the `ll:targetResource` subject, which is
+      # The entrypoint for the slice is the `.` subject, which is
       # assumed to be the resource intended to be targeted by the request (i.e. the
       # resource to be created, updated, or deleted).
       #
       # @return [Hash] A hash of attributes, empty if no statements were given.
-      def params_from_graph(request)
-        graph = graph_from_request(request)
+      def params_from_slice(request)
+        slice = slice_from_request(request)
 
-        return unless graph
+        return unless slice
 
-        request.update_param(:body_graph, graph)
+        request.env['emp_json'] = slice
         target_class = target_class_from_path(request)
         return if target_class.blank?
 
-        update_actor_param(request, graph)
-        update_target_params(request, graph, target_class)
+        update_actor_param(request, slice)
+        update_target_params(request, slice, target_class)
       end
 
       def params_from_query(request)
@@ -83,19 +82,19 @@ module LinkedRails
         opts[:class]
       end
 
-      def update_actor_param(request, graph)
-        actor = graph.query([Vocab.ll[:targetResource], Vocab.schema.creator]).first
+      def update_actor_param(request, slice)
+        actor = values_from_slice(slice, '.', Vocab.schema.creator)
+
         return if actor.blank?
 
-        request.update_param(:actor_iri, actor.object)
-        graph.delete(actor)
+        request.update_param(:actor_iri, emp_to_primitive(actor))
       end
 
-      def update_target_params(request, graph, target_class)
+      def update_target_params(request, slice, target_class)
         key = target_class.to_s.demodulize.underscore
 
-        parser = ParamsParser.new(graph: graph, params: request.params)
-        from_body = parser.parse_resource(Vocab.ll[:targetResource], target_class)
+        parser = ParamsParser.new(slice: slice, params: request.params)
+        from_body = parser.parse_resource('.', target_class)
 
         request.update_param(key, from_body.merge(request.params[key] || {}))
       end

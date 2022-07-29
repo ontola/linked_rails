@@ -2,11 +2,15 @@
 
 module LinkedRails
   class ParamsParser # rubocop:disable Metrics/ClassLength
-    attr_accessor :params, :graph, :user_context
+    include ::Empathy::EmpJson::Helpers::Slices
+    include ::Empathy::EmpJson::Helpers::Primitives
+    include ::Empathy::EmpJson::Helpers::Values
+
+    attr_accessor :params, :slice, :user_context
     delegate :filter_params, to: :collection_params_parser
 
-    def initialize(graph: nil, params: {}, user_context: nil)
-      self.graph = graph
+    def initialize(slice: nil, params: {}, user_context: nil)
+      self.slice = slice
       self.params = params
       self.user_context = user_context
     end
@@ -21,21 +25,23 @@ module LinkedRails
     end
 
     def parse_param(klass, predicate, object)
-      field_options = serializer_field(klass, predicate)
+      field_options = serializer_field(klass, predicate) unless predicate == '_id'
       if field_options.is_a?(FastJsonapi::Attribute)
-        parse_attribute(klass, field_options, object.value)
+        parse_attribute(klass, field_options, emp_to_primitive(object))
       elsif field_options.is_a?(FastJsonapi::Relationship)
-        parse_association(klass, field_options, object)
+        parse_association(klass, field_options, emp_to_primitive(object))
       end
     end
 
-    # Recursively parses a resource from graph
+    # Recursively parses a resource from slice
     def parse_resource(subject, klass)
-      graph
-        .query([subject])
-        .map { |statement| parse_statement(statement, klass) }
-        .compact
-        .reduce({}) { |h, (k, v)| add_param(h, k, v) }
+      (record_from_slice(slice, subject) || {}).reduce({}) do |h, (k, v)|
+        (v.is_a?(Array) ? v : [v]).each do |value|
+          param = parse_param(klass, RDF::URI(k), value)
+          param ? add_param(h, param.first, param.second) : h
+        end
+        h
+      end
     end
 
     private
@@ -57,7 +63,7 @@ module LinkedRails
     def associated_class_from_params(reflection, object)
       return reflection.klass unless reflection.polymorphic?
 
-      query = graph.query(subject: object, predicate: Vocab.rdfv[:type])
+      query = slice.query(subject: object, predicate: Vocab.rdfv[:type])
 
       raise("No type given for '#{object}' referenced by polymorphic association '#{reflection.name}'") if query.empty?
 
@@ -94,28 +100,17 @@ module LinkedRails
     end
 
     def nested_attributes(object, klass, association, collection)
-      nested_resources =
-        if graph.query([object, Vocab.rdfv[:first], nil]).present?
-          nested_attributes_from_list(object, klass)
-        else
-          parsed = parse_nested_resource(object, klass)
-          collection ? {rand(1_000_000_000).to_s => parsed} : parsed
-        end
-      ["#{association}_attributes", nested_resources]
-    end
+      parsed = parse_nested_resource(object, klass)
+      nested_resources = collection ? {rand(1_000_000_000).to_s => parsed} : parsed
 
-    def nested_attributes_from_list(object, klass)
-      Hash[
-        RDF::List.new(subject: object, graph: graph)
-          .map { |nested| [rand(1_000_000_000).to_s, parse_nested_resource(nested, klass)] }
-      ]
+      ["#{association}_attributes", nested_resources]
     end
 
     def parse_association(klass, field_options, object)
       association = field_options.association || field_options.key
       reflection = klass.reflect_on_association(association) || raise("#{association} not found for #{name}")
 
-      if graph&.has_subject?(object)
+      if slice&.key?(object.to_s)
         association_klass = associated_class_from_params(reflection, object)
         nested_attributes(object, association_klass, association, reflection.collection?)
       elsif object.iri?
@@ -124,31 +119,30 @@ module LinkedRails
     end
 
     def parse_attribute(klass, field_options, value)
-      parsed_value = parse_blob_attribute(value) || parse_enum_attribute(klass, field_options.key, value) || value
+      parsed_value = parse_enum_attribute(klass, field_options.key, value) || value
 
-      [field_options.key, parsed_value]
-    end
-
-    def parse_blob_attribute(value)
-      params["<#{value}>"] if value.starts_with?(Vocab.ll['blobs/'])
+      [field_options.key, parsed_value.to_s]
     end
 
     def parse_enum_attribute(klass, key, value)
       opts = RDF::Serializers.serializer_for(klass)&.enum_options(key)
       return if opts.blank?
 
+
       opts.detect { |_k, options| options.iri == value }&.first&.to_s
     end
 
     def parse_iri_param(iri, reflection)
-      resource = LinkedRails.iri_mapper.resource_from_iri(iri, user_context)
-      return unless resource
-
       key = foreign_key_for_reflection(reflection)
+      value = parse_iri_param_value(iri, reflection) if key
 
-      value = resource&.try(reflection.association_primary_key) if key
+      [key, value.to_s] if value
+    end
 
-      [key, value] if value
+    def parse_iri_param_value(iri, reflection)
+      resource = LinkedRails.iri_mapper.resource_from_iri(iri, user_context)
+
+      resource&.try(reflection.association_primary_key)
     end
 
     def parse_nested_resource(object, klass)
@@ -166,10 +160,6 @@ module LinkedRails
       else
         opts[:class].requested_single_resource(opts[:params], nil)&.id
       end
-    end
-
-    def parse_statement(statement, klass)
-      parse_param(klass, statement.predicate, statement.object)
     end
 
     def serializer_field(klass, predicate)
