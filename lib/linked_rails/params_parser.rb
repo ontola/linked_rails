@@ -3,8 +3,7 @@
 module LinkedRails
   class ParamsParser # rubocop:disable Metrics/ClassLength
     include ::Empathy::EmpJson::Helpers::Slices
-    include ::Empathy::EmpJson::Helpers::Primitives
-    include ::Empathy::EmpJson::Helpers::Values
+    include ::Empathy::EmpJson::Helpers::Parsing
 
     attr_accessor :params, :slice, :user_context
     delegate :filter_params, to: :collection_params_parser
@@ -63,11 +62,11 @@ module LinkedRails
     def associated_class_from_params(reflection, object)
       return reflection.klass unless reflection.polymorphic?
 
-      query = slice.query(subject: object, predicate: Vocab.rdfv[:type])
+      type = values_from_slice(slice, object, Vocab.rdfv[:type])
 
-      raise("No type given for '#{object}' referenced by polymorphic association '#{reflection.name}'") if query.empty?
+      raise("No type given for '#{object}' referenced by polymorphic association '#{reflection.name}'") if type.blank?
 
-      iri_to_class(query.first.object)
+      iri_to_class(type)
     end
 
     def collection_params_parser
@@ -78,11 +77,11 @@ module LinkedRails
       options = serializer_field(klass, predicate)
       return unless value.count == 1 && options.present?
 
-      parsed_value = value.first.start_with?('http') ? RDF::URI(value.first) : RDF::Literal(value.first)
+      parsed_value = value.first.start_with?('http') ? RDF::URI(value.first) : value.first
       parse_param(
         klass,
         options.predicate,
-        parsed_value
+        object_to_value(parsed_value)
       )
     end
 

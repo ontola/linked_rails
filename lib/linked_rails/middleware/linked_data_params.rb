@@ -6,7 +6,7 @@ module LinkedRails
   module Middleware
     class LinkedDataParams
       include ::Empathy::EmpJson::Helpers::Slices
-      include ::Empathy::EmpJson::Helpers::Primitives
+      include ::Empathy::EmpJson::Helpers::Parsing
 
       def initialize(app)
         @app = app
