@@ -22,17 +22,6 @@ module LinkedRails
         end
       end
 
-      def previous_changes_by_predicate
-        serializer_class = RDF::Serializers.serializer_for(self)
-        return {} unless respond_to?(:previous_changes) && serializer_class
-
-        Hash[
-          previous_changes
-            .map { |k, v| [self.class.predicate_for_key(k.to_sym), v] }
-            .select { |k, _v| k.present? }
-        ]
-      end
-
       def previously_changed_relations(inverted = nil)
         serializer_class = RDF::Serializers.serializer_for(self)
         return {} unless serializer_class.try(:relationships_to_serialize)
