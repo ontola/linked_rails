@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'emp_json', '>= 1.3.0'
   spec.add_dependency 'kaminari-activerecord'
   spec.add_dependency 'pundit'
+  spec.add_dependency 'redis'
   spec.add_dependency 'rdf'
   spec.add_dependency 'rdf-serializers', '~> 0.0.10'
   spec.add_dependency 'rdf-vocab'
