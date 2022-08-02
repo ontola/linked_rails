@@ -7,8 +7,11 @@ require 'linked_rails/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |spec|
+  prerelease = ENV.fetch("PUBLISH_PRERELEASE", false)
+  env_version = ENV.fetch("GITHUB_SHA", "")[0..8]
+
   spec.name        = 'linked_rails'
-  spec.version     = LinkedRails::VERSION
+  spec.version     = prerelease ? "#{LinkedRails::VERSION}-g#{env_version}" : LinkedRails::VERSION
   spec.authors     = ['Arthur Dingemans']
   spec.email       = ['arthur@argu.co']
   spec.homepage    = 'https://github.com/ontola/linked_rails'
