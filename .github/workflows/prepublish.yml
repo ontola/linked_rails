@@ -1,0 +1,27 @@
+name: Ruby
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  prepublish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build pre-release
+      uses: cadwallion/publish-rubygems-action@master
+      env:
+        PUBLISH_PRERELEASE: true
+        RELEASE_COMMAND: rake build
+
+    - name: Pre-release Gem
+      uses: cadwallion/publish-rubygems-action@master
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
+        PUBLISH_PRERELEASE: true
+        RELEASE_COMMAND: rake release:rubygem_push
