@@ -21,8 +21,11 @@ module LinkedRails
       return response_for_wrong_host(opts) if wrong_host?(opts[:iri])
 
       include = opts[:include].to_s == 'true'
+      resource = LinkedRails.iri_mapper.resource_from_iri(request_path_to_url(opts[:iri]), user_context)
 
-      response_from_request(include, RDF::URI(opts[:iri]))
+      return response_from_request(include, RDF::URI(opts[:iri])) if resource.blank?
+
+      response_from_resource(include, opts[:iri], resource)
     rescue StandardError => e
       handle_resource_error(opts, e)
     end
@@ -84,6 +87,13 @@ module LinkedRails
       false
     end
 
+    def resource_cache_control(cacheable, status, resource_policy)
+      return :private unless status == 200 && cacheable
+      return 'no-cache' unless resource_policy.try(:public_resource?)
+
+      :public
+    end
+
     def resource_params(param)
       params = param.permit(:include, :iri)
       params[:iri] = URI(params[:iri])
@@ -131,12 +141,35 @@ module LinkedRails
       }.merge(opts)
     end
 
+    def resource_status(resource_policy)
+      raise(LinkedRails::Errors::Forbidden.new(query: :show?)) unless resource_policy.show?
+
+      200
+    end
+
     def response_for_wrong_host(opts)
       iri = opts[:iri]
       term = term_from_vocab(iri)
       return resource_response(iri) unless term
 
       ontology_term_response(iri, term, opts[:include])
+    end
+
+    def response_from_resource(include, iri, resource)
+      resource_policy = policy(resource)
+      status = resource_status(resource_policy)
+
+      resource_response(
+        iri,
+        body: response_from_resource_body(include, iri, resource, status),
+        cache: resource_cache_control(resource.try(:cacheable?), status, resource_policy),
+        language: I18n.locale,
+        status: status
+      )
+    end
+
+    def response_from_resource_body(include, _iri, resource, status)
+      include && status == 200 ? resource_body(resource) : nil
     end
 
     def term_from_vocab(iri)

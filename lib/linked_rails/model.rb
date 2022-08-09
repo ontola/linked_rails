@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'model/actionable'
+require_relative 'model/cacheable'
 require_relative 'model/collections'
 require_relative 'model/dirty'
 require_relative 'model/enhancements'

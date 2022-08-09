@@ -22,6 +22,10 @@ module LinkedRails
 
   mattr_accessor :whitelisted_spi_ips
   mattr_writer :host, :scheme
+  mattr_accessor :persistent_redis_database, default: ENV['PERSISTENT_REDIS_DATABASE'].presence || 6
+  mattr_accessor :stream_redis_database, default: ENV['STREAM_REDIS_DATABASE'].presence || 7
+  mattr_accessor :cache_redis_database, default: ENV['CACHE_REDIS_DATABASE'].presence || 8
+  mattr_accessor :cache_stream, default: ENV['CACHE_STREAM'].presence || 'transactions'
 
   def self.configurable_class(parent, klass, default: nil, reader: nil) # rubocop:disable Metrics/AbcSize
     method = :"#{[parent, klass.to_s.downcase].compact.join('_')}_class"
@@ -84,6 +88,7 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'SHACL'
 end
 
+require 'linked_rails/errors'
 require 'linked_rails/uri_template'
 require 'linked_rails/vocab'
 require 'linked_rails/cache'

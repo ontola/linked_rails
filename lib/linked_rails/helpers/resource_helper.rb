@@ -46,6 +46,13 @@ module LinkedRails
 
       private
 
+      def request_path_to_url(path)
+        return path unless path.present? && URI(path).relative?
+
+        port = [80, 443].include?(request.port) ? nil : request.port
+        URI::Generic.new(request.scheme, nil, request.host, port, nil, path, nil, nil, nil).to_s
+      end
+
       def build_new_resource
         controller_class.build_new(user_context: user_context)
       end

@@ -26,7 +26,7 @@ module LinkedRails
       end
 
       def menus
-        @menus ||= available_menus.map(&method(:memoised_menu_item))
+        @menus ||= available_menus.map(&method(:memoized_menu_item))
       end
 
       def menu(tag)

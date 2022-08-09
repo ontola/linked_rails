@@ -11,6 +11,8 @@ en:
       update:
         label: "Edit"
         success: 'Updated successfully'
+  errors:
+    access_denied: "You're not authorized for this action. (%{action})"
   linked_rails:
     status:
       400: "Error in request"

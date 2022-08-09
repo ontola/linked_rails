@@ -4,6 +4,7 @@ module LinkedRails
   class Ontology
     include ActiveModel::Model
     include LinkedRails::Model
+    include LinkedRails::Model::Cacheable
 
     def classes
       @classes ||= LinkedRails.linked_models.map do |klass|

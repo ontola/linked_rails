@@ -9,9 +9,7 @@ module LinkedRails
       Storage.hset(
         :persistent,
         :manifest,
-        {
-          LinkedRails.iri.to_s => web_manifest.to_json
-        }
+        LinkedRails.iri.to_s => web_manifest.to_json
       )
     end
 

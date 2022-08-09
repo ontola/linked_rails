@@ -46,6 +46,10 @@ module LinkedRails
       self.class.policy_class
     end
 
+    def public_resource?
+      false
+    end
+
     def show?
       false
     end

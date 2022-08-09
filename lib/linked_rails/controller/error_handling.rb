@@ -6,6 +6,10 @@ module LinkedRails
       extend ActiveSupport::Concern
       include ActiveSupport::Rescuable
 
+      included do
+        rescue_from LinkedRails::Errors::Forbidden, with: :handle_error
+      end
+
       private
 
       def add_error_snackbar(error)
@@ -69,6 +73,7 @@ module LinkedRails
             'Doorkeeper::Errors::InvalidGrantReuse' => 422,
             'LinkedRails::Auth::Errors::Expired' => 410,
             'LinkedRails::Auth::Errors::Unauthorized' => 401,
+            'LinkedRails::Errors::Forbidden' => 403,
             'Pundit::NotAuthorizedError' => 403
           }
         end

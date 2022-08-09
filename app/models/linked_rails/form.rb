@@ -5,6 +5,7 @@ require 'pundit'
 module LinkedRails
   class Form # rubocop:disable Metrics/ClassLength
     include LinkedRails::Model
+    include LinkedRails::Model::Cacheable
 
     class_attribute :abstract_form, :pages, :model_class
 
