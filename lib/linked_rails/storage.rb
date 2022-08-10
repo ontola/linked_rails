@@ -11,7 +11,8 @@ module LinkedRails
     }.freeze
     KEYS = {
       manifest: 'cache:Manifest',
-      redirect: 'cache:Redirect'
+      redirect_exact: 'cache:Redirect:Exact',
+      redirect_prefix: 'cache:Redirect:Prefix'
     }.freeze
 
     class << self

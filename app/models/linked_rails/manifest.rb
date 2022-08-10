@@ -165,6 +165,12 @@ module LinkedRails
       end
 
       def move(from, to)
+        Storage.hset(
+          :persistent,
+          :redirect_prefix,
+          from => to
+        )
+
         data = Storage.hget(:persistent, :manifest, from)
 
         Storage.hset(:persistent, :manifest, to, data) if data
