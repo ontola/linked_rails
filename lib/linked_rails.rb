@@ -54,8 +54,10 @@ module LinkedRails
       @@scheme ||= Rails.application.routes.default_url_options[:protocol] || :http # rubocop:disable Style/ClassVars
     end
 
-    def iri(**opts)
-      RDF::URI.new(**{scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(opts))
+    def iri(**args)
+      opts = {scheme: LinkedRails.scheme, host: LinkedRails.host}.merge(args)
+      opts[:path] = opts[:path].presence || '/'
+      RDF::URI.new(**opts)
     end
   end
 
@@ -106,4 +108,5 @@ require 'linked_rails/routes'
 require 'linked_rails/serializer'
 require 'linked_rails/translate'
 require 'linked_rails/railtie'
+require 'linked_rails/url'
 require 'linked_rails/storage'

@@ -249,7 +249,7 @@ module LinkedRails
 
     def sanitized_relative_path(iri) # rubocop:disable Metrics/AbcSize
       iri.path = "#{iri.path}/" unless iri.path&.ends_with?('/')
-      uri = URI(LinkedRails.iri.path.present? ? iri.to_s.split("#{LinkedRails.iri.path}/").last : iri)
+      uri = URI(LinkedRails.iri.path.chomp('/').present? ? iri.to_s.split("#{LinkedRails.iri.path}/").last : iri)
 
       [uri.path, uri.query].compact.join('?')
     end

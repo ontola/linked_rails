@@ -9,7 +9,7 @@ module LinkedRails
       Storage.hset(
         :persistent,
         :manifest,
-        LinkedRails.iri.to_s => web_manifest.to_json
+        URL.as_href(LinkedRails.iri) => web_manifest.to_json
       )
     end
 
@@ -41,7 +41,7 @@ module LinkedRails
     def blob_preview_iri
       return unless ActiveStorage::Blob.service.present?
 
-      LinkedRails.iri(path: 'rails/active_storage/blobs/redirect/{signed_id}/preview')
+      "#{LinkedRails.iri(path: 'rails/active_storage/blobs/redirect')}/{signed_id}/preview')"
     end
 
     def blob_upload_iri
@@ -138,7 +138,7 @@ module LinkedRails
 
     def web_manifest_sw_section
       {
-        src: "#{scope}/sw.js",
+        src: "#{scope.chomp('/')}/sw.js",
         scope: scope
       }
     end
@@ -161,19 +161,19 @@ module LinkedRails
 
     class << self
       def destroy(iri)
-        Storage.hdel(:persistent, :manifest, iri)
+        Storage.hdel(:persistent, :manifest, URL.as_href(iri))
       end
 
       def move(from, to)
         Storage.hset(
           :persistent,
           :redirect_prefix,
-          from => to
+          URL.as_href(from) => URL.as_href(to)
         )
 
-        data = Storage.hget(:persistent, :manifest, from)
+        data = Storage.hget(:persistent, :manifest, URL.as_href(from))
 
-        Storage.hset(:persistent, :manifest, to, data) if data
+        Storage.hset(:persistent, :manifest, URL.as_href(to), data) if data
 
         destroy(from)
       end

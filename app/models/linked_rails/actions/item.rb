@@ -187,7 +187,7 @@ module LinkedRails
 
       def target_url_fallback # rubocop:disable Metrics/AbcSize
         base = (resource.try(:singular_resource?) ? resource.singular_iri : resource.iri).dup
-        base.path = "#{base.path}/#{target_path}" if target_path.present?
+        base.path = "#{base.path.chomp('/')}/#{target_path}" if target_path.present?
         base.query = Rack::Utils.parse_nested_query(base.query).merge(target_query).to_param if target_query.present?
         base
       end

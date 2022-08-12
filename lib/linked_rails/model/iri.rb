@@ -62,6 +62,7 @@ module LinkedRails
         iri = root_relative_iri.dup
         iri.scheme = LinkedRails.scheme
         iri.host = LinkedRails.host
+        iri.path = iri.path.presence || '/'
         iri
       end
 
