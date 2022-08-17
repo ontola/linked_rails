@@ -38,7 +38,7 @@ module LinkedRails
         params = Rails.application.routes.recognize_path(iri.to_s, method: method)
 
         route_params_to_opts(params.merge(query), iri.to_s)
-      rescue ActionController::RoutingError
+      rescue ActionController::RoutingError, SystemStackError
         EMPTY_IRI_OPTS.dup
       end
 

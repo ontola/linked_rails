@@ -98,6 +98,8 @@ module LinkedRails
       params = param.permit(:include, :iri)
       params[:iri] = URI(params[:iri])
       params
+    rescue URI::InvalidURIError
+      params.except(:iri)
     end
 
     def resource_response_body(iri, rack_body, status)
