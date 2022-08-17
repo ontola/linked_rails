@@ -8,8 +8,9 @@ module LinkedRails
       include LinkedRails::Model
 
       attr_accessor :collection, :filter
-      delegate :apply_scope, :association_base, :association_class, :default_page_size, :display, :include_members,
-               :parent, :policy, :total_page_count, :unfiltered_collection, :user_context, to: :collection
+      delegate :apply_scope, :association_base, :association_class, :child_resource, :default_page_size, :display,
+               :include_members,:parent, :policy, :total_page_count, :unfiltered_collection, :user_context,
+               to: :collection
       delegate :count, to: :members
 
       alias id iri
