@@ -41,7 +41,7 @@ module LinkedRails
     def blob_preview_iri
       return unless ActiveStorage::Blob.service.present?
 
-      "#{LinkedRails.iri(path: 'rails/active_storage/blobs/redirect')}/{signed_id}/preview')"
+      "#{LinkedRails.iri(path: 'rails/active_storage/blobs/redirect')}/{signed_id}/preview"
     end
 
     def blob_upload_iri
