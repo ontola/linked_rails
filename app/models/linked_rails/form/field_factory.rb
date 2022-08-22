@@ -52,13 +52,7 @@ module LinkedRails
       private
 
       def attr_column(name)
-        column_model =
-          if model_class.is_delegated_attribute?(name)
-            model_class.class_for_delegated_attribute(name)
-          else
-            model_class
-          end
-        column_model.column_for_attribute(name)
+        model_class.column_for_attribute(name)
       end
 
       def attr_to_datatype # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
