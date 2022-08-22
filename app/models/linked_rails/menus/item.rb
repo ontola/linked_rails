@@ -81,7 +81,7 @@ module LinkedRails
           parent = parent_from_params(params, user_context)
           return if parent.blank?
 
-          parent.menu_sequence
+          parent.try(:menu_sequence)
         end
       end
     end
