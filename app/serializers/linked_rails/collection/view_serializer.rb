@@ -17,6 +17,7 @@ module LinkedRails
       has_one :collection, predicate: Vocab.as.partOf
       has_one :unfiltered_collection, predicate: Vocab.ontola[:baseCollection]
       has_one :member_sequence, predicate: Vocab.as.items
+      has_many :members
     end
   end
 end

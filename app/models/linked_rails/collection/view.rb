@@ -43,7 +43,7 @@ module LinkedRails
       end
 
       def preview_includes
-        include_members ? {member_sequence: :members} : %i[member_sequence]
+        include_members ? {members: {}, member_sequence: :members} : %i[member_sequence]
       end
 
       def title
