@@ -49,15 +49,18 @@ module LinkedRails
       end
 
       def menu_item(tag, options) # rubocop:disable Metrics/AbcSize
-        if options[:policy].present?
-          return unless resource_policy(options[:policy_resource]).send(options[:policy], *options[:policy_arguments])
-        end
+        return unless show_menu_item?(tag, options)
+
         options[:label_params] ||= {}
         options[:label_params][:default] ||= ["menus.default.#{tag}".to_sym, tag.to_s.capitalize]
         options[:label] ||= default_label(tag, options)
         options[:action] = ontola_dialog_action(options[:href]) if options.delete(:dialog)
         options.except!(:policy_resource, :policy, :policy_arguments, :label_params)
         LinkedRails.menus_item_class.new(resource: resource, tag: tag, parent: self, **options)
+      end
+
+      def policy_verdict(policy, options)
+        policy.send(options[:policy], *options[:policy_arguments])
       end
 
       def resource_policy(policy_resource)
@@ -67,6 +70,14 @@ module LinkedRails
 
         @resource_policy ||= {}
         @resource_policy[policy_resource] ||= Pundit.policy(user_context, policy_resource)
+      end
+
+      def show_menu_item?(_tag, options)
+        return true if options[:policy].blank?
+
+        policy = resource_policy(options[:policy_resource])
+
+        policy_verdict(policy, options)
       end
 
       def iri_template
