@@ -8,6 +8,7 @@ module LinkedRails
       policy = Pundit.policy!(user_context, child_resource)
       verdict = policy.create?
       @message = policy.message
+      @action_status = policy.action_status
       verdict
     end
 
