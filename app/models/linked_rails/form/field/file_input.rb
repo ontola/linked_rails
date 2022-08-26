@@ -4,7 +4,11 @@ module LinkedRails
   class Form
     class Field
       class FileInput < Field
-        attr_accessor :max_size
+        attr_writer :max_size
+
+        def max_size
+          @max_size.respond_to?(:call) ? @max_size.call : @max_size
+        end
       end
     end
   end
