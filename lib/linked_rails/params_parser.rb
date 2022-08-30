@@ -118,9 +118,13 @@ module LinkedRails
     end
 
     def parse_attribute(klass, field_options, value)
-      parsed_value = parse_enum_attribute(klass, field_options.key, value) || value
+      [field_options.key, parse_attribute_value(klass, field_options, value)]
+    end
 
-      [field_options.key, parsed_value.to_s]
+    def parse_attribute_value(klass, field_options, value)
+      return nil if value == Vocab.libro[:null]
+
+      (parse_enum_attribute(klass, field_options.key, value) || value).to_s
     end
 
     def parse_enum_attribute(klass, key, value)
@@ -133,9 +137,15 @@ module LinkedRails
 
     def parse_iri_param(iri, reflection)
       key = foreign_key_for_reflection(reflection)
-      value = parse_iri_param_value(iri, reflection) if key
+      return unless key
 
-      [key, value.to_s] if value
+      if iri == Vocab.libro[:null]
+        [key, nil]
+      else
+        value = parse_iri_param_value(iri, reflection)
+
+        [key, value.to_s] if value
+      end
     end
 
     def parse_iri_param_value(iri, reflection)
