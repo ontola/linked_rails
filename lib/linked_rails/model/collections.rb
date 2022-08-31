@@ -70,7 +70,9 @@ module LinkedRails
 
       module ClassMethods
         def collection_iri(**opts)
-          LinkedRails.iri(path: collection_root_relative_iri(**opts))
+          fragment = opts.delete(:fragment)
+
+          LinkedRails.iri(path: collection_root_relative_iri(**opts), fragment: fragment)
         end
 
         # Sets the defaults for all collections for this class.
