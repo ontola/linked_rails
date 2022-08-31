@@ -76,19 +76,19 @@ module LinkedRails
       end
 
       def iris_from_scope?
-        members_query.is_a?(ActiveRecord::Relation) && !polymorphic_collection?
+        members_query.is_a?(ActiveRecord::Relation) && !polymorphic_collection?(members_query.klass)
       end
 
       def members_array
         members_query.to_a
       end
 
-      def polymorphic_collection?
-        column = association_class.inheritance_column
-        polymorphic = association_class.columns_hash.include?(column)
+      def polymorphic_collection?(klass)
+        column = klass.inheritance_column
+        polymorphic = klass.columns_hash.include?(column)
         return false unless polymorphic
 
-        return true if association_class.descends_from_active_record?
+        return true if klass.descends_from_active_record?
 
         members_query.where_values_hash.include?(column) &&
           members_query.where_values_hash[column] != association_class.to_s
