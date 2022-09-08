@@ -10,7 +10,7 @@ module LinkedRails
       end
 
       def anonymous_iri?
-        self.class < ActiveRecord::Base && new_record?
+        self.class < ActiveRecord::Base && new_record? && @iri.blank?
       end
 
       # @return [RDF::URI].
@@ -44,7 +44,12 @@ module LinkedRails
 
       # @return [RDF::URI]
       def root_relative_iri(**opts)
-        RDF::URI(expand_iri_template(**iri_opts.merge(opts)))
+        return @root_relative_iri if opts.blank? && @root_relative_iri.present?
+
+        root_relative_iri = RDF::URI(expand_iri_template(**iri_opts.merge(opts)))
+        @root_relative_iri = root_relative_iri if opts.blank?
+
+        root_relative_iri
       end
 
       # @return [String, Symbol]

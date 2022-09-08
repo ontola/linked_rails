@@ -61,13 +61,15 @@ module LinkedRails
       end
 
       def object
-        @object = list.instance_exec(&@object) if @object.respond_to?(:call)
-
-        @object || resource
+        object_from_var || resource
       end
 
       def object_iri
         object&.iri&.anonymous? ? anonymous_object_iri : object&.iri
+      end
+
+      def object_root_relative_iri
+        RDF::URI(object_iri.to_s.split(LinkedRails.iri.to_s).second)
       end
 
       def parent
@@ -150,6 +152,12 @@ module LinkedRails
 
       def label_fallback
         LinkedRails.translate(:action, :label, self)
+      end
+
+      def object_from_var
+        return @object unless @object.respond_to?(:call)
+
+        @object = list.instance_exec(&@object)
       end
 
       def policy_expired?

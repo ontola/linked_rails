@@ -15,10 +15,10 @@ module LinkedRails
 
       module ClassMethods
         def action_triples(object, _params)
-          if object.iri.anonymous? && !object.try(:singular_resource?)
-            []
-          else
+          if named_object?(object) || object.try(:singular_resource?)
             object.try(:action_triples) || []
+          else
+            []
           end
         end
       end

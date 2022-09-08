@@ -12,8 +12,8 @@ module LinkedRails
       alias parent action
       delegate :object, to: :action
 
-      def iri
-        action.object_iri
+      def root_relative_iri
+        action.object_root_relative_iri
       end
 
       class << self
@@ -30,7 +30,10 @@ module LinkedRails
 
           parent = parent_from_params!(params, user_context)
 
-          new(action: parent) if parent.object.anonymous_iri?
+          object = parent&.object
+          object.instance_variable_set(:@iri, parent.object_iri)
+          object.instance_variable_set(:@root_relative_iri, parent.object_root_relative_iri)
+          object
         end
       end
     end

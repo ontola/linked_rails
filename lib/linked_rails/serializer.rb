@@ -115,7 +115,13 @@ module LinkedRails
         collection_name = "#{name.to_s.singularize}_collection"
         opts[:association] ||= name
         opts[:polymorphic] ||= true
-        opts[:if] ||= method(:named_object?)
+
+        action_object = opts.delete(:action_object)
+        opts[:if] ||= -> (object) {
+          return action_object if object.iri.try(:path)&.end_with?('/action_object')
+
+          named_object?(object)
+        }
 
         collection_opts = {}
         collection_opts[:page_size] = opts.delete(:page_size) if opts.key?(:page_size)
