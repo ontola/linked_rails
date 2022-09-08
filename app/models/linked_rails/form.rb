@@ -120,7 +120,7 @@ module LinkedRails
 
       def has_many(key, **opts)
         opts[:input_field] = Form::Field::AssociationInput
-        opts[:max_count] = 99
+        opts[:max_count] ||= 99
         field(key, **opts)
       end
 
