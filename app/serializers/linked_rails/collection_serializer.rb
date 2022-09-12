@@ -13,6 +13,7 @@ module LinkedRails
     end
     attribute :serialized_iri_template, predicate: Vocab.ontola[:iriTemplate]
     attribute :iri_template_opts, predicate: Vocab.ontola[:iriTemplateOpts]
+    attribute :download_urls, predicate: Vocab.schema.downloadUrl
     attribute :default_type, predicate: Vocab.ontola[:defaultType], &:type
     attribute :display, predicate: Vocab.ontola[:collectionDisplay] do |object|
       Vocab.ontola["collectionDisplay/#{object.display || :default}"]
