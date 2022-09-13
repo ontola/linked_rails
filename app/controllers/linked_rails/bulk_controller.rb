@@ -144,9 +144,14 @@ module LinkedRails
     end
 
     def resource_status(resource_policy)
-      raise(LinkedRails::Errors::Forbidden.new(query: :show?)) unless resource_policy.show?
+      return 200 if resource_policy.show?
 
-      200
+      raise(
+        LinkedRails::Errors::Forbidden.new(
+          action_status: resource_policy.try(:action_status),
+          query: :show?
+        )
+      )
     end
 
     def response_for_wrong_host(opts)

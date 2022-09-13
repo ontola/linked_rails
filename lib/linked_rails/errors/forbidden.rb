@@ -3,7 +3,7 @@
 module LinkedRails
   module Errors
     class Forbidden < StandardError
-      attr_reader :query, :record, :policy, :action
+      attr_reader :query, :record, :policy, :action, :action_status
 
       # @param [Hash] options
       # @option options [String] query The action of the request
@@ -16,6 +16,7 @@ module LinkedRails
         @record = options[:record]
         @policy = options[:policy]
         @action = @query[-1] == '?' ? @query[0..-2] : @query
+        @action_status = options[:action_status]
         @message = options[:message]
 
         raise StandardError if @query.blank? && @message.blank?
